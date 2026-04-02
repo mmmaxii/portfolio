@@ -1,0 +1,339 @@
+/* --- Variables de Color (Para fácil edición) --- */
+:root {
+    --bg-deep: #020617; /* Cielo Nocturno Profundo */
+    --bg-card: #0f172a; /* Montañas/Sombra */
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;   /* Cian Estrella Neón */
+    --accent-glow: #7dd3fc;
+    --font-titles: 'Poppins', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+    --transition: all 0.3s ease;
+}
+
+/* --- Reset y Estilos Globales --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth; /* Scroll suave nativo */
+    font-size: 16px;
+}
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- Títulos Modernos --- */
+h1, h2, h3 {
+    font-family: var(--font-titles);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+h2 {
+    color: var(--text-main);
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.section-title-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #1e293b;
+    padding-bottom: 10px;
+}
+
+.section-icon {
+    color: var(--accent);
+    font-size: 1.8rem;
+}
+
+/* --- Navbar (Fija y Tech) --- */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgba(2, 6, 23, 0.9); /* Sutil transparencia */
+    backdrop-filter: blur(10px); /* Efecto borroso pro */
+    z-index: 1000;
+    border-bottom: 1px solid #1e293b;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.nav-logo {
+    font-family: var(--font-titles);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.nav-logo:hover {
+    color: var(--accent-glow);
+    text-shadow: 0 0 10px var(--accent);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    color: var(--accent);
+}
+
+/* --- Sección Hero --- */
+.hero {
+    height: 100vh; /* Ocupa toda la pantalla */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 70%); /* Degradado radial "noche" */
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    color: var(--text-main);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    margin-bottom: 40px;
+}
+
+/* --- Botones --- */
+.btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-titles);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--bg-deep);
+    border: 2px solid var(--accent);
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(56, 189, 248, 0.1);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+/* --- Secciones Generales --- */
+section {
+    padding: 100px 0; /* Espaciado entre secciones */
+}
+
+p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+strong {
+    color: var(--text-main);
+    font-weight: 400;
+}
+
+/* --- Project Card (Lo más interactivo) --- */
+.project-card {
+    background-color: var(--bg-card);
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 30px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto hover en la tarjeta */
+.project-card:hover {
+    transform: translateY(-5px); /* Se levanta sutilmente */
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px -10px rgba(2, 6, 23, 0.7);
+}
+
+/* Pequeño destello neón en el borde superior al hacer hover */
+.project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+}
+
+.project-card:hover::before {
+    transform: translateX(100%);
+}
+
+.project-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.project-tech {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-family: 'Courier New', monospace; /* Toque tech old-school */
+    margin-bottom: 15px;
+}
+
+.project-links {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* --- Skills Tags --- */
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.skill-tag {
+    background-color: #1e293b;
+    color: var(--accent);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 400;
+    border: 1px solid #334155;
+    transition: var(--transition);
+}
+
+.skill-tag:hover {
+    background-color: rgba(56, 189, 248, 0.1);
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+/* --- Contacto --- */
+.contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.contact-item {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+}
+
+.contact-item i {
+    color: var(--accent);
+    width: 20px;
+    text-align: center;
+}
+
+.contact-item:hover {
+    color: var(--text-main);
+    transform: translateX(5px);
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 40px 0;
+    border-top: 1px solid #1e293b;
+    background-color: var(--bg-deep);
+}
+
+footer p {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* --- Animaciones (Scroll Revel) --- */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in.appear {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Responsividad --- */
+@media (max-width: 768px) {
+    html { font-size: 14px; }
+    .hero h1 { font-size: 2.5rem; }
+    .nav-links { display: none; } /* Ocultar menú en móvil para simplicidad */
+    section { padding: 60px 0; }
+}
