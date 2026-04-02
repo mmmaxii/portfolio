@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maximiliano Valderrama | Data Science & Python Portfolio</title>
     
+    <!-- Nuevas Tipografías: Outfit e Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
@@ -20,7 +25,7 @@
             <a href="#" class="nav-logo">MFVV</a>
             <ul class="nav-links">
                 <li><a href="#about">Sobre Mí</a></li>
-                <li><a href="#project">Proyecto</a></li>
+                <li><a href="#project">Proyectos</a></li>
                 <li><a href="#skills">Habilidades</a></li>
                 <li><a href="#contact">Contacto</a></li>
             </ul>
@@ -30,8 +35,8 @@
     <header class="hero">
         <div class="hero-content">
             <h1 class="glitch" data-text="Maximiliano Valderrama">Maximiliano Valderrama</h1>
-            <p class="subtitle">Junior Data Scientist | Python Backend Developer</p>
-            <a href="#project" class="btn-primary">Ver Proyecto Destacado</a>
+            <p class="subtitle">Desarrollador Backend Python y Fullstack</p>
+            <a href="#project" class="btn-primary">Ver Mis Proyectos</a>
         </div>
     </header>
 
@@ -43,27 +48,127 @@
                 <h2>Sobre Mí</h2>
             </div>
             <p>
-                Soy un desarrollador enfocado en el **análisis de datos** y el desarrollo **backend con Python**. Mi pasión radica en resolver problemas complejos utilizando modelos de **Machine Learning** y pipelines automatizados. Busco transformar datos crudos en insights accionables y productos funcionales.
+                Soy un desarrollador enfocado en el **análisis de datos** y el desarrollo **backend con Python**. Mi pasión radica en resolver problemas complejos utilizando modelos de bases de datos, APIs y herramientas backend robustas, transformando datos en soluciones tecnológicas completas y elegantes interfaces web.
             </p>
         </section>
 
+        <!-- Nueva Sección de Proyectos Principales (E-Wallet) -->
         <section id="project" class="fade-in">
             <div class="section-title-container">
-                <i class="fa-solid fa-satellite section-icon"></i>
-                <h2>Proyecto Destacado</h2>
+                <i class="fa-solid fa-layer-group section-icon"></i>
+                <h2>Proyectos Principales</h2>
             </div>
-            <div class="project-card">
+            
+            <div class="projects-grid">
+                
+                <!-- Proyecto 1: Alke Wallet -->
+                <div class="project-card">
+                    <!-- Carrusel -->
+                    <div class="swiper projectSwiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="img/alke_wallet_mobile_1775145150554.png" alt="Alke Wallet Mobile View">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/alke_wallet_mobile_1775145150554.png" alt="Alke Wallet Dashboard"> <!-- Puedes poner tu propia foto luego -->
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                
+                    <div class="project-content">
+                        <h3>💰 Alke Wallet</h3>
+                        <p class="project-tech">HTML • CSS (Bootstrap) • JavaScript (ES6)</p>
+                        <p>
+                            Billetera digital interactiva diseñada con un enfoque Mobile-First. Destaca por utilizar SweetAlert2 para notificaciones fluidas y animaciones Glassmorphism (Efecto vidrio). Integra simuladores de depósitos y un buscador asíncrono para transferir dinero de forma rápida y sencilla.
+                        </p>
+                        <div class="project-links">
+                            <a href="https://github.com/mmmaxii/Alke-Wallet" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Repositorio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proyecto 2: BancoPy -->
+                <div class="project-card">
+                    <!-- Carrusel -->
+                    <div class="swiper projectSwiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="img/bancopy_terminal_1775145167302.png" alt="BancoPy System Terminal">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/bancopy_terminal_1775145167302.png" alt="BancoPy Architecture Document"> <!-- Puedes poner tu propia foto luego -->
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                
+                    <div class="project-content">
+                        <h3>🏦 Gestor BancoPy</h3>
+                        <p class="project-tech">Python • POO • SQLite • API SendGrid</p>
+                        <p>
+                            Completo sistema de gestión bancaria que aplica arquitectura en capas (DAO). Soporta flujos de autenticación estrictos, persistencia de transacciones multi-usuario con jerarquías poli-mórficas (Regular, Corporate, VIP), e integración con SendGrid para enviar correos de bienvenida de manera silenciosa.
+                        </p>
+                        <div class="project-links">
+                            <a href="https://github.com/mmmaxii/BancoPy" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Repositorio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proyecto 3: Alke Wallet Django -->
+                <div class="project-card">
+                    <!-- Carrusel -->
+                    <div class="swiper projectSwiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="img/alke_django_dashboard_1775145183115.png" alt="Alke Wallet Django Dashboard">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/alke_django_dashboard_1775145183115.png" alt="Alke Wallet Django Charts"> <!-- Puedes poner tu propia foto luego -->
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                
+                    <div class="project-content">
+                        <h3>📈 Alke Wallet Fullstack</h3>
+                        <p class="project-tech">Django Frontend • SQLite • Fetch API • Chart.js</p>
+                        <p>
+                            Evolución definitiva de Alke Wallet combinando plantillas de Django con backend SQL. Implemente manejo de estados transaccionales usando `transaction.atomic` (para separar sub-cuentas seguras), gráficos estáticos iterativos de Chart.js y optimizaciones usando JavaScript Vanilla para evitar renderizados de página al enviar dinero.
+                        </p>
+                        <div class="project-links">
+                            <a href="https://github.com/mmmaxii/Alke-wallet---django" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Repositorio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Proyectos Adicionales -->
+        <section id="ai-projects" class="fade-in">
+             <div class="section-title-container">
+                <i class="fa-solid fa-satellite section-icon"></i>
+                <h2>Proyectos de IA</h2>
+            </div>
+            <div class="project-card" style="display:flex; flex-direction:column;">
                 <div class="project-content">
                     <h3>Pipeline Espectroscópico con ML</h3>
-                    <p class="project-tech">Python • Machine Learning • Pandas • Scikit-Learn</p>
+                    <p class="project-tech">Pandas • Scikit-Learn • Numpy</p>
                     <p>
-                        Diseño y ejecución de un pipeline automatizado para el procesamiento de datos astronómicos. Apliqué modelos de Machine Learning para la clasificación y predicción de cuerpos celestes, optimizando tiempos de análisis.
+                        Diseño y ejecución de un pipeline automatizado para el procesamiento de datos astronómicos. Apliqué modelos de Machine Learning para la clasificación y predicción de cuerpos celestes, optimizando tiempos de análisis de forma programática.
                     </p>
                     <div class="project-links">
                         <a href="https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%204" target="_blank" class="btn-secondary">
                             <i class="fab fa-github"></i> Ver Código
                         </a>
-                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -74,14 +179,13 @@
                 <h2>Tech Stack</h2>
             </div>
             <div class="skills-grid">
-                <span class="skill-tag">Python</span>
+                <span class="skill-tag">Python (Django)</span>
+                <span class="skill-tag">Bases de Datos (SQL, SQLite)</span>
+                <span class="skill-tag">Arquitectura de Software (DAO)</span>
+                <span class="skill-tag">Frontend (HTML5, Vanilla CSS)</span>
+                <span class="skill-tag">JavaScript / Fetch API</span>
                 <span class="skill-tag">Machine Learning</span>
-                <span class="skill-tag">SQL</span>
-                <span class="skill-tag">Pandas/NumPy</span>
-                <span class="skill-tag">Git/GitHub</span>
-                <span class="skill-tag">API REST</span>
-                <span class="skill-tag">Django (Básico)</span>
-                <span class="skill-tag">HTML/CSS/JS</span>
+                <span class="skill-tag">Git y GitHub</span>
             </div>
         </section>
 
@@ -90,22 +194,25 @@
                 <i class="fa-solid fa-satellite-dish section-icon"></i>
                 <h2>Hablemos</h2>
             </div>
-            <p>Estoy abierto a oportunidades y colaboraciones en Data Science y desarrollo Python.</p>
+            <p>Estoy abierto a oportunidades y colaboraciones técnicas donde pueda aportar valor real a través de aplicaciones backend solidas.</p>
             <div class="contact-links">
                 <a href="mailto:maximilianovalderrama123@gmail.com" class="contact-item">
                     <i class="fa-solid fa-envelope"></i> maximilianovalderrama123@gmail.com
                 </a>
                 <a href="https://github.com/mmmaxii" target="_blank" class="contact-item">
-                    <i class="fab fa-github"></i> GitHub Profile
+                    <i class="fab fa-github"></i> mi GitHub
                 </a>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 Maximiliano Felipe Valderrama Vargas. Desarrollado con 💙 y Python.</p>
+        <p>&copy; 2026 Maximiliano F. Valderrama. Elaborado con 💙 y Python.</p>
     </footer>
 
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Tu script local -->
     <script src="script.js"></script>
 </body>
 </html>

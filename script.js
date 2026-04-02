@@ -25,6 +25,25 @@ document.addEventListener('DOMContentLoaded', () => {
     fadeElems.forEach(elem => {
         appearOnScroll.observe(elem);
     });
+
+    // 2. Inicializar Carrusel Swiper.js en las Tarjetas de Proyectos
+    const swipers = new Swiper('.projectSwiper', {
+        loop: true,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false, // Seguir rotando incluso tras tocar
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        // Animaciones más suaves para el theme minimalista
+        effect: 'fade',
+        fadeEffect: {
+            crossFade: true
+        },
+        speed: 800
+    });
     
-    console.log("Portafolio 'Night Tech' cargado e interactivo.");
+    console.log("Portafolio Ámbar/Dorado cargado interactivo.");
 });

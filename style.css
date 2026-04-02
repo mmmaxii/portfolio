@@ -1,14 +1,14 @@
-/* --- Variables de Color (Para fácil edición) --- */
+/* --- Variables de Color Modernas (Ámbar & Dorado sobre Zinc) --- */
 :root {
-    --bg-deep: #020617; /* Cielo Nocturno Profundo */
-    --bg-card: #0f172a; /* Montañas/Sombra */
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --accent: #38bdf8;   /* Cian Estrella Neón */
-    --accent-glow: #7dd3fc;
-    --font-titles: 'Poppins', sans-serif;
-    --font-body: 'Roboto', sans-serif;
-    --transition: all 0.3s ease;
+    --bg-deep: #09090b; /* Zinc 950 muy oscuro */
+    --bg-card: #18181b; /* Zinc 900 elegante */
+    --text-main: #fafafa;
+    --text-muted: #a1a1aa; /* Zinc 400 */
+    --accent: #d97706;   /* Ámbar Oscuro/Dorado */
+    --accent-glow: #f59e0b; /* Ámbar brillante (Hover) */
+    --font-titles: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- Reset y Estilos Globales --- */
@@ -16,23 +16,23 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: var(--font-body);
 }
 
 html {
-    scroll-behavior: smooth; /* Scroll suave nativo */
+    scroll-behavior: smooth;
     font-size: 16px;
 }
 
 body {
     background-color: var(--bg-deep);
     color: var(--text-main);
-    font-family: var(--font-body);
-    line-height: 1.6;
+    line-height: 1.7;
     overflow-x: hidden;
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -41,7 +41,7 @@ body {
 h1, h2, h3 {
     font-family: var(--font-titles);
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.02em;
 }
 
 h2 {
@@ -56,8 +56,8 @@ h2 {
 .section-title-container {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #1e293b;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #27272a; /* Borde más sutil */
     padding-bottom: 10px;
 }
 
@@ -66,15 +66,15 @@ h2 {
     font-size: 1.8rem;
 }
 
-/* --- Navbar (Fija y Tech) --- */
+/* --- Navbar --- */
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(2, 6, 23, 0.9); /* Sutil transparencia */
-    backdrop-filter: blur(10px); /* Efecto borroso pro */
+    background-color: rgba(9, 9, 11, 0.85);
+    backdrop-filter: blur(12px);
     z-index: 1000;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid #27272a;
 }
 
 .nav-container {
@@ -83,106 +83,109 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 18px 20px;
 }
 
 .nav-logo {
     font-family: var(--font-titles);
     font-weight: 700;
     font-size: 1.5rem;
-    color: var(--accent);
+    color: var(--text-main);
     text-decoration: none;
     transition: var(--transition);
+    letter-spacing: 1px;
 }
 
 .nav-logo:hover {
     color: var(--accent-glow);
-    text-shadow: 0 0 10px var(--accent);
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 25px;
+    gap: 30px;
 }
 
 .nav-links a {
     text-decoration: none;
     color: var(--text-muted);
-    font-weight: 400;
+    font-weight: 500;
     font-size: 0.95rem;
     transition: var(--transition);
 }
 
 .nav-links a:hover {
-    color: var(--accent);
+    color: var(--text-main);
 }
 
-/* --- Sección Hero --- */
+/* --- Hero --- */
 .hero {
-    height: 100vh; /* Ocupa toda la pantalla */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: radial-gradient(circle at center, #0f172a 0%, #020617 70%); /* Degradado radial "noche" */
+    background: radial-gradient(circle at top center, #18181b 0%, #09090b 60%);
     padding: 0 20px;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: 4rem;
     margin-bottom: 15px;
     color: var(--text-main);
 }
 
 .subtitle {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: var(--text-muted);
-    font-weight: 300;
+    font-weight: 400;
     margin-bottom: 40px;
 }
 
 /* --- Botones --- */
 .btn-primary, .btn-secondary {
     display: inline-block;
-    padding: 12px 30px;
-    border-radius: 5px;
+    padding: 14px 32px;
+    border-radius: 8px; /* Bordes más redondeados */
     text-decoration: none;
     font-weight: 600;
     font-family: var(--font-titles);
     transition: var(--transition);
     cursor: pointer;
+    font-size: 1rem;
 }
 
 .btn-primary {
-    background-color: var(--accent);
+    background-color: var(--text-main);
     color: var(--bg-deep);
-    border: 2px solid var(--accent);
+    border: 2px solid var(--text-main);
 }
 
 .btn-primary:hover {
-    background-color: transparent;
-    color: var(--accent);
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    background-color: var(--accent);
+    color: var(--bg-deep);
+    border-color: var(--accent);
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
     background-color: transparent;
-    color: var(--accent);
-    border: 2px solid var(--accent);
+    color: var(--text-main);
+    border: 1px solid #3f3f46;
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 10px 20px;
 }
 
 .btn-secondary:hover {
-    background-color: rgba(56, 189, 248, 0.1);
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    background-color: #27272a;
+    border-color: #52525b;
 }
 
-/* --- Secciones Generales --- */
+/* --- Secciones --- */
 section {
-    padding: 100px 0; /* Espaciado entre secciones */
+    padding: 120px 0;
 }
 
 p {
@@ -193,62 +196,115 @@ p {
 
 strong {
     color: var(--text-main);
-    font-weight: 400;
+    font-weight: 500;
 }
 
-/* --- Project Card (Lo más interactivo) --- */
+/* --- Grid de Proyectos --- */
+.projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+@media (min-width: 768px) {
+    .projects-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+}
+
+/* --- Tarjetas de Proyecto --- */
 .project-card {
     background-color: var(--bg-card);
-    border: 1px solid #1e293b;
-    border-radius: 12px;
-    padding: 30px;
+    border: 1px solid #27272a;
+    border-radius: 16px;
     transition: var(--transition);
-    position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Efecto hover en la tarjeta */
 .project-card:hover {
-    transform: translateY(-5px); /* Se levanta sutilmente */
-    border-color: var(--accent);
-    box-shadow: 0 10px 30px -10px rgba(2, 6, 23, 0.7);
+    transform: translateY(-8px);
+    border-color: #3f3f46;
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
 }
 
-/* Pequeño destello neón en el borde superior al hacer hover */
+/* Línea de acento sutil */
 .project-card::before {
     content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block;
+    height: 4px;
     width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
+    background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+    opacity: 0;
+    transition: var(--transition);
 }
 
 .project-card:hover::before {
-    transform: translateX(100%);
+    opacity: 1;
+}
+
+/* --- Carrusel Swiper en Tarjetas --- */
+.swiper {
+    width: 100%;
+    height: 250px;
+    background-color: #09090b;
+    border-bottom: 1px solid #27272a;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.project-card:hover .swiper-slide img {
+    transform: scale(1.05); /* Efecto zoom out al hacer hover en la tarjeta */
+}
+
+/* Personalización de los puntitos del carrusel */
+.swiper-pagination-bullet {
+    background: var(--text-muted) !important;
+    opacity: 0.5 !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--accent) !important;
+    opacity: 1 !important;
+    transform: scale(1.2);
+}
+
+.project-content {
+    padding: 30px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .project-card h3 {
     font-size: 1.5rem;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     color: var(--text-main);
 }
 
 .project-tech {
     font-size: 0.9rem;
     color: var(--accent);
-    font-family: 'Courier New', monospace; /* Toque tech old-school */
-    margin-bottom: 15px;
+    font-weight: 500;
+    margin-bottom: 20px;
 }
 
 .project-links {
-    margin-top: 25px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
+    margin-top: auto; /* Empuja el botón al fondo si la tarjeta crece */
+    padding-top: 20px;
 }
 
 /* --- Skills Tags --- */
@@ -260,20 +316,20 @@ strong {
 }
 
 .skill-tag {
-    background-color: #1e293b;
-    color: var(--accent);
-    padding: 8px 18px;
-    border-radius: 20px;
+    background-color: #18181b;
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 8px;
     font-size: 0.9rem;
-    font-weight: 400;
-    border: 1px solid #334155;
+    font-weight: 500;
+    border: 1px solid #27272a;
     transition: var(--transition);
 }
 
 .skill-tag:hover {
-    background-color: rgba(56, 189, 248, 0.1);
+    background-color: #27272a;
     border-color: var(--accent);
-    transform: scale(1.05);
+    color: var(--accent-glow);
 }
 
 /* --- Contacto --- */
@@ -290,39 +346,41 @@ strong {
     font-size: 1.1rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     transition: var(--transition);
+    padding: 10px 0;
 }
 
 .contact-item i {
     color: var(--accent);
-    width: 20px;
+    width: 24px;
     text-align: center;
+    font-size: 1.2rem;
 }
 
 .contact-item:hover {
     color: var(--text-main);
-    transform: translateX(5px);
+    transform: translateX(8px);
 }
 
 /* --- Footer --- */
 footer {
     text-align: center;
-    padding: 40px 0;
-    border-top: 1px solid #1e293b;
+    padding: 50px 0;
+    border-top: 1px solid #27272a;
     background-color: var(--bg-deep);
 }
 
 footer p {
     font-size: 0.9rem;
-    color: #64748b;
+    color: #52525b;
 }
 
-/* --- Animaciones (Scroll Revel) --- */
+/* --- Animaciones (Scroll) --- */
 .fade-in {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fade-in.appear {
@@ -332,8 +390,12 @@ footer p {
 
 /* --- Responsividad --- */
 @media (max-width: 768px) {
-    html { font-size: 14px; }
-    .hero h1 { font-size: 2.5rem; }
-    .nav-links { display: none; } /* Ocultar menú en móvil para simplicidad */
-    section { padding: 60px 0; }
+    html { font-size: 15px; }
+    .hero h1 { font-size: 2.8rem; }
+    .nav-links { display: none; }
+    section { padding: 80px 0; }
+    
+    .swiper {
+        height: 200px; /* Carrusel más pequeño en móviles */
+    }
 }
