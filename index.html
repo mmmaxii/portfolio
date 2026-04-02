@@ -158,19 +158,91 @@
         <section id="ai-projects" class="fade-in">
              <div class="section-title-container">
                 <i class="fa-solid fa-satellite section-icon"></i>
-                <h2>Proyectos de IA</h2>
+                <h2>Proyectos de IA y Simulación</h2>
             </div>
-            <div class="project-card" style="display:flex; flex-direction:column;">
-                <div class="project-content">
-                    <h3>Pipeline Espectroscópico con ML</h3>
-                    <p class="project-tech">Pandas • Scikit-Learn • Numpy</p>
-                    <p>
-                        Diseño y ejecución de un pipeline automatizado para el procesamiento de datos astronómicos. Apliqué modelos de Machine Learning para la clasificación y predicción de cuerpos celestes, optimizando tiempos de análisis de forma programática.
-                    </p>
-                    <div class="project-links">
-                        <a href="https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%204" target="_blank" class="btn-secondary">
-                            <i class="fab fa-github"></i> Ver Código
-                        </a>
+            
+            <div class="projects-grid">
+                <!-- Simulación Lente Gravitacional Interactiva -->
+                <div class="project-card">
+                    <!-- Contenedor para el GIF -->
+                    <img src="img/lente_gravitacional.gif" alt="Simulación Lente Gravitacional Interactiva" style="width: 100%; border-radius: 12px 12px 0 0; object-fit: cover;">
+                    <div class="project-content">
+                        <h3>Simulación de Lente Gravitacional</h3>
+                        <p class="project-tech">Python • Numpy • Matplotlib</p>
+                        <p>
+                            Simulación interactiva utilizando un modelo de Esfera Isoterma Singular (SIS) con Shear externo. Permite visualizar en tiempo real cómo la gravedad distorsiona la luz de una galaxia de fondo ajustando parámetros mediante controles interactivos.
+                        </p>
+                        <div class="project-links">
+                            <a href="https://github.com/mmmaxii/Simulacion-lente-gravitacional" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Ver Código
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualización de Sombra y Agujero Negro -->
+                <div class="project-card">
+                    <!-- Carrusel de imágenes del proceso -->
+                    <div class="swiper projectSwiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="img/Agujero negro con disco de acreción (modelo visual).png" alt="Agujero negro modelo visual">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/Agujero negro con disco de acresion v2.png" alt="Agujero negro v2">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/Agujero negro con disco de acresion v2,2.png" alt="Agujero negro v2.2">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/agujero negro v3.png" alt="Agujero negro v3">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/agujero negro v3,1.png" alt="Agujero negro v3.1">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/agujero negro v3,2.png" alt="Agujero negro v3.2">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/agujero negro v3,3.png" alt="Agujero negro v3.3">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/agujero negro v3,4.png" alt="Agujero negro v3.4">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/agujero negro v3,5.png" alt="Agujero negro final (v3.5)">
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                    <div class="project-content">
+                        <h3>Sombra de Agujero Negro</h3>
+                        <p class="project-tech">Python • NumPy • Matplotlib</p>
+                        <p>
+                            Simulación numérica de la apariencia óptica de un agujero negro de Schwarzschild. Combina la determinación exacta del parámetro de impacto crítico ("sombra") usando Ray-Shooting Inverso, con una aproximación de campo débil para la deflexión de luz de las estrellas de fondo.
+                        </p>
+                        <div class="project-links">
+                            <a href="https://github.com/mmmaxii/ProyectosU-2025/tree/main/Proyectos%20independientes" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Ver Código
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pipeline Espectroscópico -->
+                <div class="project-card">
+                    <img src="img/tngsimulation.png" alt="Simulación TNG50" style="width: 100%; border-radius: 12px 12px 0 0; object-fit: cover;">
+                    <div class="project-content">
+                        <h3>Pipeline de Simulación y Análisis TNG50</h3>
+                        <p class="project-tech">Pandas • Scikit-Learn • Numpy • IllustrisTNG</p>
+                        <p>
+                            Diseño y ejecución de un pipeline automatizado para el procesamiento de datos astronómicos extraídos de la simulación TNG50. Apliqué modelos de Machine Learning para analizar las propiedades físicas (masa estelar, tasa de formación estelar, metalicidad) de las galaxias y predecir su evolución en diferentes etapas del universo. Utiliza datos de la simulación magnetohidrodinámica cosmológica a gran escala de formación y evolución de galaxias, extraídos de forma programática.
+                        </p>
+                        <div class="project-links">
+                            <a href="https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%204" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Ver Código
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
