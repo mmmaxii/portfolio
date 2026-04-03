@@ -126,7 +126,7 @@ h2 {
     justify-content: center;
     align-items: center;
     text-align: center;
-    background-color: var(--bg-deep); /* Base if images don't load */
+    background-color: var(--bg-deep); /* Base si mis imágenes no cargan */
     padding: 0 20px;
     position: relative;
     overflow: hidden;
@@ -145,11 +145,11 @@ h2 {
 .slice {
     flex: 1;
     height: 100%;
-    transform: skewX(-15deg); /* Genera la diagonal */
+    transform: skewX(-15deg); /* Genero la diagonal */
     overflow: hidden;
     position: relative;
     border-right: 4px solid var(--bg-deep); /* Líneas divisorias color fondo */
-    margin-left: -50px; /* Expande para tapar los huecos del skew en bordes */
+    margin-left: -50px; /* Expando para tapar los huecos del skew en bordes */
     margin-right: -50px;
 }
 
@@ -157,12 +157,12 @@ h2 {
 .slice:last-child { margin-right: -100px; padding-right: 50px; border-right: none; }
 
 .slice-bg {
-    width: 200%; /* Da margen para centrar deshaciendo el skew */
+    width: 200%; /* Doy margen para centrar deshaciendo el skew */
     height: 100%;
     background-size: cover;
     background-position: center;
     position: absolute;
-    transform: skewX(15deg); /* Deshace la inclinación para que la imagen se vea derecha */
+    transform: skewX(15deg); /* Deshago la inclinación para que la imagen se vea derecha */
     left: -50%;
     transition: transform 0.6s ease, filter 0.6s ease;
     filter: grayscale(100%) brightness(0.8); /* Oscuro y apagado por defecto */
@@ -179,7 +179,7 @@ h2 {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle at center, rgba(9, 9, 11, 0.4) 0%, rgba(9, 9, 11, 1) 100%);
-    pointer-events: none; /* Deja pasar el ratón para los hovers */
+    pointer-events: none; /* Dejo pasar el ratón para los hovers */
     z-index: 2;
 }
 
@@ -363,7 +363,7 @@ strong {
 }
 
 .project-links {
-    margin-top: auto; /* Empuja el botón al fondo si la tarjeta crece */
+    margin-top: auto; /* Empujo el botón al fondo si la tarjeta crece */
     padding-top: 20px;
 }
 

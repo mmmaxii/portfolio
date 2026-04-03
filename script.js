@@ -1,4 +1,4 @@
-// Esperar a que el DOM esté cargado
+// Espero a que el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Efecto de aparición (Fade-in on Scroll)
@@ -7,31 +7,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuración del observador
     const appearOptions = {
         threshold: 0.15, // El elemento debe estar 15% visible
-        rootMargin: "0px 0px -50px 0px" // Ejecutar un poco antes de que llegue
+        rootMargin: "0px 0px -50px 0px" // Ejecuto un poco antes de que llegue
     };
     
     const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
         entries.forEach(entry => {
             if (!entry.isIntersecting) {
-                return; // Si no está visible, no hacer nada
+                return; // Si no está visible, no hago nada
             } else {
-                entry.target.classList.add('appear'); // Añadir clase que activa la animación CSS
-                appearOnScroll.unobserve(entry.target); // Dejar de observar una vez que apareció
+                entry.target.classList.add('appear'); // Añado clase que activa la animación CSS
+                appearOnScroll.unobserve(entry.target); // Dejo de observar una vez que apareció
             }
         });
     }, appearOptions);
     
-    // Activar el observador para cada elemento con la clase .fade-in
+    // Activo el observador para cada elemento con la clase .fade-in
     fadeElems.forEach(elem => {
         appearOnScroll.observe(elem);
     });
 
-    // 2. Inicializar Carrusel Swiper.js en las Tarjetas de Proyectos Regulares
+    // 2. Inicializo Carrusel Swiper.js en las Tarjetas de Proyectos Regulares
     const swipers = new Swiper('.projectSwiper', {
         loop: true,
         autoplay: {
             delay: 4000,
-            disableOnInteraction: false, // Seguir rotando incluso tras tocar
+            disableOnInteraction: false, // Sigo rotando incluso tras tocar
         },
         pagination: {
             el: '.swiper-pagination',
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         speed: 800
     });
 
-    // 3. Inicializar Carrusel rápido para Agujero Negro
+    // 3. Inicializo Carrusel rápido para Agujero Negro
     const fastSwiper = new Swiper('.fastSwiper', {
         loop: true,
         autoplay: {
