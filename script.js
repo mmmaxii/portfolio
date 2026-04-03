@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         appearOnScroll.observe(elem);
     });
 
-    // 2. Inicializar Carrusel Swiper.js en las Tarjetas de Proyectos
+    // 2. Inicializar Carrusel Swiper.js en las Tarjetas de Proyectos Regulares
     const swipers = new Swiper('.projectSwiper', {
         loop: true,
         autoplay: {
@@ -37,12 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
             el: '.swiper-pagination',
             clickable: true,
         },
-        // Animaciones más suaves para el theme minimalista
+        // Animaciones más suaves
         effect: 'fade',
         fadeEffect: {
             crossFade: true
         },
         speed: 800
+    });
+
+    // 3. Inicializar Carrusel rápido para Agujero Negro
+    const fastSwiper = new Swiper('.fastSwiper', {
+        loop: true,
+        autoplay: {
+            delay: 1200, // Mucho más rápido (1.2 segundos entre imágenes)
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        effect: 'fade',
+        fadeEffect: {
+            crossFade: true
+        },
+        speed: 300 // Transición más ágil
     });
     
     console.log("Portafolio Ámbar/Dorado cargado interactivo.");

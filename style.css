@@ -1,3 +1,4 @@
+@import url('https://fonts.cdnfonts.com/css/latin-modern-roman');
 /* --- Variables de Color Modernas (Ámbar & Dorado sobre Zinc) --- */
 :root {
     --bg-deep: #09090b; /* Zinc 950 muy oscuro */
@@ -87,13 +88,13 @@ h2 {
 }
 
 .nav-logo {
-    font-family: var(--font-titles);
-    font-weight: 700;
-    font-size: 1.5rem;
+    font-family: 'Latin Modern Roman', 'Computer Modern Serif', 'Times New Roman', serif;
+    font-weight: normal;
+    font-size: 1.8rem;
     color: var(--text-main);
     text-decoration: none;
     transition: var(--transition);
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .nav-logo:hover {
@@ -125,8 +126,67 @@ h2 {
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: radial-gradient(circle at top center, #18181b 0%, #09090b 60%);
+    background-color: var(--bg-deep); /* Base if images don't load */
     padding: 0 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Nuevo Collage Hero */
+.hero-bg-collage {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex;
+    z-index: 1;
+    background: var(--bg-deep);
+}
+
+/* Los cortes diagonales */
+.slice {
+    flex: 1;
+    height: 100%;
+    transform: skewX(-15deg); /* Genera la diagonal */
+    overflow: hidden;
+    position: relative;
+    border-right: 4px solid var(--bg-deep); /* Líneas divisorias color fondo */
+    margin-left: -50px; /* Expande para tapar los huecos del skew en bordes */
+    margin-right: -50px;
+}
+
+.slice:first-child { margin-left: -100px; padding-left: 50px; }
+.slice:last-child { margin-right: -100px; padding-right: 50px; border-right: none; }
+
+.slice-bg {
+    width: 200%; /* Da margen para centrar deshaciendo el skew */
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    transform: skewX(15deg); /* Deshace la inclinación para que la imagen se vea derecha */
+    left: -50%;
+    transition: transform 0.6s ease, filter 0.6s ease;
+    filter: grayscale(100%) brightness(0.8); /* Oscuro y apagado por defecto */
+}
+
+/* Efecto al hacer hover sobre cada rebanada */
+.slice:hover .slice-bg {
+    filter: grayscale(0%) brightness(0.6);
+    transform: skewX(15deg) scale(1.1);
+}
+
+/* Superposición para garantizar legibilidad del texto */
+.collage-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(9, 9, 11, 0.4) 0%, rgba(9, 9, 11, 1) 100%);
+    pointer-events: none; /* Deja pasar el ratón para los hovers */
+    z-index: 2;
+}
+
+/* Textos encima de todo */
+.hero-content {
+    position: relative;
+    z-index: 10;
 }
 
 .hero h1 {

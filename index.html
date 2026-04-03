@@ -22,7 +22,7 @@
 
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="nav-logo">MFVV</a>
+            <a href="#" class="nav-logo">Valderrama M.</a>
             <ul class="nav-links">
                 <li><a href="#about">Sobre Mí</a></li>
                 <li><a href="#project">Proyectos</a></li>
@@ -33,6 +33,16 @@
     </nav>
 
     <header class="hero">
+        <!-- Collage de fondo -->
+        <div class="hero-bg-collage">
+            <div class="slice"><div class="slice-bg" style="background-image: url('img/tngsimulation.png');"></div></div>
+            <div class="slice"><div class="slice-bg" style="background-image: url('img/alkewallet_django_home.png');"></div></div>
+            <div class="slice"><div class="slice-bg" style="background-image: url('img/Agujero negro con disco de acresion v2.png');"></div></div>
+            <div class="slice"><div class="slice-bg" style="background-image: url('img/bancopy_terminal_1775145167302.png');"></div></div>
+            <div class="slice"><div class="slice-bg" style="background-image: url('img/lente_gravitacional.gif');"></div></div>
+            <div class="collage-overlay"></div>
+        </div>
+
         <div class="hero-content">
             <h1 class="glitch" data-text="Maximiliano Valderrama">Maximiliano Valderrama</h1>
             <p class="subtitle">Desarrollador Backend Python y Fullstack</p>
@@ -48,7 +58,16 @@
                 <h2>Sobre Mí</h2>
             </div>
             <p>
-                Soy un desarrollador enfocado en el **análisis de datos** y el desarrollo **backend con Python**. Mi pasión radica en resolver problemas complejos utilizando modelos de bases de datos, APIs y herramientas backend robustas, transformando datos en soluciones tecnológicas completas y elegantes interfaces web.
+                Soy originario de Los Ángeles, Chile, y estudiante de Astronomía, una carrera que me reveló mi gran vocación profesional: la <strong>programación y automatización</strong>. Analizar inmensos volúmenes de datos astronómicos de misiones como Kepler, Gaia DR3, TESS y simulaciones como IllustrisTNG me demostró el enorme potencial de Python para entender y modelar el universo.
+            </p>
+            <p>
+                Considero que poseo un perfil sumamente pragmático. Descubrir que cualquier proceso que uno imagine puede automatizarse me motivó a profundizar en cursos de Programación Avanzada. Actualmente, me encuentro en la recta final de mi carrera y cursando de forma paralela un <strong>Bootcamp de Desarrollo Fullstack</strong>. Mi objetivo es poder tomar todo ese poder del Backend y el procesamiento de datos, y plasmarlo en interfaces visuales que destaquen por su diseño y experiencia de usuario.
+            </p>
+            <p>
+                Mi proyecto en paralelo y hobby más demandante en la actualidad es personal: <strong>ser padre</strong>. Cuidar de mi hija recién nacida a tiempo completo me enseña a diario sobre resiliencia, prioridades y organización, lo que compagino firmemente con mis estudios y la programación.
+            </p>
+            <p>
+                A futuro, el ámbito investigativo es mi mayor proyección: deseo especializarme en la simulación y análisis de <strong>discos protoplanetarios</strong>, para lograr encontrar relaciones directas sobre cómo se originan los mundos oceánicos (<em>Water Worlds</em>) y entender qué mecanismos rigen su creación.
             </p>
         </section>
 
@@ -151,6 +170,38 @@
                     </div>
                 </div>
 
+                <!-- Proyecto 4: Sistema Solar Interactivo -->
+                <div class="project-card">
+                    <!-- Carrusel -->
+                    <div class="swiper projectSwiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="img/solar_system_home.png" alt="Sistema Solar Home">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/solar_system_sun.png" alt="Sistema Solar Sol">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="img/solar_system_saturn.png" alt="Sistema Solar Saturno">
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                
+                    <div class="project-content">
+                        <h3>Sistema Solar Interactivo</h3>
+                        <p class="project-tech">Django • HTML5 • Vanilla CSS • Three.js</p>
+                        <p>
+                            Aplicación web interactiva construida bajo arquitectura MVT con Django, diseñada para visualizar los cuerpos celestes del sistema solar. Destaca por su avanzado diseño frontend utilizando CSS (Glassmorphism), disposiciones dinámicas y la integración de renderizado 3D de modelos astronómicos a través de Three.js.
+                        </p>
+                        <div class="project-links">
+                            <a href="#" target="_blank" class="btn-secondary">
+                                <i class="fab fa-github"></i> Repositorio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -165,7 +216,7 @@
                 <!-- Simulación Lente Gravitacional Interactiva -->
                 <div class="project-card">
                     <!-- Contenedor para el GIF -->
-                    <img src="img/lente_gravitacional.gif" alt="Simulación Lente Gravitacional Interactiva" style="width: 100%; border-radius: 12px 12px 0 0; object-fit: cover;">
+                    <img src="img/lente_gravitacional.gif" alt="Simulación Lente Gravitacional Interactiva" style="width: 100%; height: 250px; border-radius: 12px 12px 0 0; object-fit: cover;">
                     <div class="project-content">
                         <h3>Simulación de Lente Gravitacional</h3>
                         <p class="project-tech">Python • Numpy • Matplotlib</p>
@@ -183,7 +234,7 @@
                 <!-- Visualización de Sombra y Agujero Negro -->
                 <div class="project-card">
                     <!-- Carrusel de imágenes del proceso -->
-                    <div class="swiper projectSwiper">
+                    <div class="swiper fastSwiper">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
                                 <img src="img/Agujero negro con disco de acreción (modelo visual).png" alt="Agujero negro modelo visual">
@@ -200,9 +251,7 @@
                             <div class="swiper-slide">
                                 <img src="img/agujero negro v3,1.png" alt="Agujero negro v3.1">
                             </div>
-                            <div class="swiper-slide">
-                                <img src="img/agujero negro v3,2.png" alt="Agujero negro v3.2">
-                            </div>
+                        
                             <div class="swiper-slide">
                                 <img src="img/agujero negro v3,3.png" alt="Agujero negro v3.3">
                             </div>
@@ -231,7 +280,7 @@
 
                 <!-- Pipeline Espectroscópico -->
                 <div class="project-card">
-                    <img src="img/tngsimulation.png" alt="Simulación TNG50" style="width: 100%; border-radius: 12px 12px 0 0; object-fit: cover;">
+                    <img src="img/tngsimulation.png" alt="Simulación TNG50" style="width: 100%; height: 250px; border-radius: 12px 12px 0 0; object-fit: cover;">
                     <div class="project-content">
                         <h3>Pipeline de Simulación y Análisis TNG50</h3>
                         <p class="project-tech">Pandas • Scikit-Learn • Numpy • IllustrisTNG</p>
@@ -275,7 +324,7 @@
                     <i class="fa-solid fa-envelope"></i> maximilianovalderrama123@gmail.com
                 </a>
                 <a href="https://github.com/mmmaxii" target="_blank" class="contact-item">
-                    <i class="fab fa-github"></i> mi GitHub
+                    <i class="fab fa-github"></i> GitHub
                 </a>
             </div>
         </section>
