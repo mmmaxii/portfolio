@@ -459,3 +459,194 @@ footer p {
         height: 200px; /* Carrusel más pequeño en móviles */
     }
 }
+
+/* --- Práctica Profesional --- */
+.practica-hero-card {
+    background: rgba(24, 24, 27, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: inset 0 0 20px rgba(217, 119, 6, 0.05);
+}
+
+.practica-subtitle {
+    margin-top: 50px;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.practica-subtitle i {
+    color: var(--accent);
+}
+
+.practica-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+@media (min-width: 768px) {
+    .practica-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+.practica-card {
+    background-color: var(--bg-card);
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 30px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.practica-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px -10px rgba(217, 119, 6, 0.2);
+}
+
+.card-icon {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 15px;
+}
+
+.practica-card h4 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.card-tech {
+    font-size: 0.85rem;
+    color: var(--accent-glow);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.practica-list {
+    list-style-type: none;
+    margin-top: 15px;
+}
+
+.practica-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.practica-list li::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+/* Galería CSS Grid */
+.practica-gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .practica-gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 250px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(transparent, rgba(9, 9, 11, 0.95));
+    padding: 20px;
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+}
+
+.gallery-overlay h5 {
+    color: var(--accent-glow);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.gallery-overlay p {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* Logros Container */
+.logros-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.logro-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent);
+    transition: var(--transition);
+}
+
+.logro-item:hover {
+    transform: translateX(10px);
+}
+
+.logro-item i {
+    font-size: 2rem;
+    color: var(--text-main);
+    background-color: #27272a;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.logro-item h5 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.logro-item p {
+    margin: 0;
+    font-size: 1rem;
+}
