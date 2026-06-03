@@ -88,97 +88,111 @@
                 <p>Este modelamiento fue construido utilizando bases teóricas de la evolución de discos (tripodpy, dustpylib) combinando el decaimiento de la tasa de acreción en estrellas T-Tauri y regímenes de fragmentación para entender la transición entre material rocoso (rico en silicatos) y material rico en hielos.</p>
             </div>
 
-            <h3 class="practica-subtitle"><i class="fa-solid fa-microchip"></i> Arquitectura y Herramientas</h3>
-            <div class="practica-grid">
-                <!-- Tarjeta 1: Pipeline -->
-                <div class="practica-card">
-                    <div class="card-icon"><i class="fa-solid fa-code-branch"></i></div>
-                    <h4>1. El Pipeline Principal</h4>
-                    <p class="card-tech">WaterworldPipeline • Mixins</p>
-                    <p>Arquitectura orientada a objetos que modulariza la física del disco:</p>
-                    <ul class="practica-list">
-                        <li><strong>Disk Setup:</strong> Define grilla radial y calcula parámetros estelares (L ≈ 1 L_sun, T ≈ 4000 K).</li>
-                        <li><strong>Disk Chemistry:</strong> Inyecta volátiles (H₂O, CO₂, CO) sobre silicatos.</li>
-                        <li><strong>Snowline Physics:</strong> Modelo de Oka et al. Simula migración secular hacia el interior (M_dot ≈ t^-1.5).</li>
-                        <li><strong>Pressure Bumps:</strong> Modelos de Kanagawa, Duffell y sinusoidales para trampas de polvo.</li>
-                    </ul>
-                </div>
-
-                <!-- Tarjeta 2: Módulo de Acreción -->
-                <div class="practica-card">
-                    <div class="card-icon"><i class="fa-solid fa-meteor"></i></div>
-                    <h4>2. Módulo de Acreción</h4>
-                    <p class="card-tech">PA3Py (PebbleAccretion3)</p>
-                    <p>Módulo desarrollado para rastrear cómo los embriones crecen:</p>
-                    <ul class="practica-list">
-                        <li>Masa inicial considerada 100% material rocoso.</li>
-                        <li>Fracción de hielo/silicato regulada estrictamente por la snowline de H₂O.</li>
-                        <li>Incorpora deriva de polvo y fragmentación estelar de pebbles.</li>
-                    </ul>
-                </div>
-
-                <!-- Tarjeta 3: Visualización -->
-                <div class="practica-card">
-                    <div class="card-icon"><i class="fa-solid fa-eye"></i></div>
-                    <h4>3. Visualización y Análisis</h4>
-                    <p class="card-tech">disk_visualizer • Python 2D</p>
-                    <p>Paquete diseñado para interpretar cientos de snapshots HDF5:</p>
-                    <ul class="practica-list">
-                        <li>Mapea simultáneamente densidades de gas (Σ_gas) y polvo (Σ_dust).</li>
-                        <li>Rastrea paramétricamente la posición en AU de la snowline.</li>
-                        <li>Renderización batch de animaciones GIF de alta calidad.</li>
-                    </ul>
-                </div>
+            <!-- Menú de Pestañas (Tabs) -->
+            <div class="practica-tabs">
+                <button class="tab-btn active" onclick="openTab('tab-arquitectura')"><i class="fa-solid fa-microchip"></i> Arquitectura y Pipeline</button>
+                <button class="tab-btn" onclick="openTab('tab-galeria')"><i class="fa-solid fa-images"></i> Galería Visual</button>
+                <button class="tab-btn" onclick="openTab('tab-logros')"><i class="fa-solid fa-rocket"></i> Logros Técnicos</button>
             </div>
 
-            <h3 class="practica-subtitle"><i class="fa-solid fa-images"></i> Galería de Resultados Visuales</h3>
-            <div class="practica-gallery">
-                <div class="gallery-item">
-                    <img src="img/practica/disco_inicial.png" alt="Estructura Inicial del Disco y Línea de Nieve">
-                    <div class="gallery-overlay">
-                        <h5>Estructura Inicial</h5>
-                        <p>Representación bidimensional (t=0) de densidad de gas y polvo, revelando la snowline de agua.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="img/practica/evolucion_disco.gif" alt="Evolución Dinámica: Gaps y Trampas de Presión">
-                    <div class="gallery-overlay">
-                        <h5>Evolución Dinámica</h5>
-                        <p>Planeta talla un gap, crea trampa de presión y acumula material sólido alterando la snowline.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="img/practica/embriones_oka.png" alt="Acumulación y Crecimiento de Embriones">
-                    <div class="gallery-overlay">
-                        <h5>Crecimiento de Embriones</h5>
-                        <p>Migración de snowline altera disponibilidad de hielos para el crecimiento en distintas zonas orbitales.</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Contenedor Principal de Pestañas -->
+            <div class="tab-container">
+                
+                <!-- Pestaña 1: Arquitectura -->
+                <div id="tab-arquitectura" class="tab-content active">
+                    <div class="practica-grid">
+                        <!-- Tarjeta 1: Pipeline -->
+                        <div class="practica-card">
+                            <div class="card-icon"><i class="fa-solid fa-code-branch"></i></div>
+                            <h4>1. El Pipeline Principal</h4>
+                            <p class="card-tech">WaterworldPipeline • Mixins</p>
+                            <p>Arquitectura orientada a objetos que modulariza la física del disco:</p>
+                            <ul class="practica-list">
+                                <li><strong>Disk Setup:</strong> Define grilla radial y calcula parámetros estelares (L ≈ 1 L_sun, T ≈ 4000 K).</li>
+                                <li><strong>Disk Chemistry:</strong> Inyecta volátiles (H₂O, CO₂, CO) sobre silicatos.</li>
+                                <li><strong>Snowline Physics:</strong> Modelo de Oka et al. Simula migración secular hacia el interior (M_dot ≈ t^-1.5).</li>
+                                <li><strong>Pressure Bumps:</strong> Modelos de Kanagawa, Duffell y sinusoidales para trampas de polvo.</li>
+                            </ul>
+                        </div>
 
-            <h3 class="practica-subtitle"><i class="fa-solid fa-rocket"></i> Otros Desarrollos y Logros</h3>
-            <div class="logros-container">
-                <div class="logro-item">
-                    <i class="fa-solid fa-server"></i>
-                    <div>
-                        <h5>Computación de Alto Rendimiento (HPC)</h5>
-                        <p>Scripts automáticos (Python y PBS) para enviar jobs a clústeres, explorando vastos parámetros de atenuación, radios base y masas.</p>
+                        <!-- Tarjeta 2: Módulo de Acreción -->
+                        <div class="practica-card">
+                            <div class="card-icon"><i class="fa-solid fa-meteor"></i></div>
+                            <h4>2. Módulo de Acreción</h4>
+                            <p class="card-tech">PA3Py (PebbleAccretion3)</p>
+                            <p>Módulo para rastrear el crecimiento de embriones, regido por los modelos de <strong>Drążkowska (2023)</strong> y <strong>Ormel (2017)</strong>:</p>
+                            <ul class="practica-list">
+                                <li>Masa inicial considerada 100% material rocoso.</li>
+                                <li>Fracción de hielo/silicato regulada estrictamente por la snowline de H₂O.</li>
+                                <li>Incorpora deriva de polvo y fragmentación estelar de pebbles.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Tarjeta 3: Visualización -->
+                        <div class="practica-card">
+                            <div class="card-icon"><i class="fa-solid fa-eye"></i></div>
+                            <h4>3. Visualización y Análisis</h4>
+                            <p class="card-tech">disk_visualizer • Python 2D</p>
+                            <p>Paquete diseñado para interpretar cientos de snapshots HDF5:</p>
+                            <ul class="practica-list">
+                                <li>Mapea simultáneamente densidades de gas (Σ_gas) y polvo (Σ_dust).</li>
+                                <li>Rastrea paramétricamente la posición en AU de la snowline.</li>
+                                <li>Renderización batch de animaciones GIF de alta calidad.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="logro-item">
-                    <i class="fa-solid fa-temperature-arrow-up"></i>
-                    <div>
-                        <h5>Acoplamiento Térmico Extendido</h5>
-                        <p>Superé limitaciones del código inyectando leyes termodinámicas y dependencias de acreción temporal teóricas de la literatura.</p>
+
+                <!-- Pestaña 2: Galería Interactiva -->
+                <div id="tab-galeria" class="tab-content">
+                    <div class="interactive-gallery">
+                        <!-- Imagen Principal -->
+                        <div class="main-image-container">
+                            <img id="gallery-main-img" src="img/practica/disco_inicial.png" alt="Estructura Inicial del Disco">
+                            <div class="main-image-overlay fade-in appear">
+                                <h5 id="gallery-main-title">Estructura Inicial</h5>
+                                <p id="gallery-main-desc">Representación bidimensional (t=0) de densidad de gas y polvo, revelando la snowline de agua.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Miniaturas Seleccionables -->
+                        <div class="thumbnails-container">
+                            <img src="img/practica/disco_inicial.png" class="thumb active-thumb" onclick="changeGalleryImage('img/practica/disco_inicial.png', 'Estructura Inicial', 'Representación bidimensional (t=0) de densidad de gas y polvo, revelando la snowline de agua.', this)" alt="Thumb 1">
+                            
+                            <img src="img/practica/evolucion_disco.gif" class="thumb" onclick="changeGalleryImage('img/practica/evolucion_disco.gif', 'Evolución Dinámica', 'Planeta talla un gap, crea trampa de presión y acumula material sólido alterando la snowline.', this)" alt="Thumb 2">
+                            
+                            <img src="img/practica/embriones_oka.png" class="thumb" onclick="changeGalleryImage('img/practica/embriones_oka.png', 'Crecimiento de Embriones', 'Migración de snowline altera disponibilidad de hielos para el crecimiento en distintas zonas orbitales.', this)" alt="Thumb 3">
+                        </div>
                     </div>
                 </div>
-                <div class="logro-item">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <div>
-                        <h5>Herramientas de Análisis Posterior</h5>
-                        <p>Creación de scripts iterativos (analisis_pa3_vfrag.py, etc.) para medir los efectos profundos del "drift" tardío en los perfiles de densidad.</p>
+
+                <!-- Pestaña 3: Logros Técnicos -->
+                <div id="tab-logros" class="tab-content">
+                    <div class="logros-container">
+                        <div class="logro-item">
+                            <i class="fa-solid fa-server"></i>
+                            <div>
+                                <h5>Computación de Alto Rendimiento (HPC)</h5>
+                                <p>Scripts automáticos (Python y PBS) para enviar jobs a clústeres, explorando vastos parámetros de atenuación, radios base y masas.</p>
+                            </div>
+                        </div>
+                        <div class="logro-item">
+                            <i class="fa-solid fa-temperature-arrow-up"></i>
+                            <div>
+                                <h5>Acoplamiento Térmico Extendido</h5>
+                                <p>Superé limitaciones del código inyectando leyes termodinámicas y dependencias de acreción temporal teóricas de la literatura.</p>
+                            </div>
+                        </div>
+                        <div class="logro-item">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <div>
+                                <h5>Herramientas de Análisis Posterior</h5>
+                                <p>Creación de scripts iterativos (analisis_pa3_vfrag.py, etc.) para medir los efectos profundos del "drift" tardío en los perfiles de densidad.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </section>
 

@@ -65,3 +65,46 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log("Portafolio Ámbar/Dorado cargado interactivo.");
 });
+
+// --- Lógica de Pestañas (Tabs) de la Práctica ---
+function openTab(tabId) {
+    // 1. Ocultar todos los contenidos de las pestañas
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // 2. Quitar la clase active de todos los botones
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // 3. Mostrar el contenido seleccionado y marcar su botón como activo
+    document.getElementById(tabId).classList.add('active');
+    
+    // Encontrar el botón que disparó el evento para marcarlo
+    const activeBtn = Array.from(tabBtns).find(btn => btn.getAttribute('onclick').includes(tabId));
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+}
+
+// --- Lógica de Galería Interactiva ---
+function changeGalleryImage(imageSrc, title, description, clickedElement) {
+    // 1. Cambiar imagen principal y texto
+    document.getElementById('gallery-main-img').src = imageSrc;
+    document.getElementById('gallery-main-title').textContent = title;
+    document.getElementById('gallery-main-desc').textContent = description;
+
+    // 2. Quitar clase active de todas las miniaturas
+    const thumbs = document.querySelectorAll('.thumbnails-container .thumb');
+    thumbs.forEach(thumb => {
+        thumb.classList.remove('active-thumb');
+    });
+
+    // 3. Agregar clase active a la miniatura clickeada
+    if (clickedElement) {
+        clickedElement.classList.add('active-thumb');
+    }
+}
