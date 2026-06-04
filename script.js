@@ -140,8 +140,15 @@ function updateParametricGallery() {
     // Formatear alpha para display
     let displayAlpha = currentAlpha;
     if (currentAlpha === '0.01') displayAlpha = '10⁻²';
-    if (currentAlpha === '0.001') displayAlpha = '10⁻³';
-    if (currentAlpha === '0.0001') displayAlpha = '10⁻⁴';
+    else if (currentAlpha === '0.005') displayAlpha = '5×10⁻³';
+    else if (currentAlpha === '0.003') displayAlpha = '3×10⁻³';
+    else if (currentAlpha === '0.001') displayAlpha = '10⁻³';
+    else if (currentAlpha === '0.0005') displayAlpha = '5×10⁻⁴';
+    else if (currentAlpha === '0.0001') displayAlpha = '10⁻⁴';
+
+    if (scenario === 'sinusoidal') {
+        displayAlpha = '10⁻³ (Fijo)';
+    }
 
     titleElement.textContent = `Escenario: ${scenarioText} | α = ${displayAlpha}`;
     descElement.textContent = descText;

@@ -157,9 +157,12 @@
                             </div>
                             <div class="control-group">
                                 <label><i class="fa-solid fa-sliders"></i> Parámetro Alpha (α):</label>
-                                <div class="alpha-buttons">
+                                <div class="alpha-buttons" id="alpha-buttons-container">
                                     <button class="alpha-btn active" onclick="setAlpha(this, '0.01')">10⁻²</button>
+                                    <button class="alpha-btn" onclick="setAlpha(this, '0.005')">5×10⁻³</button>
+                                    <button class="alpha-btn" onclick="setAlpha(this, '0.003')">3×10⁻³</button>
                                     <button class="alpha-btn" onclick="setAlpha(this, '0.001')">10⁻³</button>
+                                    <button class="alpha-btn" onclick="setAlpha(this, '0.0005')">5×10⁻⁴</button>
                                     <button class="alpha-btn" onclick="setAlpha(this, '0.0001')">10⁻⁴</button>
                                 </div>
                             </div>
