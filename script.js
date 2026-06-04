@@ -91,7 +91,7 @@ function openTab(tabId) {
 }
 
 // --- Lógica de Galería Paramétrica ---
-let currentAlpha = '1e-2';
+let currentAlpha = '0.01';
 
 function setAlpha(btnElement, alphaValue) {
     // Actualizar botones de alpha
@@ -112,34 +112,36 @@ function updateParametricGallery() {
     const titleElement = document.getElementById('parametric-title');
     const descElement = document.getElementById('parametric-desc');
 
-    // Construir la ruta de la imagen
-    const imageSrc = `img/practica/gifs/${scenario}/alpha_${currentAlpha}.gif`;
-    imgElement.src = imageSrc;
-
-    // Actualizar Textos Dinámicamente
+    let imageSrc = "";
     let scenarioText = "";
     let descText = "";
 
+    // Construir la ruta de la imagen real y actualizar textos
     switch(scenario) {
         case 'base':
+            imageSrc = `img/practica/gifs/base/run_r5.0_m0.01_a${currentAlpha}.gif`;
             scenarioText = "Baseline";
             descText = `Evolución de la densidad de polvo a 10 Myr bajo el régimen de viscosidad de Shakura-Sunyaev (α = ${currentAlpha}). Sin interacción planetaria fuerte (M_gap = 0.01).`;
             break;
         case 'gap':
+            imageSrc = `img/practica/gifs/run_r15.0_m3.0_a${currentAlpha}.gif`;
             scenarioText = "Gap 15 AU";
             descText = `Planeta de 3 M_jup en 15 AU esculpiendo un gap profundo. La eficiencia de atrapamiento depende fuertemente de la viscosidad (α = ${currentAlpha}).`;
             break;
         case 'sinusoidal':
+            imageSrc = `img/practica/gifs/sinusoidal/MuchosGaps_A0.7.gif`;
             scenarioText = "Estructura Sinusoidal";
-            descText = `Perturbaciones sinusoidales en el disco generando múltiples trampas de polvo locales con α = ${currentAlpha}.`;
+            descText = `Perturbaciones sinusoidales en el disco generando múltiples trampas de polvo locales. (Ejemplo con A=0.7).`;
             break;
     }
 
+    imgElement.src = imageSrc;
+
     // Formatear alpha para display
     let displayAlpha = currentAlpha;
-    if (currentAlpha === '1e-2') displayAlpha = '10⁻²';
-    if (currentAlpha === '1e-3') displayAlpha = '10⁻³';
-    if (currentAlpha === '1e-4') displayAlpha = '10⁻⁴';
+    if (currentAlpha === '0.01') displayAlpha = '10⁻²';
+    if (currentAlpha === '0.001') displayAlpha = '10⁻³';
+    if (currentAlpha === '0.0001') displayAlpha = '10⁻⁴';
 
     titleElement.textContent = `Escenario: ${scenarioText} | α = ${displayAlpha}`;
     descElement.textContent = descText;

@@ -789,9 +789,19 @@ footer p {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-top: 10px;
 }
 
 .geryon-link:hover {
     color: var(--text-main);
     text-decoration: underline;
+}
+
+/* Resetear estilos para iconos dentro de Geryon link */
+.logro-item .geryon-link i {
+    font-size: 1rem;
+    color: var(--accent-glow);
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
 }
