@@ -143,25 +143,35 @@
                     </div>
                 </div>
 
-                <!-- Pestaña 2: Galería Interactiva -->
+                <!-- Pestaña 2: Galería Paramétrica -->
                 <div id="tab-galeria" class="tab-content">
-                    <div class="interactive-gallery">
-                        <!-- Imagen Principal -->
-                        <div class="main-image-container">
-                            <img id="gallery-main-img" src="img/practica/disco_inicial.png" alt="Estructura Inicial del Disco">
-                            <div class="main-image-overlay fade-in appear">
-                                <h5 id="gallery-main-title">Estructura Inicial</h5>
-                                <p id="gallery-main-desc">Representación bidimensional (t=0) de densidad de gas y polvo, revelando la snowline de agua.</p>
+                    <div class="parametric-gallery-container">
+                        <div class="gallery-controls">
+                            <div class="control-group">
+                                <label for="scenario-select"><i class="fa-solid fa-layer-group"></i> Escenario (10 Myr):</label>
+                                <select id="scenario-select" onchange="updateParametricGallery()">
+                                    <option value="base">Baseline (M_gap = 0.01)</option>
+                                    <option value="gap">Gap 15 AU (3 M_jup)</option>
+                                    <option value="sinusoidal">Estructura Sinusoidal</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label><i class="fa-solid fa-sliders"></i> Parámetro Alpha (α):</label>
+                                <div class="alpha-buttons">
+                                    <button class="alpha-btn active" onclick="setAlpha(this, '1e-2')">10⁻²</button>
+                                    <button class="alpha-btn" onclick="setAlpha(this, '1e-3')">10⁻³</button>
+                                    <button class="alpha-btn" onclick="setAlpha(this, '1e-4')">10⁻⁴</button>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Miniaturas Seleccionables -->
-                        <div class="thumbnails-container">
-                            <img src="img/practica/disco_inicial.png" class="thumb active-thumb" onclick="changeGalleryImage('img/practica/disco_inicial.png', 'Estructura Inicial', 'Representación bidimensional (t=0) de densidad de gas y polvo, revelando la snowline de agua.', this)" alt="Thumb 1">
-                            
-                            <img src="img/practica/evolucion_disco.gif" class="thumb" onclick="changeGalleryImage('img/practica/evolucion_disco.gif', 'Evolución Dinámica', 'Planeta talla un gap, crea trampa de presión y acumula material sólido alterando la snowline.', this)" alt="Thumb 2">
-                            
-                            <img src="img/practica/embriones_oka.png" class="thumb" onclick="changeGalleryImage('img/practica/embriones_oka.png', 'Crecimiento de Embriones', 'Migración de snowline altera disponibilidad de hielos para el crecimiento en distintas zonas orbitales.', this)" alt="Thumb 3">
+
+                        <div class="main-image-container parametric-viewer">
+                            <!-- El visor carga por defecto base/alpha_1e-2.gif -->
+                            <img id="parametric-main-img" src="img/practica/gifs/base/alpha_1e-2.gif" alt="Simulación a 10 Myr">
+                            <div class="main-image-overlay">
+                                <h5 id="parametric-title">Escenario: Baseline | α = 10⁻²</h5>
+                                <p id="parametric-desc">Evolución de la densidad de polvo a 10 Myr bajo el régimen de viscosidad de Shakura-Sunyaev (1973).</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,7 +183,12 @@
                             <i class="fa-solid fa-server"></i>
                             <div>
                                 <h5>Computación de Alto Rendimiento (HPC)</h5>
-                                <p>Scripts automáticos (Python y PBS) para enviar jobs a clústeres, explorando vastos parámetros de atenuación, radios base y masas.</p>
+                                <p>Scripts automáticos (Python y PBS) para enviar jobs a clústeres computacionales, explorando vastos parámetros de atenuación, radios base y masas. En este caso particular, se utilizó la potencia computacional del clúster <strong>Geryon 2</strong>.</p>
+                                <div class="agradecimientos-box">
+                                    <h6>Agradecimientos / Acknowledgements</h6>
+                                    <p><em>"El clúster Geryon del Centro de Astro-Ingeniería UC fue utilizado exhaustivamente para los cálculos computacionales de estas simulaciones. Los proyectos ANID BASAL FB21000, BASAL CATA PFB-06, Anillo ACT-86, FONDEQUIP AIC-57 y QUIMAL 130008 proporcionaron financiamiento para diversas mejoras del clúster Geryon 2."</em></p>
+                                    <a href="https://www3.astro.puc.cl/geryon/g2/" target="_blank" class="geryon-link"><i class="fa-solid fa-link"></i> Ver información del clúster Geryon 2</a>
+                                </div>
                             </div>
                         </div>
                         <div class="logro-item">

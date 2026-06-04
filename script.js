@@ -90,21 +90,57 @@ function openTab(tabId) {
     }
 }
 
-// --- Lógica de Galería Interactiva ---
-function changeGalleryImage(imageSrc, title, description, clickedElement) {
-    // 1. Cambiar imagen principal y texto
-    document.getElementById('gallery-main-img').src = imageSrc;
-    document.getElementById('gallery-main-title').textContent = title;
-    document.getElementById('gallery-main-desc').textContent = description;
+// --- Lógica de Galería Paramétrica ---
+let currentAlpha = '1e-2';
 
-    // 2. Quitar clase active de todas las miniaturas
-    const thumbs = document.querySelectorAll('.thumbnails-container .thumb');
-    thumbs.forEach(thumb => {
-        thumb.classList.remove('active-thumb');
-    });
+function setAlpha(btnElement, alphaValue) {
+    // Actualizar botones de alpha
+    const btns = document.querySelectorAll('.alpha-btn');
+    btns.forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
 
-    // 3. Agregar clase active a la miniatura clickeada
-    if (clickedElement) {
-        clickedElement.classList.add('active-thumb');
+    // Actualizar estado
+    currentAlpha = alphaValue;
+
+    // Refrescar galería
+    updateParametricGallery();
+}
+
+function updateParametricGallery() {
+    const scenario = document.getElementById('scenario-select').value;
+    const imgElement = document.getElementById('parametric-main-img');
+    const titleElement = document.getElementById('parametric-title');
+    const descElement = document.getElementById('parametric-desc');
+
+    // Construir la ruta de la imagen
+    const imageSrc = `img/practica/gifs/${scenario}/alpha_${currentAlpha}.gif`;
+    imgElement.src = imageSrc;
+
+    // Actualizar Textos Dinámicamente
+    let scenarioText = "";
+    let descText = "";
+
+    switch(scenario) {
+        case 'base':
+            scenarioText = "Baseline";
+            descText = `Evolución de la densidad de polvo a 10 Myr bajo el régimen de viscosidad de Shakura-Sunyaev (α = ${currentAlpha}). Sin interacción planetaria fuerte (M_gap = 0.01).`;
+            break;
+        case 'gap':
+            scenarioText = "Gap 15 AU";
+            descText = `Planeta de 3 M_jup en 15 AU esculpiendo un gap profundo. La eficiencia de atrapamiento depende fuertemente de la viscosidad (α = ${currentAlpha}).`;
+            break;
+        case 'sinusoidal':
+            scenarioText = "Estructura Sinusoidal";
+            descText = `Perturbaciones sinusoidales en el disco generando múltiples trampas de polvo locales con α = ${currentAlpha}.`;
+            break;
     }
+
+    // Formatear alpha para display
+    let displayAlpha = currentAlpha;
+    if (currentAlpha === '1e-2') displayAlpha = '10⁻²';
+    if (currentAlpha === '1e-3') displayAlpha = '10⁻³';
+    if (currentAlpha === '1e-4') displayAlpha = '10⁻⁴';
+
+    titleElement.textContent = `Escenario: ${scenarioText} | α = ${displayAlpha}`;
+    descElement.textContent = descText;
 }
