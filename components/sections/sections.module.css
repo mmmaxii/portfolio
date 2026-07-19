@@ -1,0 +1,189 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.paragraph {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.subheading {
+  font-size: 1.1rem;
+  color: var(--accent-ice);
+  margin-top: 10px;
+}
+
+/* --- Tech stack --- */
+.stackGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.stackCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stackCard:hover {
+  border-color: var(--surface-border-hover);
+  box-shadow: var(--glow-cyan);
+}
+
+.stackCategory {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--accent-cyan);
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+.stackItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stackItem {
+  font-size: 0.78rem;
+  color: var(--text-main);
+  background: rgba(110, 168, 255, 0.1);
+  border: 1px solid rgba(110, 168, 255, 0.25);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+/* --- Projects --- */
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+}
+
+/* --- Research --- */
+.heroCard {
+  background: linear-gradient(140deg, rgba(110, 168, 255, 0.08), rgba(167, 139, 250, 0.08));
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.researchGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.researchCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 231, 255, 0.1);
+  color: var(--accent-cyan);
+  border: 1px solid var(--surface-border);
+}
+
+.cardTitle {
+  font-size: 0.98rem;
+  color: var(--accent-ice);
+}
+
+.cardTech {
+  font-size: 0.75rem;
+  color: var(--accent-violet);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.cardList {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.achievement {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.achievementBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.acknowledgements {
+  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.acknowledgementsHeading {
+  font-size: 0.8rem;
+  color: var(--accent-violet);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* --- Contact --- */
+.contactLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--surface-border-hover);
+  color: var(--accent-cyan);
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all 0.25s ease;
+}
+
+.contactLink:hover {
+  background: rgba(124, 231, 255, 0.1);
+  box-shadow: var(--glow-cyan);
+  text-decoration: none;
+}
