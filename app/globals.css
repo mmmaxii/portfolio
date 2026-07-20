@@ -1,24 +1,65 @@
+/*
+ * Paleta gótica-fría, 100% en variables. Ningún componente debe hardcodear
+ * un color: todos referencian estos tokens (o los --sky-* por objeto).
+ */
 :root {
-  /* Deep-space cold palette */
-  --bg-deep: #05060f;
-  --bg-elevated: #0b0e20;
-  --text-main: #e8ecf8;
-  --text-muted: #99a1c2;
-  --accent-cyan: #7ce7ff;
-  --accent-blue: #6ea8ff;
-  --accent-violet: #a78bfa;
-  --accent-ice: #cfeaff;
+  /* Profundidades (negros fríos con tinte azul) */
+  --void: #030409;
+  --void-2: #060812;
+  --ink: #0a0d1a;
+  --ink-2: #0e1224;
 
-  /* Glassmorphism surfaces */
-  --surface: rgba(12, 16, 38, 0.62);
-  --surface-strong: rgba(10, 13, 32, 0.85);
-  --surface-border: rgba(124, 231, 255, 0.14);
-  --surface-border-hover: rgba(124, 231, 255, 0.35);
+  /* Texto */
+  --frost: #e9edfb;
+  --frost-dim: #9aa3c4;
+  --frost-faint: #626b8c;
 
-  /* Glows */
-  --glow-cyan: 0 0 24px rgba(124, 231, 255, 0.28);
-  --glow-violet: 0 0 24px rgba(167, 139, 250, 0.28);
-  --glow-text: 0 0 18px rgba(124, 231, 255, 0.45);
+  /* Acentos gótico-fríos (desaturados, hielo/amatista) */
+  --ice: #a8c8f0;
+  --ice-bright: #cfe2ff;
+  --azure: #6f8cff;
+  --amethyst: #9d86e0;
+  --amethyst-deep: #6b4fae;
+  --steel: #7d8bb0;
+
+  /* Fósforo del visor CASA (verde frío, por variable) */
+  --phosphor: #6fe3a8;
+  --phosphor-dim: #3f8f6a;
+  --phosphor-grid: #17362a;
+  --phosphor-bg: #050b08;
+
+  /* Superficies glass */
+  --surface: rgba(12, 16, 34, 0.6);
+  --surface-strong: rgba(8, 11, 26, 0.86);
+  --surface-border: rgba(168, 200, 240, 0.14);
+  --surface-border-hover: rgba(168, 200, 240, 0.34);
+
+  /* Chrome del visor retro */
+  --chrome-bar: #232838;
+  --chrome-bar-2: #171b28;
+  --chrome-edge: #0a0d16;
+  --chrome-line: rgba(168, 200, 240, 0.16);
+
+  /* Acento activo global (deriva de los tokens fríos) */
+  --accent: var(--ice);
+  --accent-2: var(--amethyst);
+
+  /* Glows (compuestos desde los acentos) */
+  --glow-text: 0 0 18px rgba(168, 200, 240, 0.45);
+  --glow-soft: 0 0 24px rgba(168, 200, 240, 0.22);
+  --glow-violet: 0 0 24px rgba(157, 134, 224, 0.28);
+
+  /* Colores por objeto del cielo (cada uno un token; los componentes usan var()) */
+  --sky-eta: #bcd6ff; /* hipergigante azul */
+  --sky-fornax: #b79aec; /* cúmulo de galaxias — amatista */
+  --sky-pds70: #7fe6d6; /* disco protoplanetario — cian-teal frío */
+  --sky-pulsar: #79c6ff; /* púlsar — azul eléctrico */
+  --sky-lmc: #cdd8ff; /* nube irregular — periwinkle pálido */
+  --sky-sn: #c79bff; /* supernova — violeta-magenta frío */
+
+  /* Marcador de fuente observada (estilo software astronómico) */
+  --marker: rgba(111, 227, 168, 0.5);
+  --marker-strong: rgba(111, 227, 168, 0.95);
 }
 
 * {
@@ -28,12 +69,12 @@
 }
 
 html {
-  scrollbar-color: rgba(124, 231, 255, 0.3) transparent;
+  scrollbar-color: var(--surface-border-hover) transparent;
 }
 
 body {
-  background: var(--bg-deep);
-  color: var(--text-main);
+  background: var(--void);
+  color: var(--frost);
   font-family: var(--font-body), system-ui, sans-serif;
   line-height: 1.7;
   min-height: 100dvh;
@@ -56,7 +97,7 @@ h4 {
 }
 
 a {
-  color: var(--accent-cyan);
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -77,21 +118,21 @@ button {
 }
 
 strong {
-  color: var(--accent-ice);
+  color: var(--ice-bright);
   font-weight: 600;
 }
 
 ::selection {
-  background: rgba(124, 231, 255, 0.3);
+  background: rgba(168, 200, 240, 0.3);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* Desktop star map vs mobile scroll switch */
+/* Switch cielo interactivo (desktop) vs. scroll (móvil) */
 .desktop-only {
   display: none;
 }
@@ -106,14 +147,24 @@ strong {
   }
 }
 
-/* Shared keyframes */
+/* Keyframes compartidos */
 @keyframes float {
   0%,
   100% {
     transform: translate(0, 0);
   }
   50% {
-    transform: translate(0, -14px);
+    transform: translate(0, -12px);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
@@ -121,21 +172,11 @@ strong {
   0%,
   100% {
     opacity: 0.75;
-    filter: drop-shadow(0 0 6px rgba(124, 231, 255, 0.5));
+    transform: scale(1);
   }
   50% {
     opacity: 1;
-    filter: drop-shadow(0 0 16px rgba(124, 231, 255, 0.9));
-  }
-}
-
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 1;
+    transform: scale(1.04);
   }
 }
 

@@ -1,0 +1,44 @@
+.wrapper {
+  display: inline-grid;
+  place-items: center;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* transform-box: fill-box fija el origen de rotación/escala al centro del
+   propio dibujo; sin esto el origen queda mal y el objeto orbita descentrado. */
+.pulse {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: pulse-glow 4.5s ease-in-out infinite;
+}
+
+.spin {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: spin-slow 6s linear infinite;
+}
+
+.spinSlow {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: spin-slow 90s linear infinite;
+}
+
+.driftSlow {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: pulse-glow 9s ease-in-out infinite;
+}
+
+.still .pulse,
+.still .spin,
+.still .spinSlow,
+.still .driftSlow {
+  animation: none;
+}

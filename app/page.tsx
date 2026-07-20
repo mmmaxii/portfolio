@@ -1,11 +1,11 @@
-import StarMap from "@/components/starmap/StarMap";
+import SkyScene from "@/components/scene/SkyScene";
 import MobileLayout from "@/components/mobile/MobileLayout";
 
 export default function Home() {
   return (
     <>
       <div className="desktop-only">
-        <StarMap />
+        <SkyScene />
       </div>
       <div className="mobile-only">
         <MobileLayout />

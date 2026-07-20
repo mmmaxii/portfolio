@@ -1,29 +1,38 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 24px;
   padding: 40px 18px 30px;
-  max-width: 1100px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
 .hero {
   text-align: center;
-  padding: 60px 10px 30px;
+  padding: 50px 10px 24px;
+}
+
+.kicker {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--phosphor);
+  opacity: 0.8;
+  margin-bottom: 14px;
 }
 
 .name {
-  font-size: clamp(2rem, 8vw, 3rem);
-  color: var(--text-main);
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  color: var(--frost);
   text-shadow: var(--glow-text);
   margin-bottom: 12px;
 }
 
 .role {
-  color: var(--accent-cyan);
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--ice);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
 }
 
 .card {
@@ -34,7 +43,7 @@
   backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .cardHeader {
@@ -47,20 +56,95 @@
   flex-shrink: 0;
 }
 
-.cardTitle {
-  font-size: 1.35rem;
-  color: var(--accent-ice);
+.cardCatalog {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: var(--phosphor);
+  text-transform: uppercase;
 }
 
-.cardTagline {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+.cardTitle {
+  font-size: 1.35rem;
+  color: var(--ice-bright);
+}
+
+.blurb {
+  font-size: 0.85rem;
+  color: var(--frost-dim);
   font-style: italic;
+  border-left: 2px solid var(--surface-border-hover);
+  padding-left: 12px;
+}
+
+.detail {
+  margin-top: 2px;
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.child {
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  background: var(--void-2);
+  overflow: hidden;
+}
+
+.childSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.childSummary::-webkit-details-marker {
+  display: none;
+}
+
+.childSummary::after {
+  content: "+";
+  position: absolute;
+  right: 20px;
+  color: var(--phosphor);
+  font-family: var(--font-mono), monospace;
+}
+
+.child {
+  position: relative;
+}
+
+.child[open] .childSummary::after {
+  content: "−";
+}
+
+.childLabel {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--frost);
+}
+
+.childSub {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--frost-faint);
+  text-transform: uppercase;
+}
+
+.childBody {
+  padding: 4px 16px 18px;
+  border-top: 1px solid var(--surface-border);
 }
 
 .footer {
   text-align: center;
-  color: var(--text-muted);
-  font-size: 0.8rem;
+  color: var(--frost-faint);
+  font-size: 0.78rem;
   padding: 20px 0 10px;
 }

@@ -338,55 +338,208 @@ export function gifDescription(scenario: GifScenario, alpha: Alpha): string {
   }
 }
 
-/* ---------------------------- Mapa estelar ------------------------------ */
+/* -------------------- Cielo real austral (Los Ángeles, Chile) ------------ */
+/*
+ * Seis objetos astronómicos reales, visibles desde latitud ~37° S, ubicados
+ * de forma aproximada a como aparecerían en el cielo. Cada objeto es un portal
+ * temático. Navegación de 3 niveles: cielo → objeto (zoom) → sub-portal → detalle.
+ *
+ * Los colores NUNCA se hardcodean en los componentes: cada objeto referencia
+ * un token CSS (colorVar) definido en app/globals.css.
+ */
 
-export type SectionId = "about" | "research" | "projects" | "stack" | "contact";
+export type SectionId = "about" | "projects" | "research" | "ai" | "tech" | "contact";
 
-export type CelestialKind = "planet" | "spiral-galaxy" | "proto-disk" | "star-cluster" | "pulsar";
+export type SkyKind =
+  | "hypergiant" // Eta Carinae
+  | "galaxy-cluster" // Fornax
+  | "proto-disk" // PDS 70
+  | "pulsar" // PSR B1257+12
+  | "irregular" // Gran Nube de Magallanes
+  | "supernova"; // SN 1987A
 
-export interface CelestialSection {
-  id: SectionId;
+export type DetailContent =
+  | { type: "about" }
+  | { type: "contact" }
+  | { type: "research" }
+  | { type: "project"; projectTitle: string }
+  | { type: "tech"; category: string }
+  | { type: "note"; body: string[] };
+
+export interface SkyChild {
+  id: string;
   label: string;
-  tagline: string;
-  object: CelestialKind;
-  /** Position of the object's center on the desktop star map, in % of the viewport. */
-  position: { top: string; left: string };
+  sublabel?: string;
+  detail: DetailContent;
 }
 
-export const celestialSections: CelestialSection[] = [
+export interface SkyObject {
+  id: SectionId;
+  section: string; // "Sobre mí"
+  object: string; // "Eta Carinae"
+  catalog: string; // "η Car"
+  blurb: string; // línea descriptiva del objeto real
+  kind: SkyKind;
+  colorVar: string; // token CSS, p.ej. "--sky-eta"
+  size: number; // tamaño del glifo en el cielo (px)
+  position: { top: string; left: string }; // ubicación aproximada en el cielo austral
+  ra: string;
+  dec: string;
+  /** Sub-portales (nivel 2). Si no hay, el objeto abre su propio detalle. */
+  children?: SkyChild[];
+  /** Detalle propio cuando el objeto es singular (Sobre mí, Contacto). */
+  self?: DetailContent;
+}
+
+export const skyObjects: SkyObject[] = [
   {
     id: "about",
-    label: "Sobre Mí",
-    tagline: "Un planeta habitable",
-    object: "planet",
-    position: { top: "22%", left: "22%" },
-  },
-  {
-    id: "research",
-    label: "Investigación",
-    tagline: "Discos protoplanetarios",
-    object: "proto-disk",
-    position: { top: "20%", left: "76%" },
+    section: "Sobre mí",
+    object: "Eta Carinae",
+    catalog: "η Carinae",
+    blurb: "Hipergigante azul inestable, ~100 masas solares. Una de las estrellas más luminosas de la Galaxia y futura supernova.",
+    kind: "hypergiant",
+    colorVar: "--sky-eta",
+    size: 74,
+    position: { top: "43%", left: "50%" },
+    ra: "10 45 03.6",
+    dec: "-59 41 04",
+    self: { type: "about" },
   },
   {
     id: "projects",
-    label: "Proyectos",
-    tagline: "Una galaxia en expansión",
-    object: "spiral-galaxy",
-    position: { top: "72%", left: "18%" },
+    section: "Proyectos",
+    object: "Cúmulo de Fornax",
+    catalog: "Fornax Cluster",
+    blurb: "Cúmulo de cientos de galaxias en la constelación del Horno. Cada galaxia, un proyecto.",
+    kind: "galaxy-cluster",
+    colorVar: "--sky-fornax",
+    size: 120,
+    position: { top: "73%", left: "26%" },
+    ra: "03 38 29.0",
+    dec: "-35 27 03",
+    children: [
+      { id: "alke-fs", label: "Alke Wallet Fullstack", sublabel: "Django · SQLite", detail: { type: "project", projectTitle: "Alke Wallet Fullstack" } },
+      { id: "decoia", label: "DecoIA", sublabel: "PWA · IA", detail: { type: "project", projectTitle: "DecoIA" } },
+      { id: "solar", label: "Sistema Solar Interactivo", sublabel: "Django · Three.js", detail: { type: "project", projectTitle: "Sistema Solar Interactivo" } },
+      { id: "bancopy", label: "Gestor BancoPy", sublabel: "Python · POO", detail: { type: "project", projectTitle: "Gestor BancoPy" } },
+      { id: "alke", label: "Alke Wallet", sublabel: "HTML · JS", detail: { type: "project", projectTitle: "Alke Wallet" } },
+    ],
   },
   {
-    id: "stack",
-    label: "Tech Stack",
-    tagline: "Cúmulo de herramientas",
-    object: "star-cluster",
-    position: { top: "76%", left: "80%" },
+    id: "research",
+    section: "Astronomía",
+    object: "PDS 70",
+    catalog: "PDS 70",
+    blurb: "Estrella T-Tauri con disco protoplanetario y planetas en formación, observada por ALMA y JWST. Mi área de investigación.",
+    kind: "proto-disk",
+    colorVar: "--sky-pds70",
+    size: 96,
+    position: { top: "18%", left: "40%" },
+    ra: "14 08 10.2",
+    dec: "-41 23 53",
+    children: [
+      { id: "practica", label: "Práctica: Discos Protoplanetarios", sublabel: "PA3Py · TriPoDPy", detail: { type: "research" } },
+      { id: "lente", label: "Lente Gravitacional", sublabel: "SIS + Shear", detail: { type: "project", projectTitle: "Simulación de Lente Gravitacional" } },
+      { id: "bh", label: "Sombra de Agujero Negro", sublabel: "Ray-Shooting", detail: { type: "project", projectTitle: "Sombra de Agujero Negro" } },
+      { id: "ngc5972", label: "Espectroscopía IFU NGC 5972", sublabel: "MUSE · Voronoi", detail: { type: "project", projectTitle: "Análisis Espectroscópico IFU de NGC 5972" } },
+      { id: "tng50", label: "ML con datos de TNG50", sublabel: "PyTorch · TensorFlow", detail: { type: "project", projectTitle: "Machine Learning con datos de TNG50" } },
+    ],
+  },
+  {
+    id: "ai",
+    section: "Inteligencia Artificial",
+    object: "PSR B1257+12",
+    catalog: "PSR B1257+12",
+    blurb: "El primer sistema planetario descubierto fuera del Sol: planetas orbitando un púlsar. Cada planeta, una faceta de mi trabajo con IA.",
+    kind: "pulsar",
+    colorVar: "--sky-pulsar",
+    size: 68,
+    position: { top: "20%", left: "73%" },
+    ra: "13 00 01.0",
+    dec: "+12 40 57",
+    children: [
+      { id: "decoia-ai", label: "DecoIA", sublabel: "Claude API · Flux", detail: { type: "project", projectTitle: "DecoIA" } },
+      { id: "ml-astro", label: "Machine Learning astronómico", sublabel: "TNG50", detail: { type: "project", projectTitle: "Machine Learning con datos de TNG50" } },
+      {
+        id: "llm-agents",
+        label: "LLMs, Agentes & MCP",
+        sublabel: "Orquestación",
+        detail: {
+          type: "note",
+          body: [
+            "Integro modelos de lenguaje en aplicaciones reales: en **DecoIA** uso la API de Claude para generar ideas de diseño e instrucciones DIY a partir de una foto.",
+            "Me interesa la construcción de **agentes** y flujos con herramientas (function calling, MCP) para automatizar tareas de análisis y procesamiento de datos.",
+          ],
+        },
+      },
+      {
+        id: "rag",
+        label: "RAG & Embeddings",
+        sublabel: "Recuperación",
+        detail: {
+          type: "note",
+          body: [
+            "Exploro **Retrieval-Augmented Generation**: indexación con embeddings y recuperación semántica para dar contexto fiable a los modelos.",
+            "Objetivo: conectar literatura científica y datos propios a asistentes que respondan con fuentes verificables.",
+          ],
+        },
+      },
+      {
+        id: "cv",
+        label: "Visión por Computador",
+        sublabel: "Imágenes",
+        detail: {
+          type: "note",
+          body: [
+            "Procesamiento de imágenes aplicado: en **DecoIA**, renders fotorrealistas con Flux Kontext Pro a partir de fotos de espacios reales.",
+            "En astronomía, análisis de imágenes IFU/MUSE y mapas de simulaciones para extraer propiedades físicas.",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    id: "tech",
+    section: "Tecnologías",
+    object: "Gran Nube de Magallanes",
+    catalog: "LMC",
+    blurb: "Galaxia irregular satélite de la Vía Láctea, un tesoro del cielo austral. Cada región, un grupo de tecnologías.",
+    kind: "irregular",
+    colorVar: "--sky-lmc",
+    size: 130,
+    position: { top: "70%", left: "77%" },
+    ra: "05 23 34.5",
+    dec: "-69 45 22",
+    children: [
+      { id: "tech-backend", label: "Backend", sublabel: "Python · Django · FastAPI", detail: { type: "tech", category: "Backend" } },
+      { id: "tech-frontend", label: "Frontend", sublabel: "React · Next.js · TS", detail: { type: "tech", category: "Frontend" } },
+      { id: "tech-db", label: "Bases de Datos", sublabel: "PostgreSQL · SQLite", detail: { type: "tech", category: "Bases de Datos" } },
+      { id: "tech-ml", label: "Machine Learning", sublabel: "PyTorch · TensorFlow", detail: { type: "tech", category: "Machine Learning" } },
+      { id: "tech-devops", label: "DevOps & Deploy", sublabel: "Git · Vercel · Railway", detail: { type: "tech", category: "DevOps & Deploy" } },
+      { id: "tech-arch", label: "Arquitectura", sublabel: "MVT · DAO", detail: { type: "tech", category: "Arquitectura de Software" } },
+    ],
   },
   {
     id: "contact",
-    label: "Contacto",
-    tagline: "Una señal periódica",
-    object: "pulsar",
-    position: { top: "50%", left: "88%" },
+    section: "Contacto",
+    object: "SN 1987A",
+    catalog: "SN 1987A",
+    blurb: "La supernova más cercana y estudiada en siglos, en la Gran Nube de Magallanes. Una explosión que sigue evolucionando: comencemos algo nuevo.",
+    kind: "supernova",
+    colorVar: "--sky-sn",
+    size: 72,
+    position: { top: "50%", left: "89%" },
+    ra: "05 35 28.0",
+    dec: "-69 16 11",
+    self: { type: "contact" },
   },
 ];
+
+export function getProject(title: string): Project | undefined {
+  return projects.find((p) => p.title === title);
+}
+
+export function getTechCategory(category: string): TechCategory | undefined {
+  return techStack.find((t) => t.category === category);
+}

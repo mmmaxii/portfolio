@@ -1,0 +1,119 @@
+.node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  transition: opacity 0.7s ease;
+  /* Aparición secuencial en la intro (backwards: invisible hasta su delay,
+     luego revierte a los estilos normales para que dimmed/focused funcionen). */
+  animation: node-appear 0.6s ease backwards;
+}
+
+@keyframes node-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node {
+    animation: none;
+  }
+}
+
+.glyphWrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  animation: float 9s ease-in-out infinite;
+  transition: transform 0.4s ease;
+}
+
+.node:hover .glyphWrap {
+  transform: scale(1.12);
+}
+
+/* Marcador de fuente observada — círculo punteado */
+.marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px dashed var(--marker);
+  border-radius: 50%;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.node:hover .marker,
+.node:focus-visible .marker {
+  opacity: 1;
+  border-color: var(--marker-strong);
+  box-shadow: 0 0 16px -2px var(--marker);
+}
+
+.tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-family: var(--font-mono), monospace;
+  opacity: 0.72;
+  transition: opacity 0.3s ease;
+}
+
+.node:hover .tag,
+.node:focus-visible .tag {
+  opacity: 1;
+}
+
+.catalog {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--phosphor);
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.label {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  color: var(--frost);
+}
+
+.node:hover .label,
+.node:focus-visible .label {
+  color: var(--ice-bright);
+  text-shadow: var(--glow-text);
+}
+
+/* Estados durante el zoom */
+.idle {
+  opacity: 1;
+}
+
+.dimmed {
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.focused {
+  pointer-events: none;
+}
+
+.focused .tag {
+  opacity: 0;
+}
+
+.focused .marker {
+  opacity: 0;
+}
