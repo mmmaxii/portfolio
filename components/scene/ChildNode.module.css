@@ -9,7 +9,7 @@
   border: none;
   padding: 8px;
   width: 150px;
-  animation: child-in 0.5s ease both;
+  animation: child-in 0.45s ease var(--appear-delay, 0s) both;
 }
 
 @keyframes child-in {
@@ -20,6 +20,13 @@
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .child {
+    animation: none;
+    opacity: 1;
   }
 }
 

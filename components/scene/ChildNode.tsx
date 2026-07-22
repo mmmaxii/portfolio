@@ -6,25 +6,25 @@ import styles from "./ChildNode.module.css";
 interface ChildNodeProps {
   child: SkyChild;
   colorVar: string;
-  angle: number; // radianes, posición en el anillo
-  radius: number; // en vmin
-  delay: number;
+  x: number; // % del viewport
+  y: number; // % del viewport
+  appearDelay: number; // ms — pequeño escalonado entre sub-portales
   onOpen: () => void;
 }
 
-export default function ChildNode({ child, colorVar, angle, radius, delay, onOpen }: ChildNodeProps) {
-  const x = (radius * Math.cos(angle)).toFixed(2);
-  const y = (radius * Math.sin(angle)).toFixed(2);
+export default function ChildNode({ child, colorVar, x, y, appearDelay, onOpen }: ChildNodeProps) {
   return (
     <button
       type="button"
       className={styles.child}
-      style={{
-        left: `calc(50% + ${x}vmin)`,
-        top: `calc(50% + ${y}vmin)`,
-        color: `var(${colorVar})`,
-        animationDelay: `${delay}s`,
-      }}
+      style={
+        {
+          left: `${x.toFixed(2)}%`,
+          top: `${y.toFixed(2)}%`,
+          color: `var(${colorVar})`,
+          "--appear-delay": `${appearDelay}ms`,
+        } as React.CSSProperties
+      }
       onClick={onOpen}
       aria-haspopup="dialog"
       aria-label={child.label}

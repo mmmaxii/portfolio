@@ -9,9 +9,7 @@
   border: none;
   padding: 8px;
   transition: opacity 0.7s ease;
-  /* Aparición secuencial en la intro (backwards: invisible hasta su delay,
-     luego revierte a los estilos normales para que dimmed/focused funcionen). */
-  animation: node-appear 0.6s ease backwards;
+  animation: node-appear 0.6s ease both;
 }
 
 @keyframes node-appear {
@@ -26,6 +24,7 @@
 @media (prefers-reduced-motion: reduce) {
   .node {
     animation: none;
+    opacity: 1;
   }
 }
 

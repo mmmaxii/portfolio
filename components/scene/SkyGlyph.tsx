@@ -14,7 +14,20 @@ interface SkyGlyphProps {
   animated?: boolean;
 }
 
-function Hypergiant() {
+/*
+ * Nota sobre las rotaciones: usamos <animateTransform> nativo de SVG en vez de
+ * animar `transform` por CSS. CSS con `transform-box: view-box` en un <g>
+ * anidado es inconsistente entre navegadores cuando el grupo no es simétrico
+ * respecto a (50,50) (p.ej. el disco con su planeta descentrado) — el pivote
+ * de rotación termina en el centroide de la caja del contenido, no en (50,50),
+ * y el objeto rotante se ve descentrado respecto a la estrella/núcleo fijo.
+ * SMIL rota siempre alrededor del pivote exacto declarado, sin ambigüedad.
+ */
+function spinProps(from: number, to: number, dur: string) {
+  return { attributeName: "transform", type: "rotate" as const, from: `${from} 50 50`, to: `${to} 50 50`, dur, repeatCount: "indefinite" as const };
+}
+
+function Hypergiant({ animated }: { animated: boolean }) {
   return (
     <svg viewBox="0 0 100 100" className={styles.svg}>
       <defs>
@@ -37,7 +50,8 @@ function Hypergiant() {
         <rect x="49.6" y="20" width="0.8" height="60" fill="url(#hg-sp)" opacity="0.5" transform="rotate(-45 50 50)" />
       </g>
       {/* Homúnculo: lóbulos bipolares de Eta Carinae */}
-      <g opacity="0.5" className={styles.spinSlow}>
+      <g opacity="0.5">
+        {animated && <animateTransform {...spinProps(0, 360, "90s")} />}
         <ellipse cx="50" cy="34" rx="13" ry="18" fill="currentColor" fillOpacity="0.18" />
         <ellipse cx="50" cy="66" rx="13" ry="18" fill="currentColor" fillOpacity="0.18" />
       </g>
@@ -47,7 +61,7 @@ function Hypergiant() {
   );
 }
 
-function GalaxyCluster() {
+function GalaxyCluster({ animated }: { animated: boolean }) {
   const galaxies = [
     { x: 50, y: 48, rx: 11, ry: 6, rot: -18, o: 0.9 },
     { x: 68, y: 60, rx: 7, ry: 4, rot: 30, o: 0.8 },
@@ -73,7 +87,8 @@ function GalaxyCluster() {
         </radialGradient>
       </defs>
       <circle cx="50" cy="50" r="48" fill="url(#gc-halo)" />
-      <g className={styles.spinSlow}>
+      <g>
+        {animated && <animateTransform {...spinProps(0, 360, "90s")} />}
         {galaxies.map((g, i) => (
           <ellipse
             key={i}
@@ -91,7 +106,7 @@ function GalaxyCluster() {
   );
 }
 
-function ProtoDisk() {
+function ProtoDisk({ animated }: { animated: boolean }) {
   return (
     <svg viewBox="0 0 100 100" className={styles.svg}>
       <defs>
@@ -101,7 +116,8 @@ function ProtoDisk() {
           <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <g transform="rotate(-22 50 50)" className={styles.spinSlow}>
+      <g transform="rotate(-22 50 50)">
+        {animated && <animateTransform {...spinProps(-22, 338, "90s")} />}
         <ellipse cx="50" cy="50" rx="46" ry="15" fill="none" stroke="currentColor" strokeOpacity="0.7" strokeWidth="3" />
         <ellipse cx="50" cy="50" rx="37" ry="12" fill="none" stroke="currentColor" strokeOpacity="0.28" strokeWidth="2.4" />
         {/* gap donde se forma un planeta */}
@@ -115,7 +131,7 @@ function ProtoDisk() {
   );
 }
 
-function Pulsar() {
+function Pulsar({ animated }: { animated: boolean }) {
   return (
     <svg viewBox="0 0 100 100" className={styles.svg}>
       <defs>
@@ -130,20 +146,23 @@ function Pulsar() {
         </linearGradient>
       </defs>
       {/* haces rotando */}
-      <g className={styles.spin}>
+      <g>
+        {animated && <animateTransform {...spinProps(0, 360, "6s")} />}
         <path d="M50 50 L36 2 L64 2 Z" fill="url(#ps-beam)" opacity="0.6" transform="rotate(180 50 50)" />
         <path d="M50 50 L36 2 L64 2 Z" fill="url(#ps-beam)" opacity="0.6" />
       </g>
       {/* anillos de emisión */}
       <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.4" />
-      <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1.4" strokeDasharray="3 9" className={styles.spin} />
+      <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1.4" strokeDasharray="3 9">
+        {animated && <animateTransform {...spinProps(0, 360, "6s")} />}
+      </circle>
       <circle cx="50" cy="50" r="12" fill="url(#ps-core)" className={styles.pulse} />
       <circle cx="50" cy="50" r="4.5" fill="#ffffff" />
     </svg>
   );
 }
 
-function Irregular() {
+function Irregular({ animated: _animated }: { animated: boolean }) {
   const blobs = [
     { x: 44, y: 50, r: 26, o: 0.16 },
     { x: 62, y: 44, r: 18, o: 0.14 },
@@ -186,7 +205,7 @@ function Irregular() {
   );
 }
 
-function Supernova() {
+function Supernova({ animated: _animated }: { animated: boolean }) {
   return (
     <svg viewBox="0 0 100 100" className={styles.svg}>
       <defs>
@@ -215,7 +234,7 @@ function Supernova() {
   );
 }
 
-const RENDERERS: Record<SkyKind, () => React.ReactElement> = {
+const RENDERERS: Record<SkyKind, (props: { animated: boolean }) => React.ReactElement> = {
   hypergiant: Hypergiant,
   "galaxy-cluster": GalaxyCluster,
   "proto-disk": ProtoDisk,
@@ -232,7 +251,7 @@ export default function SkyGlyph({ kind, colorVar, size, animated = true }: SkyG
       style={{ width: size, height: size, color: `var(${colorVar})` }}
       aria-hidden="true"
     >
-      <Render />
+      <Render animated={animated} />
     </span>
   );
 }

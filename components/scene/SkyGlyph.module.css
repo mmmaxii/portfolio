@@ -10,24 +10,14 @@
   overflow: visible;
 }
 
-/* transform-box: fill-box fija el origen de rotación/escala al centro del
-   propio dibujo; sin esto el origen queda mal y el objeto orbita descentrado. */
+/* Las rotaciones (spin/spinSlow) se hacen con <animateTransform> nativo de SVG,
+   no por CSS — ver el comentario en SkyGlyph.tsx. Aquí solo quedan las
+   animaciones de escala/opacidad, seguras porque el contenido que las usa es
+   simétrico respecto a (50,50). */
 .pulse {
   transform-box: view-box;
   transform-origin: 50% 50%;
   animation: pulse-glow 4.5s ease-in-out infinite;
-}
-
-.spin {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: spin-slow 6s linear infinite;
-}
-
-.spinSlow {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: spin-slow 90s linear infinite;
 }
 
 .driftSlow {
@@ -37,8 +27,6 @@
 }
 
 .still .pulse,
-.still .spin,
-.still .spinSlow,
 .still .driftSlow {
   animation: none;
 }

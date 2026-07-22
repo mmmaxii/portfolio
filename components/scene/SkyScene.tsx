@@ -1,19 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { profile, skyObjects, type SkyChild, type SkyObject } from "@/data/content";
-import { buildConstellation, DRAW_MS } from "@/lib/constellation";
+import { scatterChildPositions } from "@/lib/scatter";
 import SkyNode from "./SkyNode";
 import ChildNode from "./ChildNode";
-import Constellation from "./Constellation";
-import ChildConstellation from "./ChildConstellation";
 import CasaPanel from "@/components/panel/CasaPanel";
 import { GithubIcon, MailIcon } from "@/components/ui/Icons";
 import styles from "./SkyScene.module.css";
 
 const ZOOM = 2.5;
-const RING_RADIUS = 30; // vmin
-const { objectFraction } = buildConstellation();
+// Punto donde se asienta el objeto enfocado tras el zoom: a la izquierda,
+// dejando el resto de la pantalla libre para que los sub-portales se dispersen.
+const FOCUS_X = 20;
+const FOCUS_Y = 50;
 
 export default function SkyScene() {
   const [focused, setFocused] = useState<SkyObject | null>(null);
@@ -41,12 +41,18 @@ export default function SkyScene() {
 
   const universeStyle = focused
     ? {
-        transform: `translate(${(50 - ZOOM * parseFloat(focused.position.left)).toFixed(2)}%, ${(
-          50 -
+        transform: `translate(${(FOCUS_X - ZOOM * parseFloat(focused.position.left)).toFixed(2)}%, ${(
+          FOCUS_Y -
           ZOOM * parseFloat(focused.position.top)
         ).toFixed(2)}%) scale(${ZOOM})`,
       }
     : { transform: "translate(0%, 0%) scale(1)" };
+
+  // Dispersión orgánica de los sub-portales alrededor del objeto enfocado.
+  const scatterPositions = useMemo(() => {
+    if (!focused?.children) return null;
+    return scatterChildPositions(focused.id, focused.children.length);
+  }, [focused]);
 
   return (
     <main className={styles.map}>
@@ -58,13 +64,11 @@ export default function SkyScene() {
           if (e.target === e.currentTarget && focused) exitFocus();
         }}
       >
-        <Constellation hidden={focused !== null} />
         {skyObjects.map((object) => (
           <SkyNode
             key={object.id}
             object={object}
             state={focused ? (focused.id === object.id ? "focused" : "dimmed") : "idle"}
-            appearDelay={Math.round((objectFraction[object.id] ?? 0) * DRAW_MS)}
             onOpen={() => openObject(object)}
           />
         ))}
@@ -77,37 +81,32 @@ export default function SkyScene() {
         <p className={styles.heroRole}>{profile.role}</p>
       </div>
 
-      {/* Nivel objeto: anillo de sub-portales */}
-      {focused && focused.children && (
+      {/* Nivel objeto: el objeto se asienta a la izquierda, sus sub-portales
+          se dispersan a la derecha. */}
+      {focused && focused.children && scatterPositions && (
         <div className={styles.childLayer}>
           <button type="button" className={styles.back} onClick={exitFocus}>
             ← Volver al cielo
           </button>
-          <ChildConstellation
-            count={focused.children.length}
-            radiusVmin={RING_RADIUS}
-            colorVar={focused.colorVar}
-          />
-          <div className={styles.focusCaption} style={{ color: `var(${focused.colorVar})` }}>
+          <div
+            className={styles.focusCaption}
+            style={{ color: `var(${focused.colorVar})`, left: `${FOCUS_X}%`, top: `${FOCUS_Y}%` }}
+          >
             <p className={styles.focusCatalog}>{focused.catalog}</p>
             <h2 className={styles.focusTitle}>{focused.section}</h2>
             <p className={styles.focusBlurb}>{focused.blurb}</p>
           </div>
-          {focused.children.map((child, i) => {
-            const n = focused.children!.length;
-            const angle = -Math.PI / 2 + (i / n) * Math.PI * 2;
-            return (
-              <ChildNode
-                key={child.id}
-                child={child}
-                colorVar={focused.colorVar}
-                angle={angle}
-                radius={RING_RADIUS}
-                delay={0.18 + 0.08 * i}
-                onOpen={() => setDetail({ object: focused, child })}
-              />
-            );
-          })}
+          {focused.children.map((child, i) => (
+            <ChildNode
+              key={child.id}
+              child={child}
+              colorVar={focused.colorVar}
+              x={scatterPositions[i].x}
+              y={scatterPositions[i].y}
+              appearDelay={80 * i}
+              onOpen={() => setDetail({ object: focused, child })}
+            />
+          ))}
         </div>
       )}
 
