@@ -119,8 +119,24 @@ export default function RealSky() {
     let raf = 0;
     let t = 0;
 
+    // Estado del efecto cinematográfico de viajes en hiperespacio (Warp Speed / Starburst)
+    let warpState: { x: number; y: number; startTime: number } | null = null;
+    const WARP_DURATION = 0.85; // segundos
+
+    function onWarp(e: Event) {
+      const customEvent = e as CustomEvent<{ x: number; y: number }>;
+      if (customEvent.detail) {
+        warpState = {
+          x: customEvent.detail.x,
+          y: customEvent.detail.y,
+          startTime: performance.now() / 1000,
+        };
+      }
+    }
+
     function frame() {
       t += 0.016;
+      const now = performance.now() / 1000;
       smooth.x += (mouse.x - smooth.x) * 0.04;
       smooth.y += (mouse.y - smooth.y) * 0.04;
       const px = (smooth.x - 0.5) * 18;
@@ -130,33 +146,111 @@ export default function RealSky() {
       ctx!.fillRect(0, 0, w, h);
       drawBand();
 
+      // Cálculo del progreso de hiperespacio (0 a 1)
+      let warpProgress = 0;
+      let intensity = 0;
+      let wx = w * 0.5;
+      let wy = h * 0.5;
+
+      if (warpState) {
+        const elapsed = now - warpState.startTime;
+        if (elapsed < WARP_DURATION) {
+          warpProgress = elapsed / WARP_DURATION;
+          // Curva suave de aceleración/desaceleración estilo película
+          intensity = Math.sin(warpProgress * Math.PI);
+          wx = warpState.x;
+          wy = warpState.y;
+        } else {
+          warpState = null;
+        }
+      }
+
       for (const s of stars) {
         const twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * s.twSpeed + s.tw);
         const alpha = s.base * twinkle;
-        // Parallax: estrellas brillantes (cercanas) se mueven más
         const depth = s.r / 2.1;
         const sx = s.x + px * depth;
         const sy = s.y + py * depth;
         const color = hexMix(cold, warm, (s.hue + 1) / 2);
 
-        ctx!.beginPath();
-        ctx!.arc(sx, sy, s.r, 0, Math.PI * 2);
-        ctx!.fillStyle = color;
-        ctx!.globalAlpha = alpha;
-        ctx!.fill();
+        if (intensity > 0.02) {
+          // EFECTO WARP STREAKS: Estelas radiales saliendo del punto de origen
+          const dx = sx - wx;
+          const dy = sy - wy;
+          const dist = Math.hypot(dx, dy) || 1;
+          const ux = dx / dist;
+          const uy = dy / dist;
 
-        // Halo para las estrellas brillantes
-        if (s.r > 1.3) {
-          const halo = ctx!.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
-          halo.addColorStop(0, color);
-          halo.addColorStop(1, "transparent");
-          ctx!.globalAlpha = alpha * 0.25;
-          ctx!.fillStyle = halo;
+          const streakLength = Math.min(dist * intensity * 0.95, 180 * intensity);
+          const ex = sx + ux * streakLength;
+          const ey = sy + uy * streakLength;
+
+          const grad = ctx!.createLinearGradient(sx, sy, ex, ey);
+          grad.addColorStop(0, color);
+          grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+
           ctx!.beginPath();
-          ctx!.arc(sx, sy, s.r * 5, 0, Math.PI * 2);
+          ctx!.moveTo(sx, sy);
+          ctx!.lineTo(ex, ey);
+          ctx!.strokeStyle = grad;
+          ctx!.lineWidth = s.r * (1 + intensity * 1.5);
+          ctx!.globalAlpha = alpha * (0.6 + intensity * 0.4);
+          ctx!.stroke();
+        } else {
+          // Estado normal sin hiperespacio
+          ctx!.beginPath();
+          ctx!.arc(sx, sy, s.r, 0, Math.PI * 2);
+          ctx!.fillStyle = color;
+          ctx!.globalAlpha = alpha;
           ctx!.fill();
+
+          if (s.r > 1.3) {
+            const halo = ctx!.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
+            halo.addColorStop(0, color);
+            halo.addColorStop(1, "transparent");
+            ctx!.globalAlpha = alpha * 0.25;
+            ctx!.fillStyle = halo;
+            ctx!.beginPath();
+            ctx!.arc(sx, sy, s.r * 5, 0, Math.PI * 2);
+            ctx!.fill();
+          }
         }
       }
+
+      // DESTELLO CINEMATOGRÁFICO DE LUZ (STARBURST / LENS FLARE)
+      if (intensity > 0.05) {
+        ctx!.save();
+        ctx!.globalCompositeOperation = "lighter";
+
+        // Halo radiante central
+        const flareRadius = 120 * intensity;
+        const flareGrad = ctx!.createRadialGradient(wx, wy, 0, wx, wy, flareRadius);
+        flareGrad.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+        flareGrad.addColorStop(0.2, "rgba(168, 200, 240, 0.7)");
+        flareGrad.addColorStop(0.6, "rgba(127, 230, 214, 0.3)");
+        flareGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        ctx!.fillStyle = flareGrad;
+        ctx!.beginPath();
+        ctx!.arc(wx, wy, flareRadius, 0, Math.PI * 2);
+        ctx!.fill();
+
+        // Rayos de luz radiales explotando desde el centro (Starburst Light Rays)
+        const rayCount = 16;
+        ctx!.strokeStyle = "rgba(200, 230, 255, " + (0.5 * intensity) + ")";
+        for (let i = 0; i < rayCount; i++) {
+          const angle = (i / rayCount) * Math.PI * 2 + t * 0.2;
+          const rayLen = (180 + Math.sin(i * 3 + t * 4) * 60) * intensity;
+          ctx!.beginPath();
+          ctx!.moveTo(wx, wy);
+          ctx!.lineTo(wx + Math.cos(angle) * rayLen, wy + Math.sin(angle) * rayLen);
+          ctx!.lineWidth = i % 2 === 0 ? 2 : 1;
+          ctx!.stroke();
+        }
+
+        ctx!.restore();
+      }
+
       ctx!.globalAlpha = 1;
 
       if (!reduced) raf = requestAnimationFrame(frame);
@@ -170,11 +264,13 @@ export default function RealSky() {
     build();
     frame();
     window.addEventListener("resize", build);
+    window.addEventListener("celestial-warp", onWarp);
     if (!reduced) window.addEventListener("mousemove", onMove);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", build);
+      window.removeEventListener("celestial-warp", onWarp);
       window.removeEventListener("mousemove", onMove);
     };
   }, []);

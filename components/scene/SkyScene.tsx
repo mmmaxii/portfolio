@@ -21,6 +21,12 @@ export default function SkyScene() {
   const [detail, setDetail] = useState<{ object: SkyObject; child: SkyChild | null } | null>(null);
 
   const openObject = useCallback((object: SkyObject) => {
+    if (typeof window !== "undefined") {
+      const px = (parseFloat(object.position.left) / 100) * window.innerWidth;
+      const py = (parseFloat(object.position.top) / 100) * window.innerHeight;
+      window.dispatchEvent(new CustomEvent("celestial-warp", { detail: { x: px, y: py } }));
+    }
+
     if (object.children && object.children.length > 0) {
       setFocused(object);
       setShowChildren(false);

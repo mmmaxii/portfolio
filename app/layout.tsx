@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, IBM_Plex_Mono, Inter } from "next/font/google";
+import { IBM_Plex_Mono, Inter, Space_Grotesk } from "next/font/google";
 import RealSky from "@/components/background/RealSky";
 import "./globals.css";
 
-const cinzel = Cinzel({
+const spaceGrotesk = Space_Grotesk({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${cinzel.variable} ${inter.variable} ${plexMono.variable}`}>
+    <html lang="es" className={`${spaceGrotesk.variable} ${inter.variable} ${plexMono.variable}`}>
       <body>
         <RealSky />
         <div className="site-content">{children}</div>
