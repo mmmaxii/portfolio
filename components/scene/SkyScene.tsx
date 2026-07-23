@@ -9,11 +9,9 @@ import CasaPanel from "@/components/panel/CasaPanel";
 import { GithubIcon, MailIcon } from "@/components/ui/Icons";
 import styles from "./SkyScene.module.css";
 
-const ZOOM = 2.5;
-// Punto donde se asienta el objeto enfocado tras el zoom: a la izquierda,
-// dejando el resto de la pantalla libre para que los sub-portales se dispersen.
-const FOCUS_X = 20;
-const FOCUS_Y = 50;
+const ZOOM = 2.2;
+const FOCUS_CENTER_X = 50;
+const FOCUS_CENTER_Y = 40;
 
 export default function SkyScene() {
   const [focused, setFocused] = useState<SkyObject | null>(null);
@@ -30,13 +28,22 @@ export default function SkyScene() {
     }
 
     if (object.children && object.children.length > 0) {
-      setFocused(object);
       setShowChildren(false);
-      // El zoom de la cámara tarda 800ms. Esperamos a que el zoom se complete
-      // para desplegar los sub-portales secuencialmente sin solaparse con el movimiento.
+
+      // PASO 1: Durante los primeros 650ms la estrella permanece FIJA en su lugar
+      // mientras explota el efecto Warp Sci-Fi radial.
+
+      // PASO 2: A los 650ms (al terminar las estelas warp), la cámara realiza la
+      // traslación y zoom para centrar suavemente la estrella en (50% X, 40% Y).
+      setTimeout(() => {
+        setFocused(object);
+      }, 650);
+
+      // PASO 3: A los 1200ms (cuando la cámara ha concluido su asentamiento),
+      // se despliegan secuencialmente los sub-nodos y el campo estelar profundo.
       setTimeout(() => {
         setShowChildren(true);
-      }, 700);
+      }, 1200);
     } else {
       setDetail({ object, child: null });
     }
@@ -65,25 +72,24 @@ export default function SkyScene() {
     return () => window.removeEventListener("keydown", onKey);
   }, [detail, focused, exitFocus]);
 
-  // El zoom se hace directamente sobre la posición (left, top) del objeto enfocado sin moverlo de lugar
+  // Al hacer zoom, la cámara centra perfectamente la fuente seleccionada en (50% X, 40% Y)
   const universeStyle = focused
     ? {
-        transformOrigin: `${focused.position.left} ${focused.position.top}`,
-        transform: `scale(${ZOOM})`,
+        transformOrigin: "0 0",
+        transform: `translate(${(FOCUS_CENTER_X - ZOOM * parseFloat(focused.position.left)).toFixed(2)}vw, ${(
+          FOCUS_CENTER_Y -
+          ZOOM * parseFloat(focused.position.top)
+        ).toFixed(2)}vh) scale(${ZOOM})`,
       }
     : {
-        transformOrigin: "center center",
-        transform: "scale(1)",
+        transformOrigin: "0 0",
+        transform: "translate(0vw, 0vh) scale(1)",
       };
 
-  // Dispersión orbital alrededor del centro original de la fuente seleccionada
+  // Dispersión orbital simétrica en anillo alrededor del objeto centrado
   const scatterPositions = useMemo(() => {
     if (!focused?.children) return null;
-    return scatterChildPositions(
-      parseFloat(focused.position.left),
-      parseFloat(focused.position.top),
-      focused.children.length
-    );
+    return scatterChildPositions(focused.children.length);
   }, [focused]);
 
   return (
@@ -123,8 +129,8 @@ export default function SkyScene() {
             className={styles.focusCaption}
             style={{
               color: `var(${focused.colorVar})`,
-              left: `${focused.position.left}`,
-              top: `calc(${focused.position.top} + 45px)`,
+              left: `${FOCUS_CENTER_X}%`,
+              top: `calc(${FOCUS_CENTER_Y}% + 55px)`,
             }}
           >
             <p className={styles.focusCatalog}>{focused.catalog}</p>
