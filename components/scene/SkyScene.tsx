@@ -17,27 +17,40 @@ const FOCUS_Y = 50;
 
 export default function SkyScene() {
   const [focused, setFocused] = useState<SkyObject | null>(null);
+  const [showChildren, setShowChildren] = useState(false);
   const [detail, setDetail] = useState<{ object: SkyObject; child: SkyChild | null } | null>(null);
 
   const openObject = useCallback((object: SkyObject) => {
     if (object.children && object.children.length > 0) {
       setFocused(object);
+      setShowChildren(false);
+      // El zoom de la cámara tarda 800ms. Esperamos a que el zoom se complete
+      // para desplegar los sub-portales secuencialmente sin solaparse con el movimiento.
+      setTimeout(() => {
+        setShowChildren(true);
+      }, 700);
     } else {
       setDetail({ object, child: null });
     }
   }, []);
 
-  const exitFocus = useCallback(() => setFocused(null), []);
+  const exitFocus = useCallback(() => {
+    setShowChildren(false);
+    // Retiramos los sub-portales de inmediato y luego deslizamos la cámara de vuelta al universo
+    setTimeout(() => {
+      setFocused(null);
+    }, 150);
+  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape" && !detail && focused) {
-        setFocused(null);
+        exitFocus();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [detail, focused]);
+  }, [detail, focused, exitFocus]);
 
   const universeStyle = focused
     ? {
@@ -48,7 +61,7 @@ export default function SkyScene() {
       }
     : { transform: "translate(0%, 0%) scale(1)" };
 
-  // Dispersión orgánica de los sub-portales alrededor del objeto enfocado.
+  // Dispersión estructurada de los sub-portales alrededor del objeto enfocado.
   const scatterPositions = useMemo(() => {
     if (!focused?.children) return null;
     return scatterChildPositions(focused.id, focused.children.length);
@@ -81,9 +94,8 @@ export default function SkyScene() {
         <p className={styles.heroRole}>{profile.role}</p>
       </div>
 
-      {/* Nivel objeto: el objeto se asienta a la izquierda, sus sub-portales
-          se dispersan a la derecha. */}
-      {focused && focused.children && scatterPositions && (
+      {/* Nivel objeto: se muestra SOLO cuando el zoom ha concluido */}
+      {focused && focused.children && showChildren && scatterPositions && (
         <div className={styles.childLayer}>
           <button type="button" className={styles.back} onClick={exitFocus}>
             ← Volver al cielo
@@ -103,7 +115,7 @@ export default function SkyScene() {
               colorVar={focused.colorVar}
               x={scatterPositions[i].x}
               y={scatterPositions[i].y}
-              appearDelay={80 * i}
+              appearDelay={100 * i}
               onOpen={() => setDetail({ object: focused, child })}
             />
           ))}

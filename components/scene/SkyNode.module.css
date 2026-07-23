@@ -98,11 +98,15 @@
 /* Estados durante el zoom */
 .idle {
   opacity: 1;
+  transition: opacity 0.4s ease;
 }
 
 .dimmed {
-  opacity: 0.08;
-  pointer-events: none;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  animation: none !important;
+  transition: opacity 0.15s ease-out, visibility 0.15s ease-out;
 }
 
 .focused {

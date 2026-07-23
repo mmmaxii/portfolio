@@ -116,15 +116,40 @@ function ProtoDisk({ animated }: { animated: boolean }) {
           <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
         </radialGradient>
       </defs>
+      {/* Disco protoplanetario estático inclinado en el espacio (-22 deg) */}
       <g transform="rotate(-22 50 50)">
-        {animated && <animateTransform {...spinProps(-22, 338, "90s")} />}
         <ellipse cx="50" cy="50" rx="46" ry="15" fill="none" stroke="currentColor" strokeOpacity="0.7" strokeWidth="3" />
         <ellipse cx="50" cy="50" rx="37" ry="12" fill="none" stroke="currentColor" strokeOpacity="0.28" strokeWidth="2.4" />
-        {/* gap donde se forma un planeta */}
+        {/* gap del disco donde orbita el protoplaneta (rx=27, ry=8.5) */}
         <ellipse cx="50" cy="50" rx="27" ry="8.5" fill="none" stroke="currentColor" strokeOpacity="0.75" strokeWidth="4" strokeDasharray="52 14" />
         <ellipse cx="50" cy="50" rx="16" ry="5" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="2.4" />
-        <circle cx="77" cy="50" r="2.4" fill="#ffffff" />
+
+        {/* Orbitador del gap principal (rx=27, ry=8.5): rotación elíptica 3D exacta */}
+        <g transform="translate(50 50) scale(1 0.314815)">
+          <g>
+            {animated && (
+              <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="18s" repeatCount="indefinite" />
+            )}
+            <g transform="translate(27 0) scale(1 3.176)">
+              <circle cx="0" cy="0" r="2.8" fill="#ffffff" />
+              <circle cx="0" cy="0" r="5.2" fill="none" stroke="currentColor" strokeOpacity="0.6" strokeWidth="1" />
+            </g>
+          </g>
+        </g>
+
+        {/* Orbitador del disco secundario (rx=37, ry=12): rotación elíptica 3D exacta */}
+        <g transform="translate(50 50) scale(1 0.324324)">
+          <g>
+            {animated && (
+              <animateTransform attributeName="transform" type="rotate" from="140 0 0" to="500 0 0" dur="40s" repeatCount="indefinite" />
+            )}
+            <g transform="translate(37 0) scale(1 3.083)">
+              <circle cx="0" cy="0" r="1.8" fill="#ffffff" opacity="0.85" />
+            </g>
+          </g>
+        </g>
       </g>
+      {/* Estrella central fija */}
       <circle cx="50" cy="50" r="10" fill="url(#pd-star)" />
       <circle cx="50" cy="50" r="3.5" fill="#ffffff" />
     </svg>

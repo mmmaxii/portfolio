@@ -19,18 +19,28 @@ function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));
 }
 
-export function scatterChildPositions(objectId: string, count: number): { x: number; y: number }[] {
+export function scatterChildPositions(_objectId: string, count: number): { x: number; y: number }[] {
   if (count === 0) return [];
-  const bandH = 68 / count;
   const positions: { x: number; y: number }[] = [];
+
+  // Dispersión estructurada en arco orbital a la derecha del objeto enfocado
+  const startY = 18;
+  const endY = 82;
+  const stepY = count > 1 ? (endY - startY) / (count - 1) : 0;
+
   for (let i = 0; i < count; i++) {
-    const seed = hashSeed(objectId, i);
-    const rx = seeded(seed);
-    const ry = seeded(seed + 91);
-    const y = 14 + bandH * i + ry * bandH * 0.75;
-    const zigzag = i % 2 === 1 ? 7 : -5;
-    const x = 42 + rx * 44 + zigzag;
-    positions.push({ x: clamp(x, 38, 92), y: clamp(y, 10, 88) });
+    const y = count === 1 ? 50 : startY + i * stepY;
+    const normalized = count > 1 ? i / (count - 1) : 0.5; // 0 a 1
+    // Curva en arco orbital: el centro se proyecta suavemente a la derecha
+    const arcOffset = Math.sin(normalized * Math.PI) * 14;
+    const staggerX = i % 2 === 1 ? 5 : 0;
+    const x = 44 + arcOffset + staggerX;
+
+    positions.push({
+      x: Number(x.toFixed(2)),
+      y: Number(y.toFixed(2)),
+    });
   }
+
   return positions;
 }

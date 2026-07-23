@@ -395,9 +395,9 @@ export const skyObjects: SkyObject[] = [
   {
     id: "about",
     section: "Sobre mí",
-    object: "Eta Carinae",
-    catalog: "η Carinae",
-    blurb: "Hipergigante azul inestable, ~100 masas solares. Una de las estrellas más luminosas de la Galaxia y futura supernova.",
+    object: "Nebulosa de Carina",
+    catalog: "NGC 3372",
+    blurb: "Una de las nebulosas de emisión más impresionantes del cielo austral, cuna de estrellas masivas observada por JWST (Cosmic Cliffs).",
     kind: "hypergiant",
     colorVar: "--sky-eta",
     size: 74,
