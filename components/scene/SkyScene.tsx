@@ -24,7 +24,9 @@ export default function SkyScene() {
     if (typeof window !== "undefined") {
       const px = (parseFloat(object.position.left) / 100) * window.innerWidth;
       const py = (parseFloat(object.position.top) / 100) * window.innerHeight;
-      window.dispatchEvent(new CustomEvent("celestial-warp", { detail: { x: px, y: py } }));
+      window.dispatchEvent(
+        new CustomEvent("celestial-warp", { detail: { x: px, y: py, isFocused: true } })
+      );
     }
 
     if (object.children && object.children.length > 0) {
@@ -41,6 +43,11 @@ export default function SkyScene() {
   }, []);
 
   const exitFocus = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("celestial-warp", { detail: { isFocused: false } })
+      );
+    }
     setShowChildren(false);
     // Retiramos los sub-portales de inmediato y luego deslizamos la cámara de vuelta al universo
     setTimeout(() => {
@@ -58,19 +65,25 @@ export default function SkyScene() {
     return () => window.removeEventListener("keydown", onKey);
   }, [detail, focused, exitFocus]);
 
+  // El zoom se hace directamente sobre la posición (left, top) del objeto enfocado sin moverlo de lugar
   const universeStyle = focused
     ? {
-        transform: `translate(${(FOCUS_X - ZOOM * parseFloat(focused.position.left)).toFixed(2)}%, ${(
-          FOCUS_Y -
-          ZOOM * parseFloat(focused.position.top)
-        ).toFixed(2)}%) scale(${ZOOM})`,
+        transformOrigin: `${focused.position.left} ${focused.position.top}`,
+        transform: `scale(${ZOOM})`,
       }
-    : { transform: "translate(0%, 0%) scale(1)" };
+    : {
+        transformOrigin: "center center",
+        transform: "scale(1)",
+      };
 
-  // Dispersión estructurada de los sub-portales alrededor del objeto enfocado.
+  // Dispersión orbital alrededor del centro original de la fuente seleccionada
   const scatterPositions = useMemo(() => {
     if (!focused?.children) return null;
-    return scatterChildPositions(focused.id, focused.children.length);
+    return scatterChildPositions(
+      parseFloat(focused.position.left),
+      parseFloat(focused.position.top),
+      focused.children.length
+    );
   }, [focused]);
 
   return (
@@ -108,7 +121,11 @@ export default function SkyScene() {
           </button>
           <div
             className={styles.focusCaption}
-            style={{ color: `var(${focused.colorVar})`, left: `${FOCUS_X}%`, top: `${FOCUS_Y}%` }}
+            style={{
+              color: `var(${focused.colorVar})`,
+              left: `${focused.position.left}`,
+              top: `calc(${focused.position.top} + 45px)`,
+            }}
           >
             <p className={styles.focusCatalog}>{focused.catalog}</p>
             <h2 className={styles.focusTitle}>{focused.section}</h2>

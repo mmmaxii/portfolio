@@ -44,6 +44,10 @@ export default function RealSky() {
     const voidColor = readVar("--void", "#030409");
 
     let stars: Star[] = [];
+    let deepSpaceStars: Star[] = [];
+    let isFocusedState = false;
+    let deepAlpha = 0;
+
     let w = 0;
     let h = 0;
     let dpr = 1;
@@ -79,6 +83,24 @@ export default function RealSky() {
           base: 0.25 + b * 0.75,
           tw: Math.random() * Math.PI * 2,
           twSpeed: 0.4 + Math.random() * 1.4,
+          hue: (Math.random() - 0.5) * 2,
+        });
+      }
+
+      // Capa adicional de micro-estrellas de espacio profundo (se revelan tras el zoom)
+      deepSpaceStars = [];
+      const deepCount = Math.min(Math.floor((w * h) / 1800), 650);
+      for (let i = 0; i < deepCount; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const b = Math.pow(Math.random(), 2.8);
+        deepSpaceStars.push({
+          x,
+          y,
+          r: 0.2 + b * 1.1,
+          base: 0.2 + b * 0.8,
+          tw: Math.random() * Math.PI * 2,
+          twSpeed: 0.8 + Math.random() * 2.2,
           hue: (Math.random() - 0.5) * 2,
         });
       }
@@ -124,13 +146,18 @@ export default function RealSky() {
     const WARP_DURATION = 0.85; // segundos
 
     function onWarp(e: Event) {
-      const customEvent = e as CustomEvent<{ x: number; y: number }>;
+      const customEvent = e as CustomEvent<{ x?: number; y?: number; isFocused?: boolean }>;
       if (customEvent.detail) {
-        warpState = {
-          x: customEvent.detail.x,
-          y: customEvent.detail.y,
-          startTime: performance.now() / 1000,
-        };
+        if (customEvent.detail.x !== undefined && customEvent.detail.y !== undefined) {
+          warpState = {
+            x: customEvent.detail.x,
+            y: customEvent.detail.y,
+            startTime: performance.now() / 1000,
+          };
+        }
+        if (customEvent.detail.isFocused !== undefined) {
+          isFocusedState = customEvent.detail.isFocused;
+        }
       }
     }
 
@@ -145,6 +172,10 @@ export default function RealSky() {
       ctx!.fillStyle = voidColor;
       ctx!.fillRect(0, 0, w, h);
       drawBand();
+
+      // Transición suave del campo de micro-estrellas de espacio profundo al hacer zoom
+      const targetDeepAlpha = isFocusedState ? 1 : 0;
+      deepAlpha += (targetDeepAlpha - deepAlpha) * 0.05;
 
       // Cálculo del progreso de hiperespacio (0 a 1)
       let warpProgress = 0;
@@ -162,6 +193,20 @@ export default function RealSky() {
           wy = warpState.y;
         } else {
           warpState = null;
+        }
+      }
+
+      // Render de micro-estrellas de espacio profundo (al estar enfocado)
+      if (deepAlpha > 0.01 && intensity <= 0.05) {
+        for (const ds of deepSpaceStars) {
+          const twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * ds.twSpeed + ds.tw);
+          const alpha = ds.base * twinkle * deepAlpha * 0.85;
+          const color = hexMix(cold, warm, (ds.hue + 1) / 2);
+          ctx!.beginPath();
+          ctx!.arc(ds.x, ds.y, ds.r, 0, Math.PI * 2);
+          ctx!.fillStyle = color;
+          ctx!.globalAlpha = alpha;
+          ctx!.fill();
         }
       }
 

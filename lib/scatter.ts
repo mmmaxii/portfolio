@@ -19,26 +19,37 @@ function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));
 }
 
-export function scatterChildPositions(_objectId: string, count: number): { x: number; y: number }[] {
+export function scatterChildPositions(
+  originLeft: number,
+  originTop: number,
+  count: number
+): { x: number; y: number }[] {
   if (count === 0) return [];
   const positions: { x: number; y: number }[] = [];
 
-  // Dispersión estructurada en arco orbital a la derecha del objeto enfocado
-  const startY = 18;
-  const endY = 82;
-  const stepY = count > 1 ? (endY - startY) / (count - 1) : 0;
+  const isRight = originLeft > 50;
+  const isTop = originTop < 40;
+
+  // Dirección y rango del arco orbital alrededor del centro de la estrella enfocada
+  let startAngle = isRight ? Math.PI * 0.75 : -Math.PI * 0.35;
+  let endAngle = isRight ? Math.PI * 1.25 : Math.PI * 0.35;
+
+  if (isTop) {
+    startAngle += 0.25;
+    endAngle += 0.25;
+  }
+
+  const stepAngle = count > 1 ? (endAngle - startAngle) / (count - 1) : 0;
 
   for (let i = 0; i < count; i++) {
-    const y = count === 1 ? 50 : startY + i * stepY;
-    const normalized = count > 1 ? i / (count - 1) : 0.5; // 0 a 1
-    // Curva en arco orbital: el centro se proyecta suavemente a la derecha
-    const arcOffset = Math.sin(normalized * Math.PI) * 14;
-    const staggerX = i % 2 === 1 ? 5 : 0;
-    const x = 44 + arcOffset + staggerX;
+    const angle = count === 1 ? (startAngle + endAngle) / 2 : startAngle + i * stepAngle;
+    const r = 21 + (i % 2 === 1 ? 5 : 0);
+    const x = originLeft + Math.cos(angle) * r * 1.15;
+    const y = originTop + Math.sin(angle) * r * 0.95;
 
     positions.push({
-      x: Number(x.toFixed(2)),
-      y: Number(y.toFixed(2)),
+      x: Math.min(88, Math.max(10, Number(x.toFixed(2)))),
+      y: Math.min(86, Math.max(10, Number(y.toFixed(2)))),
     });
   }
 
