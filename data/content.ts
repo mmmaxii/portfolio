@@ -96,7 +96,7 @@ export const projects: Project[] = [
       { src: "/img/solar_system/solar_system_sun.png", alt: "Sistema Solar Sol" },
       { src: "/img/solar_system/solar_system_saturn.png", alt: "Sistema Solar Saturno" },
     ],
-    links: [],
+    links: [{ label: "Ver Sitio Web", href: "https://solar-system-project-eta.vercel.app/", kind: "demo" }],
     group: "main",
   },
   {
