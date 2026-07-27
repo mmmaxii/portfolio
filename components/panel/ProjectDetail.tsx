@@ -1,7 +1,7 @@
 import type { Project } from "@/data/content";
 import ImageCarousel from "@/components/ui/ImageCarousel";
 import RichText from "@/components/ui/RichText";
-import { GithubIcon, GlobeIcon } from "@/components/ui/Icons";
+import { GithubIcon, GlobeIcon, LockIcon } from "@/components/ui/Icons";
 import styles from "./ProjectDetail.module.css";
 
 /*
@@ -26,7 +26,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
         )}
       </div>
 
-      {project.links.length > 0 && (
+      {(project.links.length > 0 || project.codeNote) && (
         <div className={styles.links}>
           <span className={styles.linksLabel}>// código &amp; enlaces</span>
           <div className={styles.linkRow}>
@@ -42,6 +42,12 @@ export default function ProjectDetail({ project }: { project: Project }) {
                 {link.label}
               </a>
             ))}
+            {project.codeNote && (
+              <span className={styles.codeNote}>
+                <LockIcon size={14} />
+                {project.codeNote}
+              </span>
+            )}
           </div>
         </div>
       )}

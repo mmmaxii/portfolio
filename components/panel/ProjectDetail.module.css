@@ -99,3 +99,14 @@
   box-shadow: var(--glow-soft);
   text-decoration: none;
 }
+
+.codeNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px dashed var(--surface-border-hover);
+  color: var(--frost-faint);
+}

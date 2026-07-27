@@ -60,6 +60,8 @@ export interface Project {
   links: ProjectLink[];
   group: "main" | "ai";
   carouselSpeed?: "normal" | "fast";
+  /** Nota mostrada junto a los enlaces cuando el código no es público (p. ej. producto en producción). */
+  codeNote?: string;
 }
 
 export const projects: Project[] = [
@@ -75,6 +77,7 @@ export const projects: Project[] = [
     ],
     links: [
       { label: "Ver App", href: "https://alke-wallet-django-production.up.railway.app/", kind: "demo" },
+      { label: "Repositorio", href: "https://github.com/mmmaxii/alke-wallet-django", kind: "repo" },
     ],
     group: "main",
   },
@@ -85,6 +88,7 @@ export const projects: Project[] = [
       "Innovadora PWA impulsada por IA que transforma tus espacios. Sube una foto para obtener ideas de diseño, instrucciones DIY, renders fotorrealistas (Flux Kontext Pro) y recomendaciones de productos integrados con Mercado Libre.",
     images: [{ src: "/img/decoia/decoia_home.png", alt: "DecoIA Home" }],
     links: [{ label: "Ver Sitio Web (Beta)", href: "https://www.decoia.cl/", kind: "demo" }],
+    codeNote: "Código privado — producto en producción",
     group: "main",
   },
   {
