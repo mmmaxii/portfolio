@@ -15,6 +15,7 @@ const FOCUS_CENTER_Y = 40;
 
 export default function SkyScene() {
   const [focused, setFocused] = useState<SkyObject | null>(null);
+  const [isWarping, setIsWarping] = useState(false);
   const [showChildren, setShowChildren] = useState(false);
   const [detail, setDetail] = useState<{ object: SkyObject; child: SkyChild | null } | null>(null);
 
@@ -29,21 +30,20 @@ export default function SkyScene() {
 
     if (object.children && object.children.length > 0) {
       setShowChildren(false);
+      setIsWarping(true); // PASO 1: Desaparecen inmediatamente TODOS los objetos
 
-      // PASO 1: Durante los primeros 650ms la estrella permanece FIJA en su lugar
-      // mientras explota el efecto Warp Sci-Fi radial.
+      // PASO 2: La animación Warp Sci-Fi se reproduce limpia durante 600ms en el fondo sin objetos.
 
-      // PASO 2: A los 650ms (al terminar las estelas warp), la cámara realiza la
-      // traslación y zoom para centrar suavemente la estrella en (50% X, 40% Y).
+      // PASO 3: A los 600ms (al concluir el hiperespacio), se activa el foco centrado en (50% X, 40% Y) y aparece la estrella
       setTimeout(() => {
+        setIsWarping(false);
         setFocused(object);
-      }, 650);
+      }, 600);
 
-      // PASO 3: A los 1200ms (cuando la cámara ha concluido su asentamiento),
-      // se despliegan secuencialmente los sub-nodos y el campo estelar profundo.
+      // PASO 4: A los 1000ms (con la estrella ya presente y centrada), aparecen los sub-iconos en el anillo orbital
       setTimeout(() => {
         setShowChildren(true);
-      }, 1200);
+      }, 1000);
     } else {
       setDetail({ object, child: null });
     }
@@ -102,18 +102,26 @@ export default function SkyScene() {
           if (e.target === e.currentTarget && focused) exitFocus();
         }}
       >
-        {skyObjects.map((object) => (
-          <SkyNode
-            key={object.id}
-            object={object}
-            state={focused ? (focused.id === object.id ? "focused" : "dimmed") : "idle"}
-            onOpen={() => openObject(object)}
-          />
-        ))}
+        {skyObjects.map((object) => {
+          let state: "idle" | "focused" | "dimmed" | "hiddenAll" = "idle";
+          if (isWarping) {
+            state = "hiddenAll";
+          } else if (focused) {
+            state = focused.id === object.id ? "focused" : "dimmed";
+          }
+          return (
+            <SkyNode
+              key={object.id}
+              object={object}
+              state={state}
+              onOpen={() => openObject(object)}
+            />
+          );
+        })}
       </div>
 
       {/* Hero (nivel cielo) */}
-      <div className={`${styles.hero} ${focused ? styles.heroHidden : ""}`}>
+      <div className={`${styles.hero} ${focused || isWarping ? styles.heroHidden : ""}`}>
         <p className={styles.heroKicker}>Cielo austral · Los Ángeles, Chile · 37° S</p>
         <h1 className={styles.heroName}>{profile.name}</h1>
         <p className={styles.heroRole}>{profile.role}</p>
@@ -152,10 +160,10 @@ export default function SkyScene() {
       )}
 
       {/* HUD */}
-      <p className={`${styles.hint} ${focused ? styles.hintHidden : ""}`}>
+      <p className={`${styles.hint} ${focused || isWarping ? styles.hintHidden : ""}`}>
         Selecciona una fuente catalogada para observarla
       </p>
-      <div className={`${styles.social} ${focused ? styles.heroHidden : ""}`}>
+      <div className={`${styles.social} ${focused || isWarping ? styles.heroHidden : ""}`}>
         <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
           <GithubIcon size={18} />
         </a>
@@ -163,7 +171,7 @@ export default function SkyScene() {
           <MailIcon size={18} />
         </a>
       </div>
-      <footer className={`${styles.footer} ${focused ? styles.heroHidden : ""}`}>{profile.footer}</footer>
+      <footer className={`${styles.footer} ${focused || isWarping ? styles.heroHidden : ""}`}>{profile.footer}</footer>
 
       <CasaPanel
         open={detail !== null}

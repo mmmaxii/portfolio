@@ -101,7 +101,8 @@
   transition: opacity 0.4s ease;
 }
 
-.dimmed {
+.dimmed,
+.hiddenAll {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;

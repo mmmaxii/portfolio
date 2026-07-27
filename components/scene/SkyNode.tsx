@@ -4,7 +4,7 @@ import type { SkyObject } from "@/data/content";
 import SkyGlyph from "./SkyGlyph";
 import styles from "./SkyNode.module.css";
 
-type NodeState = "idle" | "focused" | "dimmed";
+type NodeState = "idle" | "focused" | "dimmed" | "hiddenAll";
 
 interface SkyNodeProps {
   object: SkyObject;

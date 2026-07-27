@@ -3,6 +3,9 @@
  * un color: todos referencian estos tokens (o los --sky-* por objeto).
  */
 :root {
+  --font-display: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-sans), system-ui, -apple-system, sans-serif;
+
   /* Profundidades (negros fríos con tinte azul) */
   --void: #030409;
   --void-2: #060812;
