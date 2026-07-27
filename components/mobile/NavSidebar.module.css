@@ -1,0 +1,68 @@
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: sticky;
+    top: 60px;
+    width: 190px;
+    flex-shrink: 0;
+    padding-top: 60px;
+  }
+}
+
+.kicker {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--frost-faint);
+  margin-bottom: 6px;
+  padding-left: 12px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: var(--frost-dim);
+  font-size: 0.86rem;
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.link:hover {
+  color: var(--frost);
+  background: var(--surface);
+  text-decoration: none;
+}
+
+.linkActive {
+  color: var(--ice-bright);
+  background: var(--surface);
+  border-color: var(--surface-border-hover);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  flex-shrink: 0;
+}

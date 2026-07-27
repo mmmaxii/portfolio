@@ -11,7 +11,7 @@ import styles from "./ProjectDetail.module.css";
 export default function ProjectDetail({ project }: { project: Project }) {
   return (
     <article className={styles.card}>
-      <div className={styles.row}>
+      <div className={`${styles.row} ${project.images.length === 0 ? styles.rowNoMedia : ""}`}>
         <div className={styles.text}>
           <h3 className={styles.title}>{project.title}</h3>
           <p className={styles.tech}>{project.tech.join(" • ")}</p>
@@ -19,9 +19,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
             <RichText text={project.description} />
           </p>
         </div>
-        <div className={styles.media}>
-          <ImageCarousel images={project.images} speed={project.carouselSpeed} />
-        </div>
+        {project.images.length > 0 && (
+          <div className={styles.media}>
+            <ImageCarousel images={project.images} speed={project.carouselSpeed} />
+          </div>
+        )}
       </div>
 
       {project.links.length > 0 && (

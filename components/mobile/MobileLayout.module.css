@@ -1,3 +1,21 @@
+.page {
+  display: block;
+}
+
+@media (min-width: 1180px) {
+  .page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 48px;
+    padding: 0 40px;
+  }
+
+  .main {
+    margin: 0;
+  }
+}
+
 .main {
   display: flex;
   flex-direction: column;

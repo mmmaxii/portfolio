@@ -16,9 +16,9 @@ export const profile = {
 /* ------------------------------- Sobre Mí ------------------------------- */
 
 export const aboutParagraphs: string[] = [
-  "Soy originario de Los Ángeles, Chile, y estudiante de Astronomía, una carrera que me reveló mi gran vocación profesional: la **programación y automatización**. Analizar inmensos volúmenes de datos astronómicos de misiones como Kepler, Gaia DR3, TESS y simulaciones como IllustrisTNG me demostró el enorme potencial de Python para entender y modelar el universo.",
-  "Considero que poseo un perfil sumamente pragmático. Descubrir que cualquier proceso que uno imagine puede automatizarse me motivó a profundizar en cursos de Programación Avanzada. Actualmente, me encuentro en la recta final de mi carrera y cursando de forma paralela un **Bootcamp de Desarrollo Fullstack**. Mi objetivo es poder tomar todo ese poder del Backend y el procesamiento de datos, y plasmarlo en interfaces visuales que destaquen por su diseño y experiencia de usuario.",
-  "Mi proyecto en paralelo y hobby más demandante en la actualidad es personal: **ser padre**. Cuidar de mi hija recién nacida a tiempo completo me enseña a diario sobre resiliencia, prioridades y organización, lo que compagino firmemente con mis estudios y la programación.",
+  "Soy originario de Los Ángeles, Chile, y **Licenciado en Astronomía**, una carrera que me reveló mi gran vocación profesional: la **programación y automatización**. Analizar inmensos volúmenes de datos astronómicos de misiones como Kepler, Gaia DR3, TESS y simulaciones como IllustrisTNG me demostró el enorme potencial de Python para entender y modelar el universo.",
+  "Considero que poseo un perfil sumamente pragmático. Descubrir que cualquier proceso que uno imagine puede automatizarse me motivó a profundizar en cursos de Programación Avanzada. Actualmente compagino mi formación como astrónomo con un **Bootcamp de Desarrollo Fullstack**, buscando tomar todo ese poder del Backend y el procesamiento de datos, y plasmarlo en interfaces visuales que destaquen por su diseño y experiencia de usuario.",
+  "Mi proyecto en paralelo y hobby más demandante en la actualidad es personal: **ser padre**. Cuidar de mi hija a tiempo completo me enseña a diario sobre resiliencia, prioridades y organización, lo que compagino firmemente con mis estudios y la programación.",
   "A futuro, el ámbito investigativo es mi mayor proyección: deseo especializarme en la simulación y análisis de **discos protoplanetarios**, para lograr encontrar relaciones directas sobre cómo se originan los mundos oceánicos (*Water Worlds*) y entender qué mecanismos rigen su creación.",
 ];
 
@@ -30,12 +30,13 @@ export interface TechCategory {
 }
 
 export const techStack: TechCategory[] = [
-  { category: "Backend", items: ["Python", "Django", "FastAPI"] },
+  { category: "Backend", items: ["Python", "Django", "FastAPI", "Uvicorn", "JWT"] },
   { category: "Frontend", items: ["HTML5", "CSS", "JavaScript", "React", "Vite", "Next.js", "TypeScript"] },
-  { category: "Bases de Datos", items: ["PostgreSQL", "SQLite"] },
-  { category: "Machine Learning", items: ["PyTorch", "TensorFlow"] },
-  { category: "DevOps & Deploy", items: ["Git", "Vercel", "Railway"] },
-  { category: "Arquitectura de Software", items: ["MVT", "DAO"] },
+  { category: "Bases de Datos", items: ["PostgreSQL", "MySQL", "SQLite", "pgvector", "ChromaDB"] },
+  { category: "Machine Learning", items: ["PyTorch", "CUDA", "TensorFlow", "Sentence-Transformers"] },
+  { category: "IA & LLM", items: ["LangChain", "Claude API", "Google Gemini API", "RAG"] },
+  { category: "DevOps & Deploy", items: ["Git", "Docker", "Docker Compose", "AWS", "Vercel", "Railway"] },
+  { category: "Arquitectura de Software", items: ["MVT", "DAO", "REST API"] },
 ];
 
 /* ------------------------------- Proyectos ------------------------------ */
@@ -82,7 +83,7 @@ export const projects: Project[] = [
     tech: ["React", "Django", "Claude API", "Replicate Flux", "Meli API"],
     description:
       "Innovadora PWA impulsada por IA que transforma tus espacios. Sube una foto para obtener ideas de diseño, instrucciones DIY, renders fotorrealistas (Flux Kontext Pro) y recomendaciones de productos integrados con Mercado Libre.",
-    images: [{ src: "/img/decoria/decoria_home.png", alt: "DecoIA Home" }],
+    images: [{ src: "/img/decoia/decoia_home.png", alt: "DecoIA Home" }],
     links: [{ label: "Ver Sitio Web (Beta)", href: "https://www.decoia.cl/", kind: "demo" }],
     group: "main",
   },
@@ -192,6 +193,33 @@ export const projects: Project[] = [
     ],
     group: "ai",
   },
+  {
+    title: "Asterion API",
+    tech: [
+      "LangChain",
+      "Google Gemini",
+      "FastAPI",
+      "PostgreSQL + pgvector",
+      "ChromaDB",
+      "PyTorch (CUDA)",
+      "Docker",
+      "AWS",
+    ],
+    description:
+      "Asistente de investigación astrofísica impulsado por RAG (Retrieval-Augmented Generation) que integra **35 herramientas** especializadas sobre **6 fuentes de datos en vivo** —NASA Exoplanet Archive, literatura científica (NASA ADS, +47.500 papers), química atmosférica teórica, SIMBAD, Gaia DR3 y VizieR—, citando numéricamente cada dato y fuente utilizada. El agente, orquestado con LangChain sobre Gemini 2.5 Flash, combina un espejo local en SQLite del archivo de exoplanetas con un motor RAG en Postgres + pgvector (búsqueda híbrida full-text + embeddings con Reciprocal Rank Fusion), y expone todo a través de una API en FastAPI con más de 470 tests automatizados. Incluye análisis científico avanzado: zona habitable (Kopparapu 2014), Índice de Similitud con la Tierra (ESI), detección de compañeros binarios vía métricas RUWE de Gaia, y pruebas estadísticas de hipótesis (Mann-Whitney, Kolmogorov-Smirnov) entre poblaciones de planetas.",
+    images: [],
+    links: [{ label: "Ver Sitio Web", href: "https://asterion-rag.vercel.app/", kind: "demo" }],
+    group: "ai",
+  },
+  {
+    title: "PA3Py — Pebble Accretion Post-Processing",
+    tech: ["Python", "NumPy", "SciPy", "h5py", "Matplotlib", "pytest", "PyPI"],
+    description:
+      "Paquete open source en Python (`pip install pa3py`) para calcular el crecimiento y la composición de embriones planetarios mediante acreción de pebbles, en post-procesado sobre simulaciones hidrodinámicas de discos protoplanetarios de TriPoDPy. A diferencia de los modelos prescriptivos, PA3Py lee la evolución completa de gas y polvo —densidades superficiales, temperatura y distribución de tamaños en tres poblaciones—, de modo que el suministro de sólidos queda regulado por las subestructuras reales del disco (gaps planetarios, trampas de presión, perturbaciones sinusoidales). Implementa la física de acreción de **Ormel (2017)** y **Drążkowska et al. (2023)** (regímenes headwind/shear, transición suave 2D–3D, tope de masa de aislamiento) y una snowline dinámica derivada de **Oka et al. (2011)**. Publicado con documentación, 22 tests unitarios y CI en GitHub Actions; usado para calcular más de 5.000 trayectorias de crecimiento planetario sobre 1.300+ simulaciones de disco.",
+    images: [],
+    links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/PA3Py", kind: "repo" }],
+    group: "ai",
+  },
 ];
 
 /* --------------------- Práctica Profesional / Research ------------------- */
@@ -231,7 +259,7 @@ export const research = {
       bullets: [
         "**Disk Setup:** Define grilla radial y calcula parámetros estelares (L ≈ 1 L_sun, T ≈ 4000 K).",
         "**Disk Chemistry:** Inyecta volátiles (H₂O, CO₂, CO) sobre silicatos.",
-        "**Snowline Physics:** Modelo de Oka et al. Simula migración secular hacia el interior (M_dot ≈ t^-1.5).",
+        "**Snowline Physics:** Prescripción semianalítica propia que acopla el decaimiento temporal de la tasa de acreción en estrellas T-Tauri (Hartmann et al. 1998, M_dot ≈ t^-1.5) con los modelos radiativos de Oka et al. (2011), obteniendo R_snow(t): una migración realista de la snowline que cruza 1 AU a los 1.05 Myr.",
         "**Pressure Bumps:** Modelos de Kanagawa, Duffell y sinusoidales para trampas de polvo.",
       ],
     },
@@ -262,7 +290,7 @@ export const research = {
     {
       icon: "server",
       title: "Computación de Alto Rendimiento (HPC)",
-      text: "Scripts automáticos (Python y PBS) para enviar jobs a clústeres computacionales, explorando vastos parámetros de atenuación, radios base y masas. En este caso particular, se utilizó la potencia computacional del clúster **Geryon 2**.",
+      text: "Ejecuté más de **1.300 simulaciones** de evolución de gas y polvo en discos protoplanetarios en el clúster **Geryon 2** (Centro de Astro-Ingeniería UC). Aprendí a trabajar con sistemas de colas PBS/Torque —envío con `qsub`, walltime, gestión de módulos y entornos conda— y automaticé en Python el lanzamiento, monitoreo y recuperación de cientos de trabajos en paralelo sobre grillas de parámetros combinatorias.",
       acknowledgements: {
         heading: "Agradecimientos / Acknowledgements",
         quote:
@@ -270,6 +298,11 @@ export const research = {
         linkLabel: "Ver información del clúster Geryon 2",
         href: "https://www3.astro.puc.cl/geryon/g2/",
       },
+    },
+    {
+      icon: "chart",
+      title: "Resultados: la \"Isla de Crecimiento\"",
+      text: "Del barrido de parámetros (turbulencia α y velocidad de fragmentación v_frag) obtuve **5.006 trayectorias** de crecimiento planetario válidas, con las que identifiqué una \"Isla de Crecimiento\" (α ≲ 10⁻³, M_gap ~ 0.05–0.1 M_Jup) y mostré que la regulación **temporal** del flujo de pebbles —el cuándo llega el material, no solo el cuánto— controla simultáneamente la masa final del planeta y su contenido de agua.",
     },
     {
       icon: "thermometer",
@@ -440,6 +473,7 @@ export const skyObjects: SkyObject[] = [
     dec: "-41 23 53",
     children: [
       { id: "practica", label: "Práctica: Discos Protoplanetarios", sublabel: "PA3Py · TriPoDPy", detail: { type: "research" } },
+      { id: "pa3py", label: "PA3Py", sublabel: "Paquete PyPI", detail: { type: "project", projectTitle: "PA3Py — Pebble Accretion Post-Processing" } },
       { id: "lente", label: "Lente Gravitacional", sublabel: "SIS + Shear", detail: { type: "project", projectTitle: "Simulación de Lente Gravitacional" } },
       { id: "bh", label: "Sombra de Agujero Negro", sublabel: "Ray-Shooting", detail: { type: "project", projectTitle: "Sombra de Agujero Negro" } },
       { id: "ngc5972", label: "Espectroscopía IFU NGC 5972", sublabel: "MUSE · Voronoi", detail: { type: "project", projectTitle: "Análisis Espectroscópico IFU de NGC 5972" } },
@@ -459,44 +493,9 @@ export const skyObjects: SkyObject[] = [
     ra: "13 00 01.0",
     dec: "+12 40 57",
     children: [
+      { id: "asterion", label: "Asterion API", sublabel: "Agente RAG · LangChain", detail: { type: "project", projectTitle: "Asterion API" } },
       { id: "decoia-ai", label: "DecoIA", sublabel: "Claude API · Flux", detail: { type: "project", projectTitle: "DecoIA" } },
       { id: "ml-astro", label: "Machine Learning astronómico", sublabel: "TNG50", detail: { type: "project", projectTitle: "Machine Learning con datos de TNG50" } },
-      {
-        id: "llm-agents",
-        label: "LLMs, Agentes & MCP",
-        sublabel: "Orquestación",
-        detail: {
-          type: "note",
-          body: [
-            "Integro modelos de lenguaje en aplicaciones reales: en **DecoIA** uso la API de Claude para generar ideas de diseño e instrucciones DIY a partir de una foto.",
-            "Me interesa la construcción de **agentes** y flujos con herramientas (function calling, MCP) para automatizar tareas de análisis y procesamiento de datos.",
-          ],
-        },
-      },
-      {
-        id: "rag",
-        label: "RAG & Embeddings",
-        sublabel: "Recuperación",
-        detail: {
-          type: "note",
-          body: [
-            "Exploro **Retrieval-Augmented Generation**: indexación con embeddings y recuperación semántica para dar contexto fiable a los modelos.",
-            "Objetivo: conectar literatura científica y datos propios a asistentes que respondan con fuentes verificables.",
-          ],
-        },
-      },
-      {
-        id: "cv",
-        label: "Visión por Computador",
-        sublabel: "Imágenes",
-        detail: {
-          type: "note",
-          body: [
-            "Procesamiento de imágenes aplicado: en **DecoIA**, renders fotorrealistas con Flux Kontext Pro a partir de fotos de espacios reales.",
-            "En astronomía, análisis de imágenes IFU/MUSE y mapas de simulaciones para extraer propiedades físicas.",
-          ],
-        },
-      },
     ],
   },
   {
@@ -514,9 +513,10 @@ export const skyObjects: SkyObject[] = [
     children: [
       { id: "tech-backend", label: "Backend", sublabel: "Python · Django · FastAPI", detail: { type: "tech", category: "Backend" } },
       { id: "tech-frontend", label: "Frontend", sublabel: "React · Next.js · TS", detail: { type: "tech", category: "Frontend" } },
-      { id: "tech-db", label: "Bases de Datos", sublabel: "PostgreSQL · SQLite", detail: { type: "tech", category: "Bases de Datos" } },
+      { id: "tech-db", label: "Bases de Datos", sublabel: "PostgreSQL · MySQL · pgvector", detail: { type: "tech", category: "Bases de Datos" } },
       { id: "tech-ml", label: "Machine Learning", sublabel: "PyTorch · TensorFlow", detail: { type: "tech", category: "Machine Learning" } },
-      { id: "tech-devops", label: "DevOps & Deploy", sublabel: "Git · Vercel · Railway", detail: { type: "tech", category: "DevOps & Deploy" } },
+      { id: "tech-ia-llm", label: "IA & LLM", sublabel: "LangChain · RAG", detail: { type: "tech", category: "IA & LLM" } },
+      { id: "tech-devops", label: "DevOps & Deploy", sublabel: "Docker · AWS · Vercel", detail: { type: "tech", category: "DevOps & Deploy" } },
       { id: "tech-arch", label: "Arquitectura", sublabel: "MVT · DAO", detail: { type: "tech", category: "Arquitectura de Software" } },
     ],
   },
