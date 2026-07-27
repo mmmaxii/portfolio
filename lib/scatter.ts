@@ -29,12 +29,17 @@ export function scatterChildPositions(count: number): { x: number; y: number }[]
   const radiusX = 27; // % del viewport en X
   const radiusY = 24; // % del viewport en Y
 
-  // Distribución circular simétrica y balanceada
-  const startAngle = -Math.PI * 0.75;
-  const stepAngle = (Math.PI * 2) / count;
+  // El texto (catálogo/título/descripción) se despliega justo debajo de la
+  // estrella, centrado en 90° (recto hacia abajo). Reservamos una cuña ahí
+  // para que ningún sub-portal caiga encima del texto.
+  const CAPTION_WEDGE_DEG = 100;
+  const startDeg = 90 + CAPTION_WEDGE_DEG / 2;
+  const arcDeg = 360 - CAPTION_WEDGE_DEG;
+  const stepDeg = arcDeg / count;
 
   for (let i = 0; i < count; i++) {
-    const angle = startAngle + i * stepAngle;
+    const deg = startDeg + stepDeg * (i + 0.5);
+    const angle = (deg * Math.PI) / 180;
     const rVar = i % 2 === 1 ? 1.05 : 0.95;
     const x = centerX + Math.cos(angle) * radiusX * rVar;
     const y = centerY + Math.sin(angle) * radiusY * rVar;
