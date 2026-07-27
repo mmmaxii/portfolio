@@ -6,7 +6,7 @@ import { scatterChildPositions } from "@/lib/scatter";
 import SkyNode from "./SkyNode";
 import ChildNode from "./ChildNode";
 import CasaPanel from "@/components/panel/CasaPanel";
-import { GithubIcon, MailIcon } from "@/components/ui/Icons";
+import { GithubIcon, LinkedinIcon, MailIcon } from "@/components/ui/Icons";
 import styles from "./SkyScene.module.css";
 
 const ZOOM = 2.2;
@@ -166,6 +166,9 @@ export default function SkyScene() {
       <div className={`${styles.social} ${focused || isWarping ? styles.heroHidden : ""}`}>
         <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
           <GithubIcon size={18} />
+        </a>
+        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <LinkedinIcon size={18} />
         </a>
         <a href={`mailto:${profile.email}`} aria-label="Email">
           <MailIcon size={18} />

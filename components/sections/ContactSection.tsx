@@ -1,5 +1,5 @@
 import { profile } from "@/data/content";
-import { GithubIcon, MailIcon } from "@/components/ui/Icons";
+import { GithubIcon, LinkedinIcon, MailIcon } from "@/components/ui/Icons";
 import styles from "./sections.module.css";
 
 export default function ContactSection() {
@@ -19,6 +19,15 @@ export default function ContactSection() {
         >
           <GithubIcon size={17} />
           github.com/{profile.githubUser}
+        </a>
+        <a
+          href={profile.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.contactLink}
+        >
+          <LinkedinIcon size={17} />
+          LinkedIn
         </a>
       </div>
     </div>

@@ -8,6 +8,7 @@ export const profile = {
   email: "maximilianovalderrama123@gmail.com",
   github: "https://github.com/mmmaxii",
   githubUser: "mmmaxii",
+  linkedin: "https://www.linkedin.com/in/maximiliano-valderrama-vargas/",
   contactIntro:
     "Estoy abierto a oportunidades y colaboraciones técnicas donde pueda aportar valor real a través de aplicaciones backend sólidas.",
   footer: "© 2026 Maximiliano F. Valderrama. Elaborado con Next.js y mucho espacio-tiempo.",
