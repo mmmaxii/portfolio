@@ -4,13 +4,14 @@ import { useEffect, useRef } from "react";
 
 /*
  * Cielo nocturno realista dibujado por código sobre <canvas>.
- * - Campo de estrellas con distribución de brillo realista (muchas tenues,
- *   pocas brillantes) y color-temperatura sutil.
- * - Vía Láctea austral realista: arco difuso con nebulosidades, polvo oscuro,
- *   concentración de estrellas en la banda, y colores cálidos en el núcleo.
- * - Parpadeo (twinkle) muy leve; parallax sutil con el mouse.
- * - Efecto cinematográfico de hiperespacio (Warp Speed / Starburst).
- * Los colores base se leen de las variables CSS: nada hardcodeado aquí.
+ * - Vista general (cielo amplio):
+ *   - Vía Láctea austral realista con polvo, nebulosas y concentración densa de estrellas.
+ *   - Campo estelar amplio con parpadeo y distribución natural de magnitudes.
+ * - Vista enfocada (zoom profundo en fuente):
+ *   - El fondo denso y la Vía Láctea se desvanecen por completo.
+ *   - Quedan solo unas pocas estrellas sueltas y dispersas en el vacío profundo,
+ *     dando la sensación de zoom extremo y garantizando máxima legibilidad.
+ * - Efecto cinematográfico de hiperespacio (Warp Speed / Starburst) durante la transición.
  */
 
 interface Star {
@@ -66,10 +67,10 @@ export default function RealSky() {
 
     let stars: Star[] = [];
     let bandStars: Star[] = []; // Estrellas concentradas en la Vía Láctea
-    let deepSpaceStars: Star[] = [];
+    let sparseZoomStars: Star[] = []; // Pocas estrellas sueltas para zoom profundo
     let nebulae: Nebula[] = [];
     let isFocusedState = false;
-    let deepAlpha = 0;
+    let focusFade = 0; // 0 = cielo amplio, 1 = zoom profundo enfocado
 
     let w = 0;
     let h = 0;
@@ -78,26 +79,15 @@ export default function RealSky() {
     const smooth = { x: 0.5, y: 0.5 };
 
     // Calcula la posición Y del centro de la Vía Láctea en un punto X dado.
-    // Forma un arco suave que cruza la pantalla de esquina inferior-izquierda
-    // a esquina superior-derecha, como se ve desde el hemisferio sur.
     function bandCenterY(xNorm: number): number {
-      // Arco parabólico: sube desde abajo-izquierda, cruza el centro arriba, baja a la derecha
       const arch = -0.6 * Math.pow(xNorm - 0.5, 2) + 0.52;
       return arch * h;
     }
 
-    // Ancho de la banda en un punto dado (más ancha en el centro galáctico)
+    // Ancho de la banda en un punto dado
     function bandWidth(xNorm: number): number {
       const centerProximity = 1 - Math.abs(xNorm - 0.45) * 1.2;
       return h * (0.08 + 0.14 * Math.max(0, centerProximity));
-    }
-
-    // Distancia de un punto al eje central de la Vía Láctea (normalizada 0..1)
-    function bandDistance(x: number, y: number): number {
-      const xn = x / w;
-      const cy = bandCenterY(xn);
-      const bw = bandWidth(xn);
-      return Math.abs(y - cy) / (bw * 0.5);
     }
 
     function build() {
@@ -112,13 +102,12 @@ export default function RealSky() {
 
       const rng = seededRandom(42);
 
-      // === ESTRELLAS DE CAMPO (distribuidas por todo el cielo) ===
+      // === ESTRELLAS DE CAMPO (cielo amplio) ===
       const count = Math.min(Math.floor((w * h) / 1600), 800);
       stars = [];
       for (let i = 0; i < count; i++) {
         const x = rng() * w;
         let y = rng() * h;
-        // Leve concentración hacia la banda
         if (rng() < 0.2) {
           const xn = x / w;
           const cy = bandCenterY(xn);
@@ -136,7 +125,7 @@ export default function RealSky() {
         });
       }
 
-      // === ESTRELLAS DE LA VÍA LÁCTEA (densas, pequeñas, concentradas en la banda) ===
+      // === ESTRELLAS DE LA VÍA LÁCTEA (densas, concentradas en la banda) ===
       bandStars = [];
       const bandCount = Math.min(Math.floor((w * h) / 800), 1400);
       for (let i = 0; i < bandCount; i++) {
@@ -144,15 +133,13 @@ export default function RealSky() {
         const x = xn * w;
         const cy = bandCenterY(xn);
         const bw = bandWidth(xn);
-        // Distribución gaussiana centrada en la banda
-        const spread = (rng() + rng() + rng()) / 3; // aproximación gaussiana
+        const spread = (rng() + rng() + rng()) / 3;
         const offset = (spread - 0.5) * bw * 1.2;
         const y = cy + offset;
 
         if (y < -20 || y > h + 20) continue;
 
         const distFromCenter = Math.abs(offset) / (bw * 0.5);
-        // Más brillantes cerca del centro de la banda
         const brightBoost = Math.max(0, 1 - distFromCenter);
         const b = Math.pow(rng(), 2.5 + distFromCenter * 2);
 
@@ -163,21 +150,20 @@ export default function RealSky() {
           base: (0.15 + b * 0.5 + brightBoost * 0.2) * (0.4 + brightBoost * 0.6),
           tw: rng() * Math.PI * 2,
           twSpeed: 0.6 + rng() * 2.0,
-          // Más cálidas hacia el centro galáctico (xn ~ 0.45)
           hue: (rng() - 0.5) * 2 + (1 - Math.abs(xn - 0.45) * 2) * 0.5,
         });
       }
 
-      // === NUBES DE NEBULOSIDAD ===
+      // === NUBES DE NEBULOSIDAD (Vía Láctea) ===
       nebulae = [];
       const nebulaColors = [
-        "rgba(120, 100, 160, ALPHA)", // Violeta pálido
-        "rgba(100, 130, 180, ALPHA)", // Azul frío
-        "rgba(160, 120, 100, ALPHA)", // Marrón cálido (polvo)
-        "rgba(140, 140, 170, ALPHA)", // Gris lavanda
-        "rgba(90, 80, 130, ALPHA)",   // Violeta oscuro
-        "rgba(130, 110, 90, ALPHA)",  // Ocre oscuro
-        "rgba(100, 120, 140, ALPHA)", // Azul grisáceo
+        "rgba(120, 100, 160, ALPHA)",
+        "rgba(100, 130, 180, ALPHA)",
+        "rgba(160, 120, 100, ALPHA)",
+        "rgba(140, 140, 170, ALPHA)",
+        "rgba(90, 80, 130, ALPHA)",
+        "rgba(130, 110, 90, ALPHA)",
+        "rgba(100, 120, 140, ALPHA)",
       ];
       const nebulaCount = 25;
       for (let i = 0; i < nebulaCount; i++) {
@@ -200,27 +186,29 @@ export default function RealSky() {
         });
       }
 
-      // === MICRO-ESTRELLAS DE ESPACIO PROFUNDO (reveladas con zoom) ===
-      deepSpaceStars = [];
-      const deepCount = Math.min(Math.floor((w * h) / 1800), 650);
-      for (let i = 0; i < deepCount; i++) {
+      // === ESTRELLAS SUELTAS PARA ZOOM PROFUNDO (muy pocas, sutiles y limpias) ===
+      sparseZoomStars = [];
+      const sparseCount = 26; // Solo ~26 estrellas en toda la pantalla
+      for (let i = 0; i < sparseCount; i++) {
         const x = rng() * w;
         const y = rng() * h;
-        const b = Math.pow(rng(), 2.8);
-        deepSpaceStars.push({
+        const b = Math.pow(rng(), 2.0);
+        sparseZoomStars.push({
           x,
           y,
-          r: 0.2 + b * 1.1,
-          base: 0.2 + b * 0.8,
+          r: 0.4 + b * 1.1,
+          base: 0.2 + b * 0.5,
           tw: rng() * Math.PI * 2,
-          twSpeed: 0.8 + rng() * 2.2,
+          twSpeed: 0.3 + rng() * 0.8,
           hue: (rng() - 0.5) * 2,
         });
       }
     }
 
-    // Dibuja la Vía Láctea: múltiples capas de gradientes radiales a lo largo del arco
-    function drawMilkyWay() {
+    // Dibuja la Vía Láctea modulada por el factor de desvanecimiento
+    function drawMilkyWay(globalFade: number) {
+      if (globalFade <= 0.001) return;
+
       ctx!.save();
       ctx!.globalCompositeOperation = "lighter";
 
@@ -232,9 +220,8 @@ export default function RealSky() {
         const cy = bandCenterY(xn);
         const bw = bandWidth(xn);
 
-        // El núcleo galáctico es más brillante (xn ~ 0.4-0.5)
         const coreProximity = Math.max(0, 1 - Math.abs(xn - 0.45) * 2.5);
-        const baseAlpha = 0.015 + coreProximity * 0.04;
+        const baseAlpha = (0.015 + coreProximity * 0.04) * globalFade;
 
         const grad = ctx!.createRadialGradient(x, cy, 0, x, cy, bw);
         grad.addColorStop(0, `rgba(180, 170, 200, ${baseAlpha * 1.8})`);
@@ -255,9 +242,9 @@ export default function RealSky() {
       const coreBW = bandWidth(0.45);
 
       const coreGrad = ctx!.createRadialGradient(coreX, coreY, 0, coreX, coreY, coreBW * 0.6);
-      coreGrad.addColorStop(0, "rgba(220, 200, 180, 0.06)");
-      coreGrad.addColorStop(0.3, "rgba(180, 160, 140, 0.04)");
-      coreGrad.addColorStop(0.6, "rgba(140, 120, 130, 0.02)");
+      coreGrad.addColorStop(0, `rgba(220, 200, 180, ${0.06 * globalFade})`);
+      coreGrad.addColorStop(0.3, `rgba(180, 160, 140, ${0.04 * globalFade})`);
+      coreGrad.addColorStop(0.6, `rgba(140, 120, 130, ${0.02 * globalFade})`);
       coreGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx!.fillStyle = coreGrad;
       ctx!.beginPath();
@@ -266,7 +253,7 @@ export default function RealSky() {
 
       ctx!.restore();
 
-      // CAPA 3: Nubes de nebulosidad (no aditivas, más sutiles)
+      // CAPA 3: Nubes de nebulosidad
       ctx!.save();
       for (const neb of nebulae) {
         ctx!.save();
@@ -274,7 +261,7 @@ export default function RealSky() {
         ctx!.rotate(neb.rotation);
 
         const nebGrad = ctx!.createRadialGradient(0, 0, 0, 0, 0, Math.max(neb.rx, neb.ry));
-        const c = neb.color.replace("ALPHA", String(neb.alpha));
+        const c = neb.color.replace("ALPHA", String(neb.alpha * globalFade));
         const cFade = neb.color.replace("ALPHA", "0");
         nebGrad.addColorStop(0, c);
         nebGrad.addColorStop(0.4, c);
@@ -288,7 +275,7 @@ export default function RealSky() {
       }
       ctx!.restore();
 
-      // CAPA 4: Bandas oscuras de polvo (restar luz con darken)
+      // CAPA 4: Bandas oscuras de polvo
       ctx!.save();
       ctx!.globalCompositeOperation = "multiply";
       const dustCount = 12;
@@ -307,8 +294,9 @@ export default function RealSky() {
 
         const dustGrad = ctx!.createRadialGradient(0, 0, 0, 0, 0, Math.max(drx, dry));
         const da = 0.92 + dustRng() * 0.06;
-        dustGrad.addColorStop(0, `rgba(3, 4, 9, ${1 - da})`);
-        dustGrad.addColorStop(0.5, `rgba(3, 4, 9, ${(1 - da) * 0.5})`);
+        const dustAlpha = (1 - da) * globalFade;
+        dustGrad.addColorStop(0, `rgba(3, 4, 9, ${dustAlpha})`);
+        dustGrad.addColorStop(0.5, `rgba(3, 4, 9, ${dustAlpha * 0.5})`);
         dustGrad.addColorStop(1, "rgba(3, 4, 9, 0)");
 
         ctx!.save();
@@ -341,7 +329,7 @@ export default function RealSky() {
     let raf = 0;
     let t = 0;
 
-    // Estado del efecto cinematográfico de viajes en hiperespacio (Warp Speed / Starburst)
+    // Estado del efecto cinematográfico de hiperespacio (Warp Speed / Starburst)
     let warpState: { x: number; y: number; startTime: number } | null = null;
     const WARP_DURATION = 0.85; // segundos
 
@@ -369,9 +357,10 @@ export default function RealSky() {
       const px = (smooth.x - 0.5) * 18;
       const py = (smooth.y - 0.5) * 18;
 
-      // Transición suave del campo de micro-estrellas de espacio profundo al hacer zoom
-      const targetDeepAlpha = isFocusedState ? 1 : 0;
-      deepAlpha += (targetDeepAlpha - deepAlpha) * 0.05;
+      // Transición suave: 0 = cielo amplio, 1 = zoom profundo
+      const targetFocus = isFocusedState ? 1 : 0;
+      focusFade += (targetFocus - focusFade) * 0.07;
+      const wideAlpha = Math.max(0, 1 - focusFade);
 
       // Cálculo del progreso de hiperespacio (0 a 1)
       let warpProgress = 0;
@@ -383,7 +372,6 @@ export default function RealSky() {
         const elapsed = now - warpState.startTime;
         if (elapsed < WARP_DURATION) {
           warpProgress = elapsed / WARP_DURATION;
-          // Curva suave de aceleración/desaceleración estilo película
           intensity = Math.sin(warpProgress * Math.PI);
           wx = warpState.x;
           wy = warpState.y;
@@ -392,99 +380,123 @@ export default function RealSky() {
         }
       }
 
-      // === FONDO ===
+      // === FONDO VACÍO PROFUNDO ===
       ctx!.fillStyle = voidColor;
       ctx!.fillRect(0, 0, w, h);
 
-      // Desplazamiento sutil del fondo completo (parallax del mouse + movimiento durante zoom)
-      ctx!.save();
-      const zoomShift = isFocusedState ? 8 : 0;
-      ctx!.translate(px * 0.5 + zoomShift * (smooth.x - 0.5), py * 0.5 + zoomShift * (smooth.y - 0.5));
+      // === VÍA LÁCTEA Y ESTRELLAS DE LA BANDA (se desvanecen al hacer zoom) ===
+      if (wideAlpha > 0.002) {
+        ctx!.save();
+        const zoomShift = isFocusedState ? 8 : 0;
+        ctx!.translate(px * 0.5 + zoomShift * (smooth.x - 0.5), py * 0.5 + zoomShift * (smooth.y - 0.5));
 
-      // Dibujar Vía Láctea con todas sus capas
-      drawMilkyWay();
+        // Dibujar Vía Láctea con opacidad modulada
+        drawMilkyWay(wideAlpha);
 
-      // === ESTRELLAS DE LA VÍA LÁCTEA (densas, pequeñas) ===
-      if (intensity <= 0.05) {
-        for (const s of bandStars) {
+        // Estrellas densas de la Vía Láctea
+        if (intensity <= 0.05) {
+          for (const s of bandStars) {
+            const twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * s.twSpeed + s.tw);
+            const alpha = s.base * twinkle * wideAlpha;
+            if (alpha < 0.005) continue;
+
+            const depth = s.r / 3;
+            const sx = s.x + px * depth;
+            const sy = s.y + py * depth;
+            const color = hexMix(cold, warm, Math.max(0, Math.min(1, (s.hue + 1) / 2)));
+
+            ctx!.beginPath();
+            ctx!.arc(sx, sy, s.r, 0, Math.PI * 2);
+            ctx!.fillStyle = color;
+            ctx!.globalAlpha = alpha;
+            ctx!.fill();
+          }
+        }
+        ctx!.restore();
+      }
+
+      // === ESTRELLAS DE CAMPO AMPLIO ===
+      if (wideAlpha > 0.002 || intensity > 0.02) {
+        for (const s of stars) {
           const twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * s.twSpeed + s.tw);
           const alpha = s.base * twinkle;
-          const depth = s.r / 3;
+          const depth = s.r / 2.1;
           const sx = s.x + px * depth;
           const sy = s.y + py * depth;
-          const color = hexMix(cold, warm, Math.max(0, Math.min(1, (s.hue + 1) / 2)));
+          const color = hexMix(cold, warm, (s.hue + 1) / 2);
+
+          if (intensity > 0.02) {
+            // EFECTO WARP STREAKS: Estelas radiales
+            const dx = sx - wx;
+            const dy = sy - wy;
+            const dist = Math.hypot(dx, dy) || 1;
+            const ux = dx / dist;
+            const uy = dy / dist;
+
+            const streakLength = Math.min(dist * intensity * 0.95, 180 * intensity);
+            const ex = sx + ux * streakLength;
+            const ey = sy + uy * streakLength;
+
+            const grad = ctx!.createLinearGradient(sx, sy, ex, ey);
+            grad.addColorStop(0, color);
+            grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+            ctx!.beginPath();
+            ctx!.moveTo(sx, sy);
+            ctx!.lineTo(ex, ey);
+            ctx!.strokeStyle = grad;
+            ctx!.lineWidth = s.r * (1 + intensity * 1.5);
+            ctx!.globalAlpha = alpha * (0.6 + intensity * 0.4);
+            ctx!.stroke();
+          } else {
+            const currentAlpha = alpha * wideAlpha;
+            if (currentAlpha < 0.005) continue;
+
+            ctx!.beginPath();
+            ctx!.arc(sx, sy, s.r, 0, Math.PI * 2);
+            ctx!.fillStyle = color;
+            ctx!.globalAlpha = currentAlpha;
+            ctx!.fill();
+
+            if (s.r > 1.3) {
+              const halo = ctx!.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
+              halo.addColorStop(0, color);
+              halo.addColorStop(1, "transparent");
+              ctx!.globalAlpha = currentAlpha * 0.25;
+              ctx!.fillStyle = halo;
+              ctx!.beginPath();
+              ctx!.arc(sx, sy, s.r * 5, 0, Math.PI * 2);
+              ctx!.fill();
+            }
+          }
+        }
+      }
+
+      // === ESTRELLAS SUELTAS EN ZOOM PROFUNDO ===
+      // Al hacer zoom, solo quedan unas pocas estrellas dispersas en el fondo oscuro
+      if (focusFade > 0.005 && intensity <= 0.05) {
+        for (const s of sparseZoomStars) {
+          const twinkle = reduced ? 1 : 0.75 + 0.25 * Math.sin(t * s.twSpeed + s.tw);
+          const alpha = s.base * twinkle * focusFade;
+          const depth = s.r / 2.2;
+          const sx = s.x + px * depth;
+          const sy = s.y + py * depth;
+          const color = hexMix(cold, warm, (s.hue + 1) / 2);
 
           ctx!.beginPath();
           ctx!.arc(sx, sy, s.r, 0, Math.PI * 2);
           ctx!.fillStyle = color;
           ctx!.globalAlpha = alpha;
           ctx!.fill();
-        }
-      }
-      ctx!.restore();
 
-      // Render de micro-estrellas de espacio profundo (al estar enfocado)
-      if (deepAlpha > 0.01 && intensity <= 0.05) {
-        for (const ds of deepSpaceStars) {
-          const twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * ds.twSpeed + ds.tw);
-          const alpha = ds.base * twinkle * deepAlpha * 0.85;
-          const color = hexMix(cold, warm, (ds.hue + 1) / 2);
-          ctx!.beginPath();
-          ctx!.arc(ds.x, ds.y, ds.r, 0, Math.PI * 2);
-          ctx!.fillStyle = color;
-          ctx!.globalAlpha = alpha;
-          ctx!.fill();
-        }
-      }
-
-      // === ESTRELLAS DE CAMPO ===
-      for (const s of stars) {
-        const twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * s.twSpeed + s.tw);
-        const alpha = s.base * twinkle;
-        const depth = s.r / 2.1;
-        const sx = s.x + px * depth;
-        const sy = s.y + py * depth;
-        const color = hexMix(cold, warm, (s.hue + 1) / 2);
-
-        if (intensity > 0.02) {
-          // EFECTO WARP STREAKS: Estelas radiales saliendo del punto de origen
-          const dx = sx - wx;
-          const dy = sy - wy;
-          const dist = Math.hypot(dx, dy) || 1;
-          const ux = dx / dist;
-          const uy = dy / dist;
-
-          const streakLength = Math.min(dist * intensity * 0.95, 180 * intensity);
-          const ex = sx + ux * streakLength;
-          const ey = sy + uy * streakLength;
-
-          const grad = ctx!.createLinearGradient(sx, sy, ex, ey);
-          grad.addColorStop(0, color);
-          grad.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-          ctx!.beginPath();
-          ctx!.moveTo(sx, sy);
-          ctx!.lineTo(ex, ey);
-          ctx!.strokeStyle = grad;
-          ctx!.lineWidth = s.r * (1 + intensity * 1.5);
-          ctx!.globalAlpha = alpha * (0.6 + intensity * 0.4);
-          ctx!.stroke();
-        } else {
-          // Estado normal sin hiperespacio
-          ctx!.beginPath();
-          ctx!.arc(sx, sy, s.r, 0, Math.PI * 2);
-          ctx!.fillStyle = color;
-          ctx!.globalAlpha = alpha;
-          ctx!.fill();
-
-          if (s.r > 1.3) {
-            const halo = ctx!.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
+          if (s.r > 1.1) {
+            const halo = ctx!.createRadialGradient(sx, sy, 0, sx, sy, s.r * 4);
             halo.addColorStop(0, color);
             halo.addColorStop(1, "transparent");
-            ctx!.globalAlpha = alpha * 0.25;
+            ctx!.globalAlpha = alpha * 0.3;
             ctx!.fillStyle = halo;
             ctx!.beginPath();
-            ctx!.arc(sx, sy, s.r * 5, 0, Math.PI * 2);
+            ctx!.arc(sx, sy, s.r * 4, 0, Math.PI * 2);
             ctx!.fill();
           }
         }
