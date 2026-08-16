@@ -28,7 +28,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
       {(project.links.length > 0 || project.codeNote) && (
         <div className={styles.links}>
-          <span className={styles.linksLabel}>// código &amp; enlaces</span>
+          <span className={styles.linksLabel}>{"// código & enlaces"}</span>
           <div className={styles.linkRow}>
             {project.links.map((link) => (
               <a

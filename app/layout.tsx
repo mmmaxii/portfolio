@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import RealSky from "@/components/background/RealSky";
+import TargetCursor from "@/components/ui/TargetCursor";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -43,6 +44,13 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${jakartaSans.variable} ${plexMono.variable}`}>
       <body>
+        <TargetCursor
+          spinDuration={10}
+          cursorColor="#cfe2ff"
+          cursorColorOnTarget="#6fe3a8"
+          hoverDuration={0.2}
+          parallaxOn={true}
+        />
         <RealSky />
         <div className="site-content">{children}</div>
       </body>
