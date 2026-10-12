@@ -1,59 +1,50 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
-import RealSky from "@/components/background/RealSky";
-import TargetCursor from "@/components/ui/TargetCursor";
+import { Big_Shoulders, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 
-const jakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-sans",
+const display = Big_Shoulders({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700"],
+  axes: ["opsz"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-mono",
+const sans = IBM_Plex_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   display: "swap",
 });
 
+const mono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://portafolio-mmmaxii.vercel.app"),
-  title: "Maximiliano Valderrama | Astronomía & Desarrollo Python",
+  metadataBase: new URL("https://valderramam.vercel.app"),
+  title: "Maximiliano Valderrama | Astronomía y desarrollo Python",
   description:
-    "Portafolio de Maximiliano Valderrama — Licenciado en Astronomía y Desarrollador FullStack Python. Simulaciones astrofísicas, machine learning y desarrollo backend.",
+    "Portafolio de Maximiliano Valderrama: astronomía (PUC) y desarrollo backend en Python. Un cielo real con datos de Mellinger, DSS2, 2MASS y GALEX donde cada objeto es un proyecto.",
   openGraph: {
-    title: "Maximiliano Valderrama | Astronomía & Desarrollo Python",
-    description:
-      "Un mapa estelar interactivo: simulaciones de discos protoplanetarios, proyectos fullstack y astrofísica computacional.",
+    title: "Maximiliano Valderrama | Astronomía y desarrollo Python",
+    description: "Un cielo real con zoom y filtros ultravioleta, visible e infrarrojo; cada objeto es un proyecto.",
     locale: "es_CL",
     type: "website",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05060f",
+  themeColor: "#04060a",
+  viewportFit: "cover",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={`${jakartaSans.variable} ${plexMono.variable}`}>
-      <body>
-        <TargetCursor
-          spinDuration={10}
-          cursorColor="#cfe2ff"
-          cursorColorOnTarget="#6fe3a8"
-          hoverDuration={0.2}
-          parallaxOn={true}
-        />
-        <RealSky />
-        <div className="site-content">{children}</div>
-      </body>
+    <html lang="es" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+      <body data-band="vis">{children}</body>
     </html>
   );
 }

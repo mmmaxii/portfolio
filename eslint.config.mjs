@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Versión anterior y prototipos (no forman parte del sitio)
+    "version-beta/**",
+    "prototipo/**",
+    "recovered_files/**",
+    "graphify-out/**",
   ]),
 ]);
 

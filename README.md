@@ -1,30 +1,22 @@
-# Portafolio — Maximiliano Valderrama
+# Portafolio · Maximiliano Valderrama
 
-Portafolio personal con estética de **mapa estelar interactivo**: un evento astronómico central rodeado de objetos celestes clickeables (planeta, galaxia espiral, disco protoplanetario, cúmulo estelar y púlsar), cada uno abriendo una sección del sitio. En pantallas menores a 1024px se muestra un layout de scroll vertical clásico con el mismo contenido.
+Un cielo real con zoom (Aladin Lite + HiPS del CDS) y tres filtros: ultravioleta, visible e infrarrojo. Cada filtro agrupa un tipo de trabajo y cada objeto real del cielo es un proyecto. Al acercarse a un objeto aparece su imagen profunda (ESO, ESA/Hubble) ubicada con su astrometría AVM. Abajo, una bitácora con scroll: sobre mí, el espectro de herramientas, el catálogo de proyectos y contacto.
 
-- **Stack:** Next.js (App Router) + TypeScript, CSS Modules, [ogl](https://github.com/oframe/ogl) para el fondo Galaxy (WebGL, componente de [React Bits](https://reactbits.dev)).
-- **Contenido:** todo el contenido vive tipado en [`data/content.ts`](data/content.ts).
-- **Sin backend:** sitio 100% estático, pensado para Vercel.
+- **Stack:** Next.js (App Router) + TypeScript, CSS global con tokens, Aladin Lite v3 cargado desde el CDS.
+- **Contenido:** todo vive en [`data/content.ts`](data/content.ts): bandas, objetos (con su proyecto e imagen profunda) y el espectro de herramientas.
+- **Versión anterior:** el mapa estelar dibujado con CSS quedó en [`version-beta/`](version-beta/).
 
 ## Desarrollo
 
 ```bash
 npm install
 npm run dev    # http://localhost:3000
-npm run build  # build de producción
+npm run build
 ```
 
-## Estructura
+## Agregar un proyecto al cielo
 
-```
-app/                  # layout (fuentes, metadata), page, globals.css
-components/
-  background/         # fondo Galaxy (WebGL)
-  starmap/            # mapa estelar desktop (objetos SVG + estrella central)
-  panel/              # <dialog> modal de secciones
-  sections/           # contenido compartido desktop/móvil
-  mobile/             # layout scroll para pantallas chicas
-  ui/                 # carrusel, tabs, visor de GIFs, íconos
-data/content.ts       # fuente de verdad del contenido (español)
-public/img/           # imágenes y GIFs de proyectos/simulaciones
-```
+1. Elige un objeto real y su banda (`uv`, `vis` o `ir`) y agrégalo a `TARGETS` con su RA/Dec (ICRS, grados).
+2. Para la imagen profunda, busca la imagen en [AstroPix](https://www.astropix.org) y copia sus metadatos AVM:
+   `widthDeg = |escala| × ancho_px`, `fx = refX / ancho`, `fy = 1 − refY / alto` (AVM cuenta Y desde abajo) y `rot = Spatial.Rotation`.
+3. Si el proyecto usa herramientas nuevas, agrégalas en `SPECTRUM` con sus fuentes en `SOURCES`.

@@ -1,550 +1,363 @@
-// Single source of truth for all site content (Spanish).
-// Text supports lightweight markup: **bold** and *italic*, rendered by <RichText>.
+// Fuente única de contenido del portafolio (español).
+// Cielo: bandas (filtros) y objetos reales; cada objeto lleva un proyecto y, si existe,
+// una imagen profunda con su astrometría (metadatos AVM de ESO / ESA/Hubble).
 
 export const profile = {
   name: "Maximiliano Valderrama",
   fullName: "Maximiliano F. Valderrama",
-  role: "Licenciado en Astronomía y Desarrollador FullStack Python",
-  email: "maximilianovalderrama123@gmail.com",
+  role: "Astronomía (PUC) y desarrollo backend en Python.",
+  email: "mvalderrav@uc.cl",
   github: "https://github.com/mmmaxii",
-  githubUser: "mmmaxii",
   linkedin: "https://www.linkedin.com/in/maximiliano-valderrama-vargas/",
-  contactIntro:
-    "Estoy abierto a oportunidades y colaboraciones técnicas donde pueda aportar valor real a través de aplicaciones backend sólidas.",
-  footer: "© 2026 Maximiliano F. Valderrama. Elaborado con Next.js y mucho espacio-tiempo.",
 };
 
-/* ------------------------------- Sobre Mí ------------------------------- */
+/* ------------------------------- Bandas ------------------------------- */
 
-export const aboutParagraphs: string[] = [
-  "Soy originario de Los Ángeles, Chile, y **Licenciado en Astronomía**, una carrera que me reveló mi gran vocación profesional: la **programación y automatización**. Analizar inmensos volúmenes de datos astronómicos de misiones como Kepler, Gaia DR3, TESS y simulaciones como IllustrisTNG me demostró el enorme potencial de Python para entender y modelar el universo.",
-  "Considero que poseo un perfil sumamente pragmático. Descubrir que cualquier proceso que uno imagine puede automatizarse me motivó a profundizar en cursos de Programación Avanzada. Actualmente compagino mi formación como astrónomo con un **Bootcamp de Desarrollo Fullstack**, buscando tomar todo ese poder del Backend y el procesamiento de datos, y plasmarlo en interfaces visuales que destaquen por su diseño y experiencia de usuario.",
-  "Mi proyecto en paralelo y hobby más demandante en la actualidad es personal: **ser padre**. Cuidar de mi hija a tiempo completo me enseña a diario sobre resiliencia, prioridades y organización, lo que compagino firmemente con mis estudios y la programación.",
-  "A futuro, el ámbito investigativo es mi mayor proyección: deseo especializarme en la simulación y análisis de **discos protoplanetarios**, para lograr encontrar relaciones directas sobre cómo se originan los mundos oceánicos (*Water Worlds*) y entender qué mecanismos rigen su creación.",
-];
+export type BandId = "uv" | "vis" | "ir";
 
-/* ------------------------------ Tech Stack ------------------------------ */
-
-export interface TechCategory {
-  category: string;
-  items: string[];
+export interface Survey {
+  id: string; // HiPS ID del CDS
+  name: string;
 }
 
-export const techStack: TechCategory[] = [
-  { category: "Backend", items: ["Python", "Django", "FastAPI", "Uvicorn", "JWT"] },
-  { category: "Frontend", items: ["HTML5", "CSS", "JavaScript", "React", "Vite", "Next.js", "TypeScript"] },
-  { category: "Bases de Datos", items: ["PostgreSQL", "MySQL", "SQLite", "pgvector", "ChromaDB"] },
-  { category: "Machine Learning", items: ["PyTorch", "CUDA", "TensorFlow", "Sentence-Transformers"] },
-  { category: "IA & LLM", items: ["LangChain", "Claude API", "Google Gemini API", "RAG"] },
-  { category: "DevOps & Deploy", items: ["Git", "Docker", "Docker Compose", "AWS", "Vercel", "Railway"] },
-  { category: "Arquitectura de Software", items: ["MVT", "DAO", "REST API"] },
-];
+export interface Band {
+  id: BandId;
+  label: string; // botón
+  range: string; // botón, línea pequeña
+  kicker: string;
+  title: string;
+  text: string;
+  note: string;
+  home: { ra: number; dec: number; fov: number };
+  wide: Survey;
+  /** Survey de mayor resolución bajo cierto campo (grados). */
+  deep?: Survey & { below: number };
+  /** Cambiar de objeto con un corte a negro en vez de volar (GALEX tiene huecos). */
+  jump?: boolean;
+}
 
-/* ------------------------------- Proyectos ------------------------------ */
+export const BANDS: Record<BandId, Band> = {
+  uv: {
+    id: "uv",
+    label: "Ultravioleta",
+    range: "GALEX · 0.15–0.28 µm",
+    kicker: "ULTRAVIOLETA · λ 0.15–0.28 µm",
+    title: "IA y automatización",
+    text: "En ultravioleta brillan las estrellas jóvenes y calientes de los brazos espirales. Acá están los proyectos donde trabajo con modelos de lenguaje.",
+    note: "GALEX cubrió el cielo en parches y evitó el plano de la Vía Láctea: al alejarte verás zonas sin datos.",
+    home: { ra: 204.254, dec: -29.866, fov: 2.5 },
+    wide: { id: "CDS/P/GALEXGR6_7/color", name: "GALEX GR6/7" },
+    jump: true,
+  },
+  vis: {
+    id: "vis",
+    label: "Visible",
+    range: "Mellinger · DSS2 · 0.4–0.7 µm",
+    kicker: "VISIBLE · λ 0.4–0.7 µm",
+    title: "Lo que construyo",
+    text: "La luz que ve el ojo. Aplicaciones que cualquiera puede abrir y usar.",
+    note: "Cielo austral desde 37° S: Carina, Crux y las Nubes de Magallanes.",
+    home: { ra: 175.0, dec: -64.0, fov: 110 },
+    wide: { id: "CDS/P/Mellinger/color", name: "Mellinger" },
+    deep: { id: "CDS/P/DSS2/color", name: "DSS2 color", below: 6 },
+  },
+  ir: {
+    id: "ir",
+    label: "Infrarrojo",
+    range: "2MASS · 1.2–2.2 µm",
+    kicker: "INFRARROJO · λ 1.2–2.2 µm",
+    title: "Lo que investigo",
+    text: "El infrarrojo atraviesa el polvo y deja ver discos, núcleos galácticos y lo que el visible esconde. Mi trabajo en astronomía.",
+    note: "El centro de la galaxia: en visible es una franja oscura de polvo, acá se ve el bulbo completo.",
+    home: { ra: 266.4, dec: -29.0, fov: 60 },
+    wide: { id: "CDS/P/2MASS/color", name: "2MASS J H Ks" },
+  },
+};
 
-export interface ProjectImage {
+export const BAND_ORDER: BandId[] = ["uv", "vis", "ir"];
+
+/* ------------------------------- Objetos ------------------------------- */
+
+export interface DeepImage {
   src: string;
-  alt: string;
-}
-
-export interface ProjectLink {
+  ra: number; // coordenadas del píxel de referencia (ICRS, grados)
+  dec: number;
+  widthDeg: number; // ancho angular de la imagen completa
+  fx: number; // píxel de referencia como fracción del ancho (desde la izquierda)
+  fy: number; // píxel de referencia como fracción del alto (desde arriba)
+  rot: number; // AVM Spatial.Rotation: el norte está `rot` grados a la izquierda de la vertical
   label: string;
-  href: string;
-  kind: "demo" | "repo";
+  credit: string;
+  fadeFrom?: number; // campo (grados) donde empieza a aparecer
+  fadeTo?: number; // campo donde ya se ve completa
 }
 
 export interface Project {
   title: string;
   tech: string[];
-  description: string;
-  images: ProjectImage[];
-  links: ProjectLink[];
-  group: "main" | "ai";
-  carouselSpeed?: "normal" | "fast";
-  /** Nota mostrada junto a los enlaces cuando el código no es público (p. ej. producto en producción). */
-  codeNote?: string;
+  desc: string;
+  img?: string;
+  links: { label: string; href: string }[];
 }
 
-export const projects: Project[] = [
-  {
-    title: "Alke Wallet Fullstack",
-    tech: ["Django Frontend", "SQLite", "Fetch API", "Chart.js"],
-    description:
-      "Evolución definitiva de Alke Wallet combinando plantillas de Django con backend SQL. Implementé manejo de estados transaccionales usando `transaction.atomic` (para separar sub-cuentas seguras), gráficos estáticos iterativos de Chart.js y optimizaciones usando JavaScript Vanilla para evitar renderizados de página al enviar dinero.",
-    images: [
-      { src: "/img/alke_wallet_django/alkewallet_django_home.png", alt: "Alke Wallet Django Home" },
-      { src: "/img/alke_wallet_django/alkewallet_django_bolsillos.png", alt: "Alke Wallet Django Bolsillos" },
-      { src: "/img/alke_wallet_django/alkewallet_django_registro.png", alt: "Alke Wallet Django Registro" },
-    ],
-    links: [
-      { label: "Ver App", href: "https://alke-wallet-django-production.up.railway.app/", kind: "demo" },
-      { label: "Repositorio", href: "https://github.com/mmmaxii/alke-wallet-django", kind: "repo" },
-    ],
-    group: "main",
-  },
-  {
-    title: "DecoIA",
-    tech: ["React", "Django", "Claude API", "Replicate Flux", "Meli API"],
-    description:
-      "Innovadora PWA impulsada por IA que transforma tus espacios. Sube una foto para obtener ideas de diseño, instrucciones DIY, renders fotorrealistas (Flux Kontext Pro) y recomendaciones de productos integrados con Mercado Libre.",
-    images: [{ src: "/img/decoia/decoia_home.png", alt: "DecoIA Home" }],
-    links: [{ label: "Ver Sitio Web (Beta)", href: "https://www.decoia.cl/", kind: "demo" }],
-    codeNote: "Código privado — producto en producción",
-    group: "main",
-  },
-  {
-    title: "Sistema Solar Interactivo",
-    tech: ["Django", "HTML5", "Vanilla CSS", "Three.js"],
-    description:
-      "Aplicación web interactiva construida bajo arquitectura MVT con Django, diseñada para visualizar los cuerpos celestes del sistema solar. Destaca por su avanzado diseño frontend utilizando CSS (Glassmorphism), disposiciones dinámicas y la integración de renderizado 3D de modelos astronómicos a través de Three.js.",
-    images: [
-      { src: "/img/solar_system/solar_system_home.png", alt: "Sistema Solar Home" },
-      { src: "/img/solar_system/solar_system_sun.png", alt: "Sistema Solar Sol" },
-      { src: "/img/solar_system/solar_system_saturn.png", alt: "Sistema Solar Saturno" },
-    ],
-    links: [{ label: "Ver Sitio Web", href: "https://solar-system-project-eta.vercel.app/", kind: "demo" }],
-    group: "main",
-  },
-  {
-    title: "Gestor BancoPy",
-    tech: ["Python", "POO", "SQLite", "API SendGrid"],
-    description:
-      "Completo sistema de gestión bancaria. Soporta flujos de autenticación estrictos, persistencia de transacciones multi-usuario con jerarquías polimórficas (Regular, Corporate, VIP), e integración con SendGrid para enviar correos de bienvenida de manera silenciosa.",
-    images: [{ src: "/img/bancopy/bancopy_terminal_1775145167302.png", alt: "Terminal de BancoPy" }],
-    links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/BancoPy", kind: "repo" }],
-    group: "main",
-  },
-  {
-    title: "Alke Wallet",
-    tech: ["HTML", "CSS (Bootstrap)", "JavaScript (ES6)"],
-    description:
-      "Billetera digital interactiva diseñada con un enfoque Mobile-First. Destaca por utilizar SweetAlert2 para notificaciones fluidas y animaciones Glassmorphism (Efecto vidrio). Integra simuladores de depósitos y un buscador asíncrono para transferir dinero de forma rápida y sencilla.",
-    images: [
-      { src: "/img/alke_wallet/alkewallet_home.png", alt: "Alke Wallet Home" },
-      { src: "/img/alke_wallet/alkewallet_login.png", alt: "Alke Wallet Login" },
-      { src: "/img/alke_wallet/alkewallet_deposito.png", alt: "Alke Wallet Depósito" },
-    ],
-    links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/Alke-Wallet", kind: "repo" }],
-    group: "main",
-  },
-  {
-    title: "Simulación de Lente Gravitacional",
-    tech: ["Python", "NumPy", "Matplotlib"],
-    description:
-      "Simulación interactiva utilizando un modelo de Esfera Isoterma Singular (SIS) con Shear externo. Permite visualizar en tiempo real cómo la gravedad distorsiona la luz de una galaxia de fondo ajustando parámetros mediante controles interactivos.",
-    images: [{ src: "/img/lensing/lente_gravitacional.gif", alt: "Simulación de lente gravitacional" }],
-    links: [
-      { label: "Ver Código", href: "https://github.com/mmmaxii/Simulacion-lente-gravitacional", kind: "repo" },
-    ],
-    group: "ai",
-  },
-  {
-    title: "Sombra de Agujero Negro",
-    tech: ["Python", "NumPy", "Matplotlib"],
-    description:
-      'Simulación numérica de la apariencia óptica de un agujero negro de Schwarzschild. Combina la determinación exacta del parámetro de impacto crítico ("sombra") usando Ray-Shooting Inverso, con una aproximación de campo débil para la deflexión de luz de las estrellas de fondo.',
-    images: [
-      { src: "/img/black-hole/v1-modelo-visual.png", alt: "Agujero negro con disco de acreción (modelo visual)" },
-      { src: "/img/black-hole/v2.png", alt: "Agujero negro con disco de acreción v2" },
-      { src: "/img/black-hole/v2-2.png", alt: "Agujero negro con disco de acreción v2.2" },
-      { src: "/img/black-hole/v3.png", alt: "Agujero negro v3" },
-      { src: "/img/black-hole/v3-1.png", alt: "Agujero negro v3.1" },
-      { src: "/img/black-hole/v3-3.png", alt: "Agujero negro v3.3" },
-      { src: "/img/black-hole/v3-4.png", alt: "Agujero negro v3.4" },
-      { src: "/img/black-hole/v3-5.png", alt: "Agujero negro v3.5" },
-    ],
-    links: [
-      {
-        label: "Ver Código",
-        href: "https://github.com/mmmaxii/ProyectosU-2025/tree/main/Proyectos%20independientes",
-        kind: "repo",
-      },
-    ],
-    group: "ai",
-    carouselSpeed: "fast",
-  },
-  {
-    title: "Análisis Espectroscópico IFU de NGC 5972",
-    tech: ["Python", "NumPy", "Astropy", "Voronoi Binning"],
-    description:
-      "Estudio de la distribución espacial y propiedades de ionización del gas en la galaxia NGC 5972 usando datos del instrumento MUSE. Apliqué teselación de Voronoi para optimizar la relación señal-ruido, corrigiendo atenuaciones de polvo mediante el decremento de Balmer. Analicé los flujos para construir mapas espaciales y un diagrama BPT, clasificando las regiones ionizantes y confirmando la fuerte presencia del AGN en el núcleo.",
-    images: [
-      { src: "/img/ngc5972/galaxia.jpg", alt: "Galaxia NGC 5972" },
-      { src: "/img/ngc5972/voronoi.png", alt: "Teselación de Voronoi de NGC 5972" },
-      { src: "/img/ngc5972/bpt.png", alt: "Diagrama BPT de NGC 5972" },
-      { src: "/img/ngc5972/flujos.png", alt: "Razones de flujo de NGC 5972" },
-    ],
-    links: [
-      {
-        label: "Ver Código",
-        href: "https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%202",
-        kind: "repo",
-      },
-    ],
-    group: "ai",
-  },
-  {
-    title: "Machine Learning con datos de TNG50",
-    tech: ["PyTorch", "TensorFlow"],
-    description:
-      "Diseño y ejecución de un pipeline automatizado para el procesamiento de datos astronómicos extraídos de la simulación TNG50. Apliqué modelos de Machine Learning para analizar las propiedades físicas (masa estelar, tasa de formación estelar, metalicidad) de las galaxias y predecir su evolución en diferentes etapas del universo. Utiliza datos de la simulación magnetohidrodinámica cosmológica a gran escala de formación y evolución de galaxias, extraídos de forma programática.",
-    images: [{ src: "/img/tng/tngsimulation.png", alt: "Simulación TNG50" }],
-    links: [
-      {
-        label: "Ver Código",
-        href: "https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%204",
-        kind: "repo",
-      },
-    ],
-    group: "ai",
-  },
-  {
-    title: "Asterion API",
-    tech: [
-      "LangChain",
-      "Google Gemini",
-      "FastAPI",
-      "PostgreSQL + pgvector",
-      "ChromaDB",
-      "PyTorch (CUDA)",
-      "Docker",
-      "AWS",
-    ],
-    description:
-      "Asistente de investigación astrofísica impulsado por RAG (Retrieval-Augmented Generation) que integra **35 herramientas** especializadas sobre **6 fuentes de datos en vivo** —NASA Exoplanet Archive, literatura científica (NASA ADS, +47.500 papers), química atmosférica teórica, SIMBAD, Gaia DR3 y VizieR—, citando numéricamente cada dato y fuente utilizada. El agente, orquestado con LangChain sobre Gemini 2.5 Flash, combina un espejo local en SQLite del archivo de exoplanetas con un motor RAG en Postgres + pgvector (búsqueda híbrida full-text + embeddings con Reciprocal Rank Fusion), y expone todo a través de una API en FastAPI con más de 470 tests automatizados. Incluye análisis científico avanzado: zona habitable (Kopparapu 2014), Índice de Similitud con la Tierra (ESI), detección de compañeros binarios vía métricas RUWE de Gaia, y pruebas estadísticas de hipótesis (Mann-Whitney, Kolmogorov-Smirnov) entre poblaciones de planetas.",
-    images: [],
-    links: [{ label: "Ver Sitio Web", href: "https://asterion-rag.vercel.app/", kind: "demo" }],
-    group: "ai",
-  },
-  {
-    title: "PA3Py — Pebble Accretion Post-Processing",
-    tech: ["Python", "NumPy", "SciPy", "h5py", "Matplotlib", "pytest", "PyPI"],
-    description:
-      "Paquete open source en Python (`pip install pa3py`) para calcular el crecimiento y la composición de embriones planetarios mediante acreción de pebbles, en post-procesado sobre simulaciones hidrodinámicas de discos protoplanetarios de TriPoDPy. A diferencia de los modelos prescriptivos, PA3Py lee la evolución completa de gas y polvo —densidades superficiales, temperatura y distribución de tamaños en tres poblaciones—, de modo que el suministro de sólidos queda regulado por las subestructuras reales del disco (gaps planetarios, trampas de presión, perturbaciones sinusoidales). Implementa la física de acreción de **Ormel (2017)** y **Drążkowska et al. (2023)** (regímenes headwind/shear, transición suave 2D–3D, tope de masa de aislamiento) y una snowline dinámica derivada de **Oka et al. (2011)**. Publicado con documentación, 22 tests unitarios y CI en GitHub Actions; usado para calcular más de 5.000 trayectorias de crecimiento planetario sobre 1.300+ simulaciones de disco.",
-    images: [],
-    links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/PA3Py", kind: "repo" }],
-    group: "ai",
-  },
-];
-
-/* --------------------- Práctica Profesional / Research ------------------- */
-
-export interface ArchitectureCard {
-  icon: "branch" | "meteor" | "eye";
-  title: string;
-  tech: string;
-  lead: string;
-  bullets: string[];
-}
-
-export interface Achievement {
-  icon: "server" | "thermometer" | "chart";
-  title: string;
-  text: string;
-  acknowledgements?: {
-    heading: string;
-    quote: string;
-    linkLabel: string;
-    href: string;
-  };
-}
-
-export const research = {
-  title: "Práctica Profesional: Simulaciones de Discos Protoplanetarios",
-  intro: [
-    'Durante mi práctica, desarrollé un marco de trabajo completo para simular y analizar la evolución termodinámica y química de los discos protoplanetarios. El objetivo principal fue estudiar la dinámica de las "snowlines" (líneas de nieve de volátiles como H₂O) y cómo el surgimiento de subestructuras (gaps planetarios y trampas de presión) influye en la migración de polvo (pebbles) y la consecuente acreción sobre embriones planetarios.',
-    "Este modelamiento fue construido utilizando bases teóricas de la evolución de discos (tripodpy, dustpylib) combinando el decaimiento de la tasa de acreción en estrellas T-Tauri y regímenes de fragmentación para entender la transición entre material rocoso (rico en silicatos) y material rico en hielos.",
-  ],
-  architectureCards: [
-    {
-      icon: "branch",
-      title: "1. El Pipeline Principal",
-      tech: "WaterworldPipeline • Mixins",
-      lead: "Arquitectura orientada a objetos que modulariza la física del disco:",
-      bullets: [
-        "**Disk Setup:** Define grilla radial y calcula parámetros estelares (L ≈ 1 L_sun, T ≈ 4000 K).",
-        "**Disk Chemistry:** Inyecta volátiles (H₂O, CO₂, CO) sobre silicatos.",
-        "**Snowline Physics:** Prescripción semianalítica propia que acopla el decaimiento temporal de la tasa de acreción en estrellas T-Tauri (Hartmann et al. 1998, M_dot ≈ t^-1.5) con los modelos radiativos de Oka et al. (2011), obteniendo R_snow(t): una migración realista de la snowline que cruza 1 AU a los 1.05 Myr.",
-        "**Pressure Bumps:** Modelos de Kanagawa, Duffell y sinusoidales para trampas de polvo.",
-      ],
-    },
-    {
-      icon: "meteor",
-      title: "2. Módulo de Acreción",
-      tech: "PA3Py (PebbleAccretion3)",
-      lead: "Módulo para rastrear el crecimiento de embriones, regido por los modelos de **Drążkowska (2023)** y **Ormel (2017)**:",
-      bullets: [
-        "Masa inicial considerada 100% material rocoso.",
-        "Fracción de hielo/silicato regulada estrictamente por la snowline de H₂O.",
-        "Incorpora deriva de polvo y fragmentación estelar de pebbles.",
-      ],
-    },
-    {
-      icon: "eye",
-      title: "3. Visualización y Análisis",
-      tech: "disk_visualizer • Python 2D",
-      lead: "Paquete diseñado para interpretar cientos de snapshots HDF5:",
-      bullets: [
-        "Mapea simultáneamente densidades de gas (Σ_gas) y polvo (Σ_dust).",
-        "Rastrea paramétricamente la posición en AU de la snowline.",
-        "Renderización batch de animaciones GIF de alta calidad.",
-      ],
-    },
-  ] satisfies ArchitectureCard[],
-  achievements: [
-    {
-      icon: "server",
-      title: "Computación de Alto Rendimiento (HPC)",
-      text: "Ejecuté más de **1.300 simulaciones** de evolución de gas y polvo en discos protoplanetarios en el clúster **Geryon 2** (Centro de Astro-Ingeniería UC). Aprendí a trabajar con sistemas de colas PBS/Torque —envío con `qsub`, walltime, gestión de módulos y entornos conda— y automaticé en Python el lanzamiento, monitoreo y recuperación de cientos de trabajos en paralelo sobre grillas de parámetros combinatorias.",
-      acknowledgements: {
-        heading: "Agradecimientos / Acknowledgements",
-        quote:
-          '"El clúster Geryon del Centro de Astro-Ingeniería UC fue utilizado exhaustivamente para los cálculos computacionales de estas simulaciones. Los proyectos ANID BASAL FB21000, BASAL CATA PFB-06, Anillo ACT-86, FONDEQUIP AIC-57 y QUIMAL 130008 proporcionaron financiamiento para diversas mejoras del clúster Geryon 2."',
-        linkLabel: "Ver información del clúster Geryon 2",
-        href: "https://www3.astro.puc.cl/geryon/g2/",
-      },
-    },
-    {
-      icon: "chart",
-      title: "Resultados: la \"Isla de Crecimiento\"",
-      text: "Del barrido de parámetros (turbulencia α y velocidad de fragmentación v_frag) obtuve **5.006 trayectorias** de crecimiento planetario válidas, con las que identifiqué una \"Isla de Crecimiento\" (α ≲ 10⁻³, M_gap ~ 0.05–0.1 M_Jup) y mostré que la regulación **temporal** del flujo de pebbles —el cuándo llega el material, no solo el cuánto— controla simultáneamente la masa final del planeta y su contenido de agua.",
-    },
-    {
-      icon: "thermometer",
-      title: "Acoplamiento Térmico Extendido",
-      text: "Superé limitaciones del código inyectando leyes termodinámicas y dependencias de acreción temporal teóricas de la literatura.",
-    },
-    {
-      icon: "chart",
-      title: "Herramientas de Análisis Posterior",
-      text: 'Creación de scripts iterativos (analisis_pa3_vfrag.py, etc.) para medir los efectos profundos del "drift" tardío en los perfiles de densidad.',
-    },
-  ] satisfies Achievement[],
-};
-
-/* ----------------------- Galería paramétrica (GIFs) ---------------------- */
-
-export type GifScenario = "base" | "gap" | "sinusoidal";
-
-export const ALPHAS = ["0.01", "0.005", "0.003", "0.001", "0.0005", "0.0001"] as const;
-export type Alpha = (typeof ALPHAS)[number];
-
-export const alphaDisplay: Record<Alpha, string> = {
-  "0.01": "10⁻²",
-  "0.005": "5×10⁻³",
-  "0.003": "3×10⁻³",
-  "0.001": "10⁻³",
-  "0.0005": "5×10⁻⁴",
-  "0.0001": "10⁻⁴",
-};
-
-export const gifScenarios: { id: GifScenario; label: string }[] = [
-  { id: "base", label: "Baseline (M_gap = 0.01)" },
-  { id: "gap", label: "Gap 15 AU (3 M_jup)" },
-  { id: "sinusoidal", label: "Estructura Sinusoidal" },
-];
-
-export function buildGifSrc(scenario: GifScenario, alpha: Alpha): string {
-  switch (scenario) {
-    case "base":
-      return `/img/practica/gifs/base/run_r5.0_m0.01_a${alpha}.gif`;
-    case "gap":
-      return `/img/practica/gifs/gap/run_r15.0_m3.0_a${alpha}.gif`;
-    case "sinusoidal":
-      return "/img/practica/gifs/sinusoidal/MuchosGaps_A0.7.gif";
-  }
-}
-
-export function gifTitle(scenario: GifScenario, alpha: Alpha): string {
-  const names: Record<GifScenario, string> = {
-    base: "Baseline",
-    gap: "Gap 15 AU",
-    sinusoidal: "Estructura Sinusoidal",
-  };
-  const display = scenario === "sinusoidal" ? "10⁻³ (Fijo)" : alphaDisplay[alpha];
-  return `Escenario: ${names[scenario]} | α = ${display}`;
-}
-
-export function gifDescription(scenario: GifScenario, alpha: Alpha): string {
-  switch (scenario) {
-    case "base":
-      return `Evolución de la densidad de polvo a 10 Myr bajo el régimen de viscosidad de Shakura-Sunyaev (α = ${alpha}). Sin interacción planetaria fuerte (M_gap = 0.01).`;
-    case "gap":
-      return `Planeta de 3 M_jup en 15 AU esculpiendo un gap profundo. La eficiencia de atrapamiento depende fuertemente de la viscosidad (α = ${alpha}).`;
-    case "sinusoidal":
-      return "Perturbaciones sinusoidales en el disco generando múltiples trampas de polvo locales. (Ejemplo con A=0.7).";
-  }
-}
-
-/* -------------------- Cielo real austral (Los Ángeles, Chile) ------------ */
-/*
- * Seis objetos astronómicos reales, visibles desde latitud ~37° S, ubicados
- * de forma aproximada a como aparecerían en el cielo. Cada objeto es un portal
- * temático. Navegación de 3 niveles: cielo → objeto (zoom) → sub-portal → detalle.
- *
- * Los colores NUNCA se hardcodean en los componentes: cada objeto referencia
- * un token CSS (colorVar) definido en app/globals.css.
- */
-
-export type SectionId = "about" | "projects" | "research" | "ai" | "tech" | "contact";
-
-export type SkyKind =
-  | "hypergiant" // Eta Carinae
-  | "galaxy-cluster" // Fornax
-  | "proto-disk" // PDS 70
-  | "pulsar" // PSR B1257+12
-  | "irregular" // Gran Nube de Magallanes
-  | "supernova"; // SN 1987A
-
-export type DetailContent =
-  | { type: "about" }
-  | { type: "contact" }
-  | { type: "research" }
-  | { type: "project"; projectTitle: string }
-  | { type: "tech"; category: string }
-  | { type: "note"; body: string[] };
-
-export interface SkyChild {
+export interface Target {
   id: string;
-  label: string;
-  sublabel?: string;
-  detail: DetailContent;
+  band: BandId;
+  cat: string; // designación de catálogo
+  name: string;
+  ra: number;
+  dec: number;
+  fov: number; // campo al llegar (grados)
+  fact: string;
+  project: Project;
+  deep?: DeepImage;
 }
 
-export interface SkyObject {
-  id: SectionId;
-  section: string; // "Sobre mí"
-  object: string; // "Eta Carinae"
-  catalog: string; // "η Car"
-  blurb: string; // línea descriptiva del objeto real
-  kind: SkyKind;
-  colorVar: string; // token CSS, p.ej. "--sky-eta"
-  size: number; // tamaño del glifo en el cielo (px)
-  position: { top: string; left: string }; // ubicación aproximada en el cielo austral
-  ra: string;
-  dec: string;
-  /** Sub-portales (nivel 2). Si no hay, el objeto abre su propio detalle. */
-  children?: SkyChild[];
-  /** Detalle propio cuando el objeto es singular (Sobre mí, Contacto). */
-  self?: DetailContent;
-}
+const HUBBLE = "https://cdn.esahubble.org/archives/images/";
+const ESO = "https://cdn.eso.org/images/";
 
-export const skyObjects: SkyObject[] = [
+export const TARGETS: Target[] = [
+  // ---- Visible: lo que construyo
   {
-    id: "about",
-    section: "Sobre mí",
-    object: "Nebulosa de Carina",
-    catalog: "NGC 3372",
-    blurb: "Una de las nebulosas de emisión más impresionantes del cielo austral, cuna de estrellas masivas observada por JWST (Cosmic Cliffs).",
-    kind: "hypergiant",
-    colorVar: "--sky-eta",
-    size: 74,
-    position: { top: "43%", left: "50%" },
-    ra: "10 45 03.6",
-    dec: "-59 41 04",
-    self: { type: "about" },
+    id: "30dor", band: "vis", cat: "NGC 2070", name: "Nebulosa de la Tarántula", ra: 84.676, dec: -69.101, fov: 0.17,
+    fact: "La región de formación estelar más activa del Grupo Local, en la Gran Nube de Magallanes.",
+    project: {
+      title: "DecoIA", tech: ["React", "Django", "PostgreSQL", "Claude API", "Replicate Flux", "API Mercado Libre"],
+      desc: "PWA de diseño de interiores con IA. Subes una foto y entrega ideas de diseño, instrucciones paso a paso, renders y productos de Mercado Libre. Producto en producción; código privado.",
+      img: "/img/decoia/decoia_home.png", links: [{ label: "Ver sitio", href: "https://www.decoia.cl/" }],
+    },
+    deep: { src: HUBBLE + "publicationjpg/heic1206a.jpg", ra: 84.5711688876, dec: -69.1258976867, widthDeg: 0.2235754, fx: 0.5, fy: 0.5, rot: 35.02, label: "Hubble + MPG/ESO 2.2 m · óptico", credit: "NASA, ESA, ESO, D. Lennon, E. Sabbi et al." },
   },
   {
-    id: "projects",
-    section: "Proyectos",
-    object: "Cúmulo de Fornax",
-    catalog: "Fornax Cluster",
-    blurb: "Cúmulo de cientos de galaxias en la constelación del Horno. Cada galaxia, un proyecto.",
-    kind: "galaxy-cluster",
-    colorVar: "--sky-fornax",
-    size: 120,
-    position: { top: "73%", left: "26%" },
-    ra: "03 38 29.0",
-    dec: "-35 27 03",
-    children: [
-      { id: "alke-fs", label: "Alke Wallet Fullstack", sublabel: "Django · SQLite", detail: { type: "project", projectTitle: "Alke Wallet Fullstack" } },
-      { id: "decoia", label: "DecoIA", sublabel: "PWA · IA", detail: { type: "project", projectTitle: "DecoIA" } },
-      { id: "solar", label: "Sistema Solar Interactivo", sublabel: "Django · Three.js", detail: { type: "project", projectTitle: "Sistema Solar Interactivo" } },
-      { id: "bancopy", label: "Gestor BancoPy", sublabel: "Python · POO", detail: { type: "project", projectTitle: "Gestor BancoPy" } },
-      { id: "alke", label: "Alke Wallet", sublabel: "HTML · JS", detail: { type: "project", projectTitle: "Alke Wallet" } },
-    ],
+    id: "omegacen", band: "vis", cat: "NGC 5139", name: "Omega Centauri", ra: 201.697, dec: -47.479, fov: 0.4,
+    fact: "El cúmulo globular más masivo de la Vía Láctea: unos diez millones de estrellas.",
+    project: {
+      title: "Alke Wallet Fullstack", tech: ["Django", "SQLite", "JavaScript", "Chart.js"],
+      desc: "Billetera digital con plantillas Django y backend SQL. Transacciones con transaction.atomic para separar sub-cuentas, gráficos con Chart.js y envíos sin recargar la página.",
+      img: "/img/alke_wallet_django/alkewallet_django_home.png",
+      links: [
+        { label: "Ver app", href: "https://alke-wallet-django-production.up.railway.app/" },
+        { label: "Repositorio", href: "https://github.com/mmmaxii/alke-wallet-django" },
+      ],
+    },
+    deep: { src: ESO + "publicationjpg/eso0844a.jpg", ra: 201.697148, dec: -47.479684, widthDeg: 0.5312968, fx: 0.48472, fy: 0.47172, rot: -0.0072, label: "MPG/ESO 2.2 m WFI · B V I", credit: "ESO" },
   },
   {
-    id: "research",
-    section: "Astronomía",
-    object: "PDS 70",
-    catalog: "PDS 70",
-    blurb: "Estrella T-Tauri con disco protoplanetario y planetas en formación, observada por ALMA y JWST. Mi área de investigación.",
-    kind: "proto-disk",
-    colorVar: "--sky-pds70",
-    size: 96,
-    position: { top: "18%", left: "40%" },
-    ra: "14 08 10.2",
-    dec: "-41 23 53",
-    children: [
-      { id: "practica", label: "Práctica: Discos Protoplanetarios", sublabel: "PA3Py · TriPoDPy", detail: { type: "research" } },
-      { id: "pa3py", label: "PA3Py", sublabel: "Paquete PyPI", detail: { type: "project", projectTitle: "PA3Py — Pebble Accretion Post-Processing" } },
-      { id: "lente", label: "Lente Gravitacional", sublabel: "SIS + Shear", detail: { type: "project", projectTitle: "Simulación de Lente Gravitacional" } },
-      { id: "bh", label: "Sombra de Agujero Negro", sublabel: "Ray-Shooting", detail: { type: "project", projectTitle: "Sombra de Agujero Negro" } },
-      { id: "ngc5972", label: "Espectroscopía IFU NGC 5972", sublabel: "MUSE · Voronoi", detail: { type: "project", projectTitle: "Análisis Espectroscópico IFU de NGC 5972" } },
-      { id: "tng50", label: "ML con datos de TNG50", sublabel: "PyTorch · TensorFlow", detail: { type: "project", projectTitle: "Machine Learning con datos de TNG50" } },
-    ],
+    id: "47tuc", band: "vis", cat: "NGC 104", name: "47 Tucanae", ra: 6.024, dec: -72.081, fov: 0.55,
+    fact: "Cúmulo globular junto a la Pequeña Nube de Magallanes, visible a simple vista desde Chile.",
+    project: {
+      title: "Gestor BancoPy", tech: ["Python", "POO", "SQLite", "SendGrid"],
+      desc: "Sistema de gestión bancaria por terminal: autenticación, transacciones multiusuario con cuentas Regular, Corporate y VIP, y correos con SendGrid.",
+      img: "/img/bancopy/bancopy_terminal_1775145167302.png", links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/BancoPy" }],
+    },
+    deep: { src: ESO + "publicationjpg/eso1302a.jpg", ra: 6.022499, dec: -72.081497, widthDeg: 0.781549, fx: 0.5008, fy: 0.5049, rot: -6.27, label: "VISTA · Y J Ks (infrarrojo cercano)", credit: "ESO/M.-R. Cioni/VISTA Magellanic Cloud survey" },
+  },
+
+  // ---- Infrarrojo: lo que investigo
+  {
+    id: "pds70", band: "ir", cat: "PDS 70", name: "Disco con planetas en formación", ra: 212.0423325, dec: -41.3979441, fov: 0.0009,
+    fact: "Estrella T Tauri con dos planetas que todavía se forman dentro de su disco, observada por VLT, ALMA y JWST.",
+    project: {
+      title: "Práctica: discos protoplanetarios y PA3Py", tech: ["Python", "NumPy", "SciPy", "h5py", "pytest", "PyPI", "HPC"],
+      desc: "Paquete open source (pip install pa3py) que calcula el crecimiento de embriones planetarios por acreción de pebbles sobre simulaciones de disco de TriPoDPy, con snowline dinámica. Usado para más de 5.000 trayectorias sobre 1.300 simulaciones en el cluster Geryon 2.",
+      img: "/img/practica/gifs/gap/run_r15.0_m3.0_a0.001.gif", links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/PA3Py" }],
+    },
+    deep: { src: ESO + "screen/eso1821a.jpg", ra: 212.042332518, dec: -41.3979441244, widthDeg: 0.0003675818, fx: 0.5, fy: 0.5, rot: 90.3, label: "VLT/SPHERE · 1.6 µm", credit: "ESO/A. Müller et al.", fadeFrom: 0.011, fadeTo: 0.0035 },
   },
   {
-    id: "ai",
-    section: "Inteligencia Artificial",
-    object: "PSR B1257+12",
-    catalog: "PSR B1257+12",
-    blurb: "El primer sistema planetario descubierto fuera del Sol: planetas orbitando un púlsar. Cada planeta, una faceta de mi trabajo con IA.",
-    kind: "pulsar",
-    colorVar: "--sky-pulsar",
-    size: 68,
-    position: { top: "20%", left: "73%" },
-    ra: "13 00 01.0",
-    dec: "+12 40 57",
-    children: [
-      { id: "asterion", label: "Asterion API", sublabel: "Agente RAG · LangChain", detail: { type: "project", projectTitle: "Asterion API" } },
-      { id: "decoia-ai", label: "DecoIA", sublabel: "Claude API · Flux", detail: { type: "project", projectTitle: "DecoIA" } },
-      { id: "ml-astro", label: "Machine Learning astronómico", sublabel: "TNG50", detail: { type: "project", projectTitle: "Machine Learning con datos de TNG50" } },
-    ],
+    id: "sgra", band: "ir", cat: "Sgr A*", name: "Centro de la Vía Láctea", ra: 266.417, dec: -29.008, fov: 0.005,
+    fact: "El agujero negro de 4 millones de masas solares en el centro galáctico. En visible lo tapa el polvo; en infrarrojo se ve el cúmulo de estrellas que lo rodea.",
+    project: {
+      title: "Neural Geodesics", tech: ["Python", "PyTorch", "PINN", "RK45", "ONNX"],
+      desc: "Ray tracing relativista alrededor de agujeros negros de Schwarzschild y Kerr. En Schwarzschild, una red con pérdida informada por la física reemplaza al integrador RK45: 51 veces más rápida, con error medio de 4.3e-5. En Kerr, las soluciones cerradas en tiempo de Mino hacen innecesaria la red.",
+      img: "https://raw.githubusercontent.com/mmmaxii/neural-geodesics/main/docs/hero_kerr.png",
+      links: [{ label: "Repositorio", href: "https://github.com/mmmaxii/neural-geodesics" }],
+    },
+    deep: { src: ESO + "screen/eso0846a.jpg", ra: 266.417038167, dec: -29.0065441679, widthDeg: 0.006787312, fx: 0.5, fy: 0.5, rot: -0.34, label: "VLT/NACO · infrarrojo cercano", credit: "ESO/S. Gillessen et al." },
   },
   {
-    id: "tech",
-    section: "Tecnologías",
-    object: "Gran Nube de Magallanes",
-    catalog: "LMC",
-    blurb: "Galaxia irregular satélite de la Vía Láctea, un tesoro del cielo austral. Cada región, un grupo de tecnologías.",
-    kind: "irregular",
-    colorVar: "--sky-lmc",
-    size: 130,
-    position: { top: "70%", left: "77%" },
-    ra: "05 23 34.5",
-    dec: "-69 45 22",
-    children: [
-      { id: "tech-backend", label: "Backend", sublabel: "Python · Django · FastAPI", detail: { type: "tech", category: "Backend" } },
-      { id: "tech-frontend", label: "Frontend", sublabel: "React · Next.js · TS", detail: { type: "tech", category: "Frontend" } },
-      { id: "tech-db", label: "Bases de Datos", sublabel: "PostgreSQL · MySQL · pgvector", detail: { type: "tech", category: "Bases de Datos" } },
-      { id: "tech-ml", label: "Machine Learning", sublabel: "PyTorch · TensorFlow", detail: { type: "tech", category: "Machine Learning" } },
-      { id: "tech-ia-llm", label: "IA & LLM", sublabel: "LangChain · RAG", detail: { type: "tech", category: "IA & LLM" } },
-      { id: "tech-devops", label: "DevOps & Deploy", sublabel: "Docker · AWS · Vercel", detail: { type: "tech", category: "DevOps & Deploy" } },
-      { id: "tech-arch", label: "Arquitectura", sublabel: "MVT · DAO", detail: { type: "tech", category: "Arquitectura de Software" } },
-    ],
+    id: "ngc5972", band: "ir", cat: "NGC 5972", name: "Galaxia con núcleo activo", ra: 234.726, dec: 17.026, fov: 0.02,
+    fact: "Galaxia Seyfert 2 con una nube de gas ionizado de más de 50 mil años luz.",
+    project: {
+      title: "Espectroscopía IFU de NGC 5972", tech: ["Python", "Astropy", "Voronoi binning", "MUSE"],
+      desc: "Mapas de ionización del gas con datos de MUSE: teselación de Voronoi para la señal-ruido, corrección por decremento de Balmer y diagrama BPT que confirma el AGN del núcleo.",
+      img: "/img/ngc5972/galaxia.jpg",
+      links: [{ label: "Código", href: "https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%202" }],
+    },
+    deep: { src: HUBBLE + "large/heic1507c.jpg", ra: 234.725174953, dec: 17.0270774701, widthDeg: 0.02757685, fx: 0.49975, fy: 0.50025, rot: 89.8, label: "Hubble ACS + WFC3 · [OIII], Hα, R, I", credit: "NASA, ESA, W. Keel" },
   },
   {
-    id: "contact",
-    section: "Contacto",
-    object: "SN 1987A",
-    catalog: "SN 1987A",
-    blurb: "La supernova más cercana y estudiada en siglos, en la Gran Nube de Magallanes. Una explosión que sigue evolucionando: comencemos algo nuevo.",
-    kind: "supernova",
-    colorVar: "--sky-sn",
-    size: 72,
-    position: { top: "50%", left: "89%" },
-    ra: "05 35 28.0",
-    dec: "-69 16 11",
-    self: { type: "contact" },
+    id: "hudf", band: "ir", cat: "HUDF", name: "Campo Ultraprofundo de Hubble", ra: 53.1625, dec: -27.7914, fov: 0.03,
+    fact: "Un trozo de cielo que parece vacío y contiene unas 10.000 galaxias. Las simulaciones cosmológicas buscan reproducir galaxias como esas.",
+    project: {
+      title: "Machine Learning con TNG50", tech: ["PyTorch", "TensorFlow"],
+      desc: "Pipeline que extrae galaxias de la simulación TNG50 y entrena modelos para predecir masa estelar, formación estelar y metalicidad.",
+      img: "/img/tng/tngsimulation.png",
+      links: [{ label: "Código", href: "https://github.com/mmmaxii/ProyectosU-2025/tree/main/Astrofisica%20Experimental/Experiencia%204" }],
+    },
+    deep: { src: HUBBLE + "large/heic1214a.jpg", ra: 53.1618, dec: -27.7917, widthDeg: 0.03971416, fx: 0.64129, fy: 0.67141, rot: 51.16, label: "Hubble XDF · óptico + 1.1–1.6 µm", credit: "NASA, ESA, G. Illingworth, D. Magee, P. Oesch, R. Bouwens y HUDF09 Team" },
+  },
+  {
+    id: "a370", band: "ir", cat: "Abell 370", name: "Cúmulo que actúa como lente", ra: 39.9708, dec: -1.5778, fov: 0.026,
+    fact: "Su masa curva la luz de galaxias más lejanas y forma arcos gigantes.",
+    project: {
+      title: "Simulación de lente gravitacional", tech: ["Python", "NumPy", "Matplotlib"],
+      desc: "Modelo de esfera isoterma singular con shear externo; se ajustan los parámetros y se ve cómo se deforma la galaxia de fondo.",
+      img: "/img/lensing/lente_gravitacional.gif",
+      links: [{ label: "Código", href: "https://github.com/mmmaxii/Simulacion-lente-gravitacional" }],
+    },
+    deep: { src: HUBBLE + "publicationjpg/heic1711a.jpg", ra: 39.9702863319, dec: -1.57683079556, widthDeg: 0.03470539, fx: 0.5, fy: 0.5, rot: -27.94, label: "Hubble WFC3 + ACS · óptico + 1.1–1.6 µm", credit: "NASA, ESA/Hubble, HST Frontier Fields" },
+  },
+
+  // ---- Ultravioleta: IA
+  {
+    id: "m83", band: "uv", cat: "M83", name: "Galaxia del Molinete Austral", ra: 204.254, dec: -29.866, fov: 0.095,
+    fact: "Espiral barrada con brazos llenos de estrellas jóvenes; en ultravioleta casi solo se ven los brazos.",
+    project: {
+      title: "Asterion", tech: ["LangChain", "Gemini", "FastAPI", "Postgres + pgvector", "ChromaDB", "Docker", "AWS"],
+      desc: "Asistente de investigación astrofísica con RAG y 35 herramientas sobre NASA Exoplanet Archive, ADS, SIMBAD, Gaia DR3 y VizieR. Cita cada dato, usa búsqueda híbrida con pgvector y tiene más de 470 tests.",
+      links: [{ label: "Ver sitio", href: "https://asterion-rag.vercel.app/" }],
+    },
+    deep: { src: HUBBLE + "publicationjpg/heic1403a.jpg", ra: 204.251540572, dec: -29.8631893734, widthDeg: 0.125407, fx: 0.5, fy: 0.5, rot: -84.68, label: "Hubble WFC3 · U (336 nm) + óptico", credit: "NASA, ESA, Hubble Heritage Team; W. Blair" },
+  },
+  {
+    id: "ngc300", band: "uv", cat: "NGC 300", name: "Espiral de Sculptor", ra: 13.723, dec: -37.684, fov: 0.38,
+    fact: "Galaxia espiral cercana, casi de frente, con formación estelar repartida en todo el disco.",
+    project: {
+      title: "DecoIA: motor de IA", tech: ["Claude API", "Replicate Flux Kontext", "Django"],
+      desc: "La parte de IA de DecoIA: análisis de la foto con Claude, generación de renders con Flux Kontext y cruce con productos reales.",
+      links: [{ label: "Ver sitio", href: "https://www.decoia.cl/" }],
+    },
+    deep: { src: ESO + "publicationjpg/eso1037a.jpg", ra: 13.722861, dec: -37.684236, widthDeg: 0.5035894, fx: 0.504, fy: 0.50238, rot: 0.1095, label: "MPG/ESO 2.2 m WFI · óptico", credit: "ESO" },
   },
 ];
 
-export function getProject(title: string): Project | undefined {
-  return projects.find((p) => p.title === title);
+/* ------------------------- Espectro de herramientas ------------------------- */
+// Cada herramienta es una línea de emisión. La intensidad de la línea es el número de
+// proyectos o cursos donde aparece (las fuentes de abajo), no una autoevaluación.
+// El ancho de cada banda en λ se calcula según cuántas herramientas tiene.
+
+export interface Source {
+  label: string;
+  target?: string; // id del objeto del cielo donde vive ese proyecto
 }
 
-export function getTechCategory(category: string): TechCategory | undefined {
-  return techStack.find((t) => t.category === category);
+export const SOURCES: Record<string, Source> = {
+  decoia: { label: "DecoIA", target: "30dor" },
+  decoiaia: { label: "DecoIA: motor de IA", target: "ngc300" },
+  alke: { label: "Alke Wallet Fullstack", target: "omegacen" },
+  bancopy: { label: "Gestor BancoPy", target: "47tuc" },
+  pa3py: { label: "PA3Py y práctica", target: "pds70" },
+  ngeo: { label: "Neural Geodesics", target: "sgra" },
+  ifu: { label: "Espectroscopía IFU", target: "ngc5972" },
+  tng: { label: "ML con TNG50", target: "hudf" },
+  lens: { label: "Lente gravitacional", target: "a370" },
+  asterion: { label: "Asterion", target: "m83" },
+  gada: { label: "Certificado Google Advanced Data Analytics" },
+  bootcamp: { label: "Bootcamp Fullstack Python" },
+  web: { label: "Este portafolio" },
+};
+
+export interface SpectrumBand {
+  id: string;
+  name: string;
+  tools: { name: string; sources: string[] }[];
 }
+
+export const SPECTRUM: SpectrumBand[] = [
+  {
+    id: "backend", name: "Backend",
+    tools: [
+      { name: "Python", sources: ["bancopy", "pa3py", "ngeo", "ifu", "tng", "lens", "asterion", "gada"] },
+      { name: "Django", sources: ["decoia", "alke", "bootcamp"] },
+      { name: "FastAPI", sources: ["asterion"] },
+      { name: "APIs REST", sources: ["decoia", "asterion"] },
+      { name: "POO", sources: ["bancopy", "bootcamp"] },
+      { name: "pytest", sources: ["pa3py", "asterion"] },
+      { name: "JWT", sources: ["bootcamp"] },
+    ],
+  },
+  {
+    id: "datos", name: "Bases de datos",
+    tools: [
+      { name: "SQL", sources: ["alke", "bancopy", "asterion", "gada"] },
+      { name: "PostgreSQL", sources: ["decoia", "asterion"] },
+      { name: "pgvector", sources: ["asterion"] },
+      { name: "SQLite", sources: ["alke", "bancopy", "asterion"] },
+      { name: "MySQL", sources: ["bootcamp"] },
+      { name: "ChromaDB", sources: ["asterion"] },
+      { name: "BigQuery", sources: ["gada"] },
+    ],
+  },
+  {
+    id: "analisis", name: "Análisis de datos",
+    tools: [
+      { name: "NumPy", sources: ["pa3py", "ngeo", "ifu", "tng", "lens"] },
+      { name: "pandas", sources: ["gada"] },
+      { name: "SciPy", sources: ["pa3py"] },
+      { name: "Matplotlib", sources: ["pa3py", "ifu", "lens"] },
+      { name: "Jupyter", sources: ["gada"] },
+      { name: "EDA", sources: ["gada"] },
+      { name: "Pruebas de hipótesis", sources: ["gada"] },
+      { name: "Tableau", sources: ["gada"] },
+      { name: "Astropy", sources: ["ifu"] },
+      { name: "h5py", sources: ["pa3py"] },
+    ],
+  },
+  {
+    id: "ml", name: "Machine learning",
+    tools: [
+      { name: "scikit-learn", sources: ["gada"] },
+      { name: "Regresión lineal", sources: ["gada"] },
+      { name: "Regresión logística", sources: ["gada"] },
+      { name: "Naive Bayes", sources: ["gada"] },
+      { name: "Árboles de decisión", sources: ["gada"] },
+      { name: "Random Forest", sources: ["gada"] },
+      { name: "XGBoost", sources: ["gada"] },
+      { name: "K-means", sources: ["gada"] },
+    ],
+  },
+  {
+    id: "dl", name: "Deep learning",
+    tools: [
+      { name: "PyTorch", sources: ["ngeo", "tng", "asterion"] },
+      { name: "TensorFlow", sources: ["tng"] },
+      { name: "CUDA", sources: ["ngeo", "asterion"] },
+      { name: "PINNs", sources: ["ngeo"] },
+      { name: "ONNX", sources: ["ngeo"] },
+    ],
+  },
+  {
+    id: "ia", name: "IA y LLM",
+    tools: [
+      { name: "LLMs", sources: ["decoiaia", "asterion"] },
+      { name: "RAG", sources: ["asterion"] },
+      { name: "LangChain", sources: ["asterion"] },
+      { name: "Claude API", sources: ["decoiaia"] },
+      { name: "Gemini API", sources: ["asterion"] },
+      { name: "Embeddings", sources: ["asterion"] },
+    ],
+  },
+  {
+    id: "frontend", name: "Frontend",
+    tools: [
+      { name: "React", sources: ["decoia"] },
+      { name: "Next.js", sources: ["web"] },
+      { name: "TypeScript", sources: ["web"] },
+      { name: "JavaScript", sources: ["alke", "bootcamp"] },
+      { name: "Vite", sources: ["decoia"] },
+    ],
+  },
+  {
+    id: "infra", name: "Infraestructura",
+    tools: [
+      { name: "Git", sources: ["decoia", "pa3py", "asterion", "web"] },
+      { name: "Docker", sources: ["asterion"] },
+      { name: "GitHub Actions", sources: ["pa3py"] },
+      { name: "AWS", sources: ["asterion"] },
+      { name: "Vercel", sources: ["asterion", "web"] },
+      { name: "Railway", sources: ["alke"] },
+      { name: "HPC (Geryon 2)", sources: ["pa3py"] },
+    ],
+  },
+];
