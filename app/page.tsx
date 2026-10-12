@@ -79,8 +79,9 @@ export default function Home() {
               <h2>Espectro de herramientas</h2>
             </div>
             <p className="lede">
-              Cada herramienta es una línea de emisión. La altura de la línea es el número de proyectos o cursos donde
-              la usé: mientras más marcada, más la he trabajado. Baja para ir encendiendo las bandas.
+              Cada área de trabajo es un elemento químico y cada herramienta, una de sus líneas de emisión reales: el
+              backend es la serie de Balmer del hidrógeno. La altura de la línea es el número de proyectos o cursos
+              donde la usé. Baja para ir encendiendo los elementos.
             </p>
             <Spectrum />
           </div>

@@ -36,6 +36,7 @@ export function sepDeg(ra1: number, dec1: number, ra2: number, dec2: number): nu
 
 /** Color aproximado de una longitud de onda visible (nm) como rgb. */
 export function wavelengthRGB(l: number): [number, number, number] {
+  l = Math.min(780, Math.max(380, l)); // fuera del visible se usa el borde violeta o rojo
   let r = 0, g = 0, b = 0;
   if (l >= 380 && l < 440) { r = -(l - 440) / 60; b = 1; }
   else if (l < 490) { g = (l - 440) / 50; b = 1; }

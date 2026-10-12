@@ -236,7 +236,6 @@ export const TARGETS: Target[] = [
 /* ------------------------- Espectro de herramientas ------------------------- */
 // Cada herramienta es una línea de emisión. La intensidad de la línea es el número de
 // proyectos o cursos donde aparece (las fuentes de abajo), no una autoevaluación.
-// El ancho de cada banda en λ se calcula según cuántas herramientas tiene.
 
 export interface Source {
   label: string;
@@ -259,106 +258,117 @@ export const SOURCES: Record<string, Source> = {
   web: { label: "Este portafolio" },
 };
 
+export interface SpectrumTool {
+  name: string;
+  lambda: number; // nm, longitud de onda en aire de una línea de emisión real
+  ion: string; // identificación de la línea
+  sources: string[];
+}
+
 export interface SpectrumBand {
   id: string;
   name: string;
-  tools: { name: string; sources: string[] }[];
+  species: string; // elemento que representa la banda
+  tools: SpectrumTool[];
 }
 
+// Cada área de trabajo es un elemento químico y cada herramienta una de sus líneas de emisión
+// (λ en aire; nebulares de Tsamis et al. 2003, el resto de NIST). La altura sigue siendo el número
+// de proyectos o cursos: la línea más usada va en la línea más característica del elemento.
 export const SPECTRUM: SpectrumBand[] = [
   {
-    id: "backend", name: "Backend",
+    id: "backend", name: "Backend", species: "Hidrógeno · serie de Balmer",
     tools: [
-      { name: "Python", sources: ["bancopy", "pa3py", "ngeo", "ifu", "tng", "lens", "asterion", "gada"] },
-      { name: "Django", sources: ["decoia", "alke", "bootcamp"] },
-      { name: "FastAPI", sources: ["asterion"] },
-      { name: "APIs REST", sources: ["decoia", "asterion"] },
-      { name: "POO", sources: ["bancopy", "bootcamp"] },
-      { name: "pytest", sources: ["pa3py", "asterion"] },
-      { name: "JWT", sources: ["bootcamp"] },
+      { name: "Python", lambda: 656.28, ion: "Hα", sources: ["bancopy", "pa3py", "ngeo", "ifu", "tng", "lens", "asterion", "gada"] },
+      { name: "Django", lambda: 486.13, ion: "Hβ", sources: ["decoia", "alke", "bootcamp"] },
+      { name: "APIs REST", lambda: 434.05, ion: "Hγ", sources: ["decoia", "asterion"] },
+      { name: "POO", lambda: 410.17, ion: "Hδ", sources: ["bancopy", "bootcamp"] },
+      { name: "pytest", lambda: 397.01, ion: "Hε", sources: ["pa3py", "asterion"] },
+      { name: "FastAPI", lambda: 388.91, ion: "H8", sources: ["asterion"] },
+      { name: "JWT", lambda: 383.54, ion: "H9", sources: ["bootcamp"] },
     ],
   },
   {
-    id: "datos", name: "Bases de datos",
+    id: "datos", name: "Bases de datos", species: "Helio",
     tools: [
-      { name: "SQL", sources: ["alke", "bancopy", "asterion", "gada"] },
-      { name: "PostgreSQL", sources: ["decoia", "asterion"] },
-      { name: "pgvector", sources: ["asterion"] },
-      { name: "SQLite", sources: ["alke", "bancopy", "asterion"] },
-      { name: "MySQL", sources: ["bootcamp"] },
-      { name: "ChromaDB", sources: ["asterion"] },
-      { name: "BigQuery", sources: ["gada"] },
+      { name: "SQL", lambda: 587.57, ion: "He I 5876", sources: ["alke", "bancopy", "asterion", "gada"] },
+      { name: "SQLite", lambda: 667.82, ion: "He I 6678", sources: ["alke", "bancopy", "asterion"] },
+      { name: "PostgreSQL", lambda: 706.53, ion: "He I 7065", sources: ["decoia", "asterion"] },
+      { name: "pgvector", lambda: 447.15, ion: "He I 4471", sources: ["asterion"] },
+      { name: "MySQL", lambda: 492.19, ion: "He I 4922", sources: ["bootcamp"] },
+      { name: "ChromaDB", lambda: 501.57, ion: "He I 5016", sources: ["asterion"] },
+      { name: "BigQuery", lambda: 471.32, ion: "He I 4713", sources: ["gada"] },
     ],
   },
   {
-    id: "analisis", name: "Análisis de datos",
+    id: "analisis", name: "Análisis de datos", species: "Oxígeno",
     tools: [
-      { name: "NumPy", sources: ["pa3py", "ngeo", "ifu", "tng", "lens"] },
-      { name: "pandas", sources: ["gada"] },
-      { name: "SciPy", sources: ["pa3py"] },
-      { name: "Matplotlib", sources: ["pa3py", "ifu", "lens"] },
-      { name: "Jupyter", sources: ["gada"] },
-      { name: "EDA", sources: ["gada"] },
-      { name: "Pruebas de hipótesis", sources: ["gada"] },
-      { name: "Tableau", sources: ["gada"] },
-      { name: "Astropy", sources: ["ifu"] },
-      { name: "h5py", sources: ["pa3py"] },
+      { name: "NumPy", lambda: 500.68, ion: "[O III] 5007", sources: ["pa3py", "ngeo", "ifu", "tng", "lens"] },
+      { name: "Matplotlib", lambda: 495.89, ion: "[O III] 4959", sources: ["pa3py", "ifu", "lens"] },
+      { name: "pandas", lambda: 372.6, ion: "[O II] 3726", sources: ["gada"] },
+      { name: "SciPy", lambda: 436.32, ion: "[O III] 4363", sources: ["pa3py"] },
+      { name: "Jupyter", lambda: 557.73, ion: "[O I] 5577", sources: ["gada"] },
+      { name: "EDA", lambda: 630.03, ion: "[O I] 6300", sources: ["gada"] },
+      { name: "Pruebas de hipótesis", lambda: 636.38, ion: "[O I] 6364", sources: ["gada"] },
+      { name: "Tableau", lambda: 615.82, ion: "O I 6158", sources: ["gada"] },
+      { name: "Astropy", lambda: 731.89, ion: "[O II] 7319", sources: ["ifu"] },
+      { name: "h5py", lambda: 441.49, ion: "O II 4415", sources: ["pa3py"] },
     ],
   },
   {
-    id: "ml", name: "Machine learning",
+    id: "ml", name: "Machine learning", species: "Nitrógeno",
     tools: [
-      { name: "scikit-learn", sources: ["gada"] },
-      { name: "Regresión lineal", sources: ["gada"] },
-      { name: "Regresión logística", sources: ["gada"] },
-      { name: "Naive Bayes", sources: ["gada"] },
-      { name: "Árboles de decisión", sources: ["gada"] },
-      { name: "Random Forest", sources: ["gada"] },
-      { name: "XGBoost", sources: ["gada"] },
-      { name: "K-means", sources: ["gada"] },
+      { name: "scikit-learn", lambda: 658.35, ion: "[N II] 6583", sources: ["gada"] },
+      { name: "Regresión lineal", lambda: 654.81, ion: "[N II] 6548", sources: ["gada"] },
+      { name: "Regresión logística", lambda: 575.46, ion: "[N II] 5755", sources: ["gada"] },
+      { name: "Naive Bayes", lambda: 519.79, ion: "[N I] 5198", sources: ["gada"] },
+      { name: "Árboles de decisión", lambda: 567.96, ion: "N II 5680", sources: ["gada"] },
+      { name: "Random Forest", lambda: 594.17, ion: "N II 5942", sources: ["gada"] },
+      { name: "XGBoost", lambda: 464.06, ion: "N III 4641", sources: ["gada"] },
+      { name: "K-means", lambda: 399.5, ion: "N II 3995", sources: ["gada"] },
     ],
   },
   {
-    id: "dl", name: "Deep learning",
+    id: "dl", name: "Deep learning", species: "Azufre",
     tools: [
-      { name: "PyTorch", sources: ["ngeo", "tng", "asterion"] },
-      { name: "TensorFlow", sources: ["tng"] },
-      { name: "CUDA", sources: ["ngeo", "asterion"] },
-      { name: "PINNs", sources: ["ngeo"] },
-      { name: "ONNX", sources: ["ngeo"] },
+      { name: "PyTorch", lambda: 671.64, ion: "[S II] 6716", sources: ["ngeo", "tng", "asterion"] },
+      { name: "CUDA", lambda: 631.21, ion: "[S III] 6312", sources: ["ngeo", "asterion"] },
+      { name: "TensorFlow", lambda: 406.86, ion: "[S II] 4069", sources: ["tng"] },
+      { name: "PINNs", lambda: 545.38, ion: "S II 5454", sources: ["ngeo"] },
+      { name: "ONNX", lambda: 564.0, ion: "S II 5640", sources: ["ngeo"] },
     ],
   },
   {
-    id: "ia", name: "IA y LLM",
+    id: "ia", name: "IA y LLM", species: "Neón",
     tools: [
-      { name: "LLMs", sources: ["decoiaia", "asterion"] },
-      { name: "RAG", sources: ["asterion"] },
-      { name: "LangChain", sources: ["asterion"] },
-      { name: "Claude API", sources: ["decoiaia"] },
-      { name: "Gemini API", sources: ["asterion"] },
-      { name: "Embeddings", sources: ["asterion"] },
+      { name: "LLMs", lambda: 386.88, ion: "[Ne III] 3869", sources: ["decoiaia", "asterion"] },
+      { name: "RAG", lambda: 585.25, ion: "Ne I 5852", sources: ["asterion"] },
+      { name: "LangChain", lambda: 614.31, ion: "Ne I 6143", sources: ["asterion"] },
+      { name: "Claude API", lambda: 640.22, ion: "Ne I 6402", sources: ["decoiaia"] },
+      { name: "Gemini API", lambda: 650.65, ion: "Ne I 6507", sources: ["asterion"] },
+      { name: "Embeddings", lambda: 703.24, ion: "Ne I 7032", sources: ["asterion"] },
     ],
   },
   {
-    id: "frontend", name: "Frontend",
+    id: "frontend", name: "Frontend", species: "Calcio",
     tools: [
-      { name: "React", sources: ["decoia"] },
-      { name: "Next.js", sources: ["web"] },
-      { name: "TypeScript", sources: ["web"] },
-      { name: "JavaScript", sources: ["alke", "bootcamp"] },
-      { name: "Vite", sources: ["decoia"] },
+      { name: "JavaScript", lambda: 393.37, ion: "Ca II K", sources: ["alke", "bootcamp"] },
+      { name: "React", lambda: 729.15, ion: "[Ca II] 7291", sources: ["decoia"] },
+      { name: "Next.js", lambda: 422.67, ion: "Ca I 4227", sources: ["web"] },
+      { name: "TypeScript", lambda: 445.48, ion: "Ca I 4455", sources: ["web"] },
+      { name: "Vite", lambda: 558.88, ion: "Ca I 5589", sources: ["decoia"] },
     ],
   },
   {
-    id: "infra", name: "Infraestructura",
+    id: "infra", name: "Infraestructura", species: "Hierro",
     tools: [
-      { name: "Git", sources: ["decoia", "pa3py", "asterion", "web"] },
-      { name: "Docker", sources: ["asterion"] },
-      { name: "GitHub Actions", sources: ["pa3py"] },
-      { name: "AWS", sources: ["asterion"] },
-      { name: "Vercel", sources: ["asterion", "web"] },
-      { name: "Railway", sources: ["alke"] },
-      { name: "HPC (Geryon 2)", sources: ["pa3py"] },
+      { name: "Git", lambda: 530.29, ion: "[Fe XIV] 5303", sources: ["decoia", "pa3py", "asterion", "web"] },
+      { name: "Vercel", lambda: 637.45, ion: "[Fe X] 6375", sources: ["asterion", "web"] },
+      { name: "Docker", lambda: 465.81, ion: "[Fe III] 4658", sources: ["asterion"] },
+      { name: "GitHub Actions", lambda: 516.9, ion: "Fe II 5169", sources: ["pa3py"] },
+      { name: "AWS", lambda: 608.7, ion: "[Fe VII] 6087", sources: ["asterion"] },
+      { name: "Railway", lambda: 572.07, ion: "[Fe VII] 5721", sources: ["alke"] },
+      { name: "HPC (Geryon 2)", lambda: 715.52, ion: "[Fe II] 7155", sources: ["pa3py"] },
     ],
   },
 ];

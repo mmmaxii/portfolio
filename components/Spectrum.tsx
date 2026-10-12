@@ -6,22 +6,21 @@ import { wavelengthRGB } from "@/lib/sky";
 
 /*
  * Espectro de emisión de herramientas. Arriba, el perfil 1D (flujo vs λ) con identificación de
- * líneas; abajo, el espectro 2D tal como se vería en el detector. Cada herramienta es una línea;
- * su intensidad es el número de proyectos o cursos donde aparece.
+ * líneas; abajo, el espectro 2D tal como se vería en el detector. Cada área es un elemento y cada
+ * herramienta una línea real de ese elemento; su intensidad es el número de proyectos o cursos.
  * Al hacer scroll, el gráfico queda fijo y las bandas se van encendiendo una por una.
  */
 
 const W = 1200;
 const X0 = 48;
 const X1 = 1176;
-const L0 = 392;
-const L1 = 724;
+const L0 = 366;
+const L1 = 738;
 const BASE = 300; // y del continuo
 const PEAK = 128; // alto máximo de una línea
 const STRIP_T = 336;
 const STRIP_B = 380;
-const BANDS_Y = 404;
-const H = 446;
+const H = 392;
 
 const xOf = (l: number) => X0 + ((l - L0) / (L1 - L0)) * (X1 - X0);
 const lOf = (x: number) => L0 + ((x - X0) / (X1 - X0)) * (L1 - L0);
@@ -31,6 +30,8 @@ interface Line {
   name: string;
   band: string;
   bandName: string;
+  species: string;
+  ion: string;
   lambda: number;
   x: number;
   sources: string[];
@@ -44,36 +45,22 @@ function noise(i: number) {
   return s - Math.floor(s);
 }
 
-// Cada banda ocupa en λ un ancho proporcional a su número de herramientas.
-const GAP = 6;
 const TOTAL = SPECTRUM.reduce((n, b) => n + b.tools.length, 0);
-const PER = (L1 - L0 - 12 - GAP * (SPECTRUM.length - 1)) / TOTAL;
-const RANGES = (() => {
-  let cur = L0 + 6;
-  return SPECTRUM.map((b) => {
-    const from = cur;
-    const to = from + b.tools.length * PER;
-    cur = to + GAP;
-    return { id: b.id, name: b.name, from, to };
-  });
-})();
 
 function buildLines(): Line[] {
   const max = Math.max(...SPECTRUM.flatMap((b) => b.tools.map((t) => t.sources.length)));
-  let k = 0;
-  return SPECTRUM.flatMap((b, bi) =>
-    b.tools.map((t, i) => {
-      // Posición dentro de la banda con un leve desorden, como en un espectro real.
-      const jitter = (noise(++k * 7.31) - 0.5) * PER * 0.5;
-      const lambda = Math.round((RANGES[bi].from + (i + 0.5) * PER + jitter) * 10) / 10;
-      const [r, g, bl] = wavelengthRGB(lambda);
+  return SPECTRUM.flatMap((b) =>
+    b.tools.map((t) => {
+      const [r, g, bl] = wavelengthRGB(t.lambda);
       return {
         key: `${b.id}-${t.name}`,
         name: t.name,
         band: b.id,
         bandName: b.name,
-        lambda,
-        x: xOf(lambda),
+        species: b.species,
+        ion: t.ion,
+        lambda: t.lambda,
+        x: xOf(t.lambda),
         sources: t.sources,
         amp: 0.14 + 0.86 * (t.sources.length / max),
         rgb: `rgb(${r},${g},${bl})`,
@@ -161,8 +148,8 @@ export default function Spectrum() {
     const box = scrollRef.current;
     const svg = svgRef.current;
     if (!box || !svg || !band || box.scrollWidth <= box.clientWidth) return;
-    const i = BAND_INDEX[band];
-    const mid = (xOf(RANGES[i].from) + xOf(RANGES[i].to)) / 2;
+    const xs = LINES.filter((l) => l.band === band).map((l) => l.x);
+    const mid = (Math.min(...xs) + Math.max(...xs)) / 2;
     box.scrollTo({ left: (mid / W) * svg.clientWidth - box.clientWidth / 2, behavior: "smooth" });
   }, [band]);
 
@@ -217,13 +204,17 @@ export default function Spectrum() {
   };
 
   const ticks = [];
-  for (let l = 400; l <= 720; l += 20) ticks.push(l);
+  for (let l = 380; l <= 730; l += 20) ticks.push(l);
 
   const bandLines = band ? lines.filter((l) => l.band === band) : [];
   const total = TOTAL;
 
   const step =
-    stage === 0 ? "Desliza para encender el espectro" : stage <= NB ? `Banda ${stage} de ${NB}` : "Espectro completo";
+    stage === 0
+      ? "Desliza para encender el espectro"
+      : stage <= NB
+        ? `${stage} de ${NB} · ${SPECTRUM[stage - 1].name}: ${SPECTRUM[stage - 1].species}`
+        : "Espectro completo";
 
   return (
     <div className="spec-pin" ref={pinRef} style={{ "--steps": NB + 2 } as React.CSSProperties}>
@@ -240,8 +231,8 @@ export default function Spectrum() {
         >
           Todo <span>{total}</span>
         </button>
-        {SPECTRUM.map((b, bi) => {
-          const [r, g, bl] = wavelengthRGB((RANGES[bi].from + RANGES[bi].to) / 2);
+        {SPECTRUM.map((b) => {
+          const [r, g, bl] = wavelengthRGB(b.tools[0].lambda);
           return (
             <button
               key={b.id}
@@ -251,7 +242,7 @@ export default function Spectrum() {
               onClick={() => chooseBand(band === b.id ? null : b.id)}
             >
               <i style={{ background: `rgb(${r},${g},${bl})` }} />
-              {b.name} <span>{b.tools.length}</span>
+              {b.name} <span>{b.species.split(" ")[0]}</span>
             </button>
           );
         })}
@@ -263,7 +254,7 @@ export default function Spectrum() {
           className="spec-svg"
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Espectro de emisión: cada línea es una herramienta, su altura es el número de proyectos o cursos donde aparece"
+          aria-label="Espectro de emisión: cada área es un elemento químico y cada herramienta una de sus líneas; la altura es el número de proyectos o cursos donde aparece"
           onPointerMove={onMove}
           onPointerLeave={() => {
             setHover(null);
@@ -271,18 +262,6 @@ export default function Spectrum() {
           }}
           onClick={onClick}
         >
-          {/* sombreado de la banda activa */}
-          {RANGES.map((b) => (
-            <rect
-              key={`bg-${b.id}`}
-              x={xOf(b.from)}
-              y={20}
-              width={xOf(b.to) - xOf(b.from)}
-              height={STRIP_B - 20}
-              className={`spec-zone${band === b.id ? " on" : ""}`}
-            />
-          ))}
-
           {/* perfil 1D */}
           <path d={`${path}L${X1},${BASE}L${X0},${BASE}Z`} className="spec-fill" />
           <path d={path} className="spec-line" />
@@ -336,23 +315,6 @@ export default function Spectrum() {
             />
           ))}
 
-          {/* bandas */}
-          {RANGES.map((b) => (
-            <g
-              key={`b-${b.id}`}
-              className={`spec-band${band === b.id ? " on" : ""}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                chooseBand(band === b.id ? null : b.id);
-              }}
-            >
-              <path d={`M${xOf(b.from) + 2},${BANDS_Y - 8}V${BANDS_Y}H${xOf(b.to) - 2}V${BANDS_Y - 8}`} />
-              <text x={(xOf(b.from) + xOf(b.to)) / 2} y={BANDS_Y + 18}>
-                {b.name}
-              </text>
-            </g>
-          ))}
-
           {/* cursor */}
           {cursor !== null && (
             <g className="spec-cursor">
@@ -373,7 +335,8 @@ export default function Spectrum() {
               <div>
                 <h3>{current.name}</h3>
                 <p>
-                  λ {current.lambda.toFixed(1)} nm · {current.bandName} · intensidad {current.sources.length}
+                  {current.ion} · λ {current.lambda.toFixed(2)} nm · {current.bandName} ({current.species}) · intensidad{" "}
+                  {current.sources.length}
                 </p>
               </div>
             </div>
@@ -399,14 +362,18 @@ export default function Spectrum() {
           </>
         ) : band ? (
           <div className="sd-list">
-            <p className="sd-k">{SPECTRUM.find((b) => b.id === band)?.name} · elige una línea</p>
+            <p className="sd-k">
+              {SPECTRUM.find((b) => b.id === band)?.name} · {SPECTRUM.find((b) => b.id === band)?.species} · elige una línea
+            </p>
             <ul>
               {bandLines.map((ln) => (
                 <li key={ln.key}>
                   <button type="button" onClick={() => setLocked(ln)}>
                     <i style={{ background: ln.rgb }} />
                     {ln.name}
-                    <span>{ln.lambda.toFixed(1)} nm</span>
+                    <span>
+                      {ln.ion} · {ln.lambda.toFixed(1)} nm
+                    </span>
                   </button>
                 </li>
               ))}
@@ -414,7 +381,7 @@ export default function Spectrum() {
           </div>
         ) : (
           <p className="sd-empty">
-            {total} líneas en {SPECTRUM.length} bandas. Pasa el cursor por el espectro o elige una banda; las líneas con{" "}
+            {total} líneas de {SPECTRUM.length} elementos. Pasa el cursor por el espectro o elige un elemento; las líneas con{" "}
             <span aria-hidden>◎</span> te llevan al objeto del cielo donde está el proyecto.
           </p>
         )}
