@@ -249,3 +249,28 @@ footer p{margin:0;max-width:110ch}
 .sd-list button i{width:9px;height:9px;border-radius:50%}
 .sd-list button span{font:400 11px var(--f-mono);color:var(--ink-dim)}
 .sd-empty{color:var(--ink-dim);max-width:70ch}
+
+/* espectro fijo mientras se recorre con scroll */
+.spec-pin{height:calc(var(--steps,10) * 46vh);margin-top:12px}
+.spec{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-block:24px}
+.spec-step{font:500 11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;font-variant-numeric:tabular-nums}
+.sb.off{opacity:.38}
+.spec-line{transition:d .7s ease}
+.spec-fill{transition:d .7s ease}
+.spec-svg rect{transition:opacity .5s ease}
+.spec-id{transition:opacity .45s ease}
+.spec-id.hidden{opacity:0;pointer-events:none}
+.spec-detail{max-height:34vh;overflow:auto}
+@media (max-height:640px){
+  .spec-pin{height:auto}
+  .spec{position:static;min-height:0}
+}
+
+/* catálogo: filas que aparecen al hacer scroll */
+.idx.rv-on li{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.idx.rv-on li.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .spec-line,.spec-fill{transition:none}
+  .idx.rv-on li{transform:none;transition:opacity .3s}
+}
+.spec{margin-top:0}

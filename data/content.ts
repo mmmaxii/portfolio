@@ -16,7 +16,8 @@ export const profile = {
 export type BandId = "uv" | "vis" | "ir";
 
 export interface Survey {
-  id: string; // HiPS ID del CDS
+  // URL directa del HiPS en alasky (CDS): evita que Aladin busque espejos que bloquean CORS.
+  id: string;
   name: string;
 }
 
@@ -46,7 +47,7 @@ export const BANDS: Record<BandId, Band> = {
     text: "En ultravioleta brillan las estrellas jóvenes y calientes de los brazos espirales. Acá están los proyectos donde trabajo con modelos de lenguaje.",
     note: "GALEX cubrió el cielo en parches y evitó el plano de la Vía Láctea: al alejarte verás zonas sin datos.",
     home: { ra: 204.254, dec: -29.866, fov: 2.5 },
-    wide: { id: "CDS/P/GALEXGR6_7/color", name: "GALEX GR6/7" },
+    wide: { id: "https://alasky.cds.unistra.fr/GALEX/GALEXGR6_7_color", name: "GALEX GR6/7" },
     jump: true,
   },
   vis: {
@@ -58,8 +59,8 @@ export const BANDS: Record<BandId, Band> = {
     text: "La luz que ve el ojo. Aplicaciones que cualquiera puede abrir y usar.",
     note: "Cielo austral desde 37° S: Carina, Crux y las Nubes de Magallanes.",
     home: { ra: 175.0, dec: -64.0, fov: 110 },
-    wide: { id: "CDS/P/Mellinger/color", name: "Mellinger" },
-    deep: { id: "CDS/P/DSS2/color", name: "DSS2 color", below: 6 },
+    wide: { id: "https://alasky.cds.unistra.fr/MellingerRGB", name: "Mellinger" },
+    deep: { id: "https://alasky.cds.unistra.fr/DSS/DSSColor", name: "DSS2 color", below: 6 },
   },
   ir: {
     id: "ir",
@@ -70,7 +71,7 @@ export const BANDS: Record<BandId, Band> = {
     text: "El infrarrojo atraviesa el polvo y deja ver discos, núcleos galácticos y lo que el visible esconde. Mi trabajo en astronomía.",
     note: "El centro de la galaxia: en visible es una franja oscura de polvo, acá se ve el bulbo completo.",
     home: { ra: 266.4, dec: -29.0, fov: 60 },
-    wide: { id: "CDS/P/2MASS/color", name: "2MASS J H Ks" },
+    wide: { id: "https://alasky.cds.unistra.fr/2MASS/Color", name: "2MASS J H Ks" },
   },
 };
 

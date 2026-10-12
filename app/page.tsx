@@ -1,9 +1,8 @@
 import Sky from "@/components/Sky";
 import Spectrum from "@/components/Spectrum";
 import CopyEmail from "@/components/CopyEmail";
-import { BANDS, TARGETS, profile } from "@/data/content";
-
-const BAND_SHORT = { uv: "UV", vis: "VIS", ir: "IR" } as const;
+import Catalog from "@/components/Catalog";
+import { profile } from "@/data/content";
 
 export default function Home() {
   return (
@@ -81,7 +80,7 @@ export default function Home() {
             </div>
             <p className="lede">
               Cada herramienta es una línea de emisión. La altura de la línea es el número de proyectos o cursos donde
-              la usé.
+              la usé: mientras más marcada, más la he trabajado. Baja para ir encendiendo las bandas.
             </p>
             <Spectrum />
           </div>
@@ -94,21 +93,7 @@ export default function Home() {
               <h2>Catálogo</h2>
             </div>
             <p className="lede">Cada proyecto vive en un objeto real del cielo. Al abrirlo, la cámara vuela hasta él.</p>
-            <ul className="idx">
-              {TARGETS.map((t) => (
-                <li key={t.id}>
-                  <a href="#cielo" data-target={t.id}>
-                    <span className={`bd ${t.band}`} title={BANDS[t.band].label}>
-                      <i />
-                      {BAND_SHORT[t.band]}
-                    </span>
-                    <h3>{t.project.title}</h3>
-                    <span className="tech">{t.project.tech.slice(0, 4).join(" · ")}</span>
-                    <span className="obj">{t.cat}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <Catalog />
           </div>
         </section>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SOURCES, SPECTRUM } from "@/data/content";
 import { wavelengthRGB } from "@/lib/sky";
 
@@ -8,6 +8,7 @@ import { wavelengthRGB } from "@/lib/sky";
  * Espectro de emisión de herramientas. Arriba, el perfil 1D (flujo vs λ) con identificación de
  * líneas; abajo, el espectro 2D tal como se vería en el detector. Cada herramienta es una línea;
  * su intensidad es el número de proyectos o cursos donde aparece.
+ * Al hacer scroll, el gráfico queda fijo y las bandas se van encendiendo una por una.
  */
 
 const W = 1200;
@@ -81,7 +82,8 @@ function buildLines(): Line[] {
   );
 }
 
-function profilePath(lines: Line[]) {
+function profilePath(all: Line[], revealed: number) {
+  const lines = all.filter((l) => BAND_INDEX[l.band] < revealed);
   const sigma = 2.3;
   let d = "";
   for (let x = X0; x <= X1; x += 1) {
@@ -97,20 +99,75 @@ function profilePath(lines: Line[]) {
   return d;
 }
 
+const BAND_INDEX: Record<string, number> = Object.fromEntries(SPECTRUM.map((b, i) => [b.id, i]));
+const NB = SPECTRUM.length;
 const LINES = buildLines();
-const PATH = profilePath(LINES);
+// Un perfil por etapa: 0 bandas, 1 banda, ..., todas. El navegador interpola entre ellos.
+const PATHS = Array.from({ length: NB + 1 }, (_, k) => profilePath(LINES, k));
 
 export default function Spectrum() {
   const lines = LINES;
-  const path = PATH;
   const [hover, setHover] = useState<Line | null>(null);
   const [locked, setLocked] = useState<Line | null>(null);
-  const [band, setBand] = useState<string | null>(null);
+  // Etapa según el scroll: 0 = solo continuo, 1..NB = banda activa, NB+1 = todo.
+  const [stage, setStage] = useState(NB + 1);
+  // Elección manual (botón o banda del gráfico); se descarta al avanzar el scroll.
+  const [manual, setManual] = useState<{ band: string | null } | null>(null);
   const [cursor, setCursor] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollBand = stage >= 1 && stage <= NB ? SPECTRUM[stage - 1].id : null;
+  const band = manual ? manual.band : scrollBand;
+  const revealed = manual ? NB : Math.min(stage, NB);
+  const isOn = (ln: Line) => BAND_INDEX[ln.band] < revealed;
+  const path = PATHS[revealed];
+
+  const chooseBand = (b: string | null) => {
+    setManual({ band: b });
+    setLocked(null);
+    setHover(null);
+  };
+
+  useEffect(() => {
+    let last = -1;
+    // El cálculo es barato (un getBoundingClientRect), así que se hace directo en cada scroll.
+    const update = () => {
+      const el = pinRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const total = r.height - window.innerHeight;
+      // Pantallas bajas: el gráfico no cabe fijo, así que se muestra completo desde el inicio.
+      const short = window.matchMedia("(max-height: 640px)").matches;
+      const st = short || total <= 8 ? NB + 1 : Math.min(NB + 1, Math.max(0, Math.floor((-r.top / total) * (NB + 2))));
+      if (st !== last) {
+        last = st;
+        setStage(st);
+        setManual(null);
+      }
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  // En pantallas angostas el gráfico se desplaza solo hasta la banda activa.
+  useEffect(() => {
+    const box = scrollRef.current;
+    const svg = svgRef.current;
+    if (!box || !svg || !band || box.scrollWidth <= box.clientWidth) return;
+    const i = BAND_INDEX[band];
+    const mid = (xOf(RANGES[i].from) + xOf(RANGES[i].to)) / 2;
+    box.scrollTo({ left: (mid / W) * svg.clientWidth - box.clientWidth / 2, behavior: "smooth" });
+  }, [band]);
 
   const current = hover ?? locked;
-  const inFocus = (ln: Line) => !band || ln.band === band;
+  const inFocus = (ln: Line) => isOn(ln) && (!band || ln.band === band);
   const labelled = (ln: Line) => (band ? ln.band === band : ln.sources.length >= 3) || ln === current;
 
   function svgX(e: React.PointerEvent<SVGSVGElement> | React.MouseEvent<SVGSVGElement>) {
@@ -165,17 +222,21 @@ export default function Spectrum() {
   const bandLines = band ? lines.filter((l) => l.band === band) : [];
   const total = TOTAL;
 
+  const step =
+    stage === 0 ? "Desliza para encender el espectro" : stage <= NB ? `Banda ${stage} de ${NB}` : "Espectro completo";
+
   return (
+    <div className="spec-pin" ref={pinRef} style={{ "--steps": NB + 2 } as React.CSSProperties}>
     <div className="spec">
+      <p className="spec-step" aria-hidden>
+        {step}
+      </p>
       <div className="spec-bands" role="group" aria-label="Bandas del espectro">
         <button
           type="button"
           className="sb"
           aria-pressed={band === null}
-          onClick={() => {
-            setBand(null);
-            setHover(null);
-          }}
+          onClick={() => chooseBand(null)}
         >
           Todo <span>{total}</span>
         </button>
@@ -185,13 +246,9 @@ export default function Spectrum() {
             <button
               key={b.id}
               type="button"
-              className="sb"
               aria-pressed={band === b.id}
-              onClick={() => {
-                setBand(band === b.id ? null : b.id);
-                setLocked(null);
-                setHover(null);
-              }}
+              className={`sb${BAND_INDEX[b.id] < revealed ? "" : " off"}`}
+              onClick={() => chooseBand(band === b.id ? null : b.id)}
             >
               <i style={{ background: `rgb(${r},${g},${bl})` }} />
               {b.name} <span>{b.tools.length}</span>
@@ -200,7 +257,7 @@ export default function Spectrum() {
         })}
       </div>
 
-      <div className="spec-scroll">
+      <div className="spec-scroll" ref={scrollRef}>
         <svg
           ref={svgRef}
           className="spec-svg"
@@ -236,7 +293,10 @@ export default function Spectrum() {
             const peak = BASE - (ln.amp + 0.04) * PEAK;
             const dim = !inFocus(ln);
             return (
-              <g key={ln.key} className={`spec-id${dim ? " dim" : ""}${ln === current ? " cur" : ""}`}>
+              <g
+                key={ln.key}
+                className={`spec-id${isOn(ln) ? "" : " hidden"}${dim ? " dim" : ""}${ln === current ? " cur" : ""}`}
+              >
                 <line x1={ln.x} x2={ln.x} y1={peak - 4} y2={peak - (show ? 12 : 7)} />
                 {show && (
                   <text x={ln.x} y={peak - 16} transform={`rotate(-90 ${ln.x} ${peak - 16})`}>
@@ -271,7 +331,7 @@ export default function Spectrum() {
               width={3.2}
               height={STRIP_B - STRIP_T}
               fill={ln.rgb}
-              opacity={inFocus(ln) ? 0.35 + 0.65 * ln.amp : 0.08}
+              opacity={inFocus(ln) ? 0.35 + 0.65 * ln.amp : isOn(ln) ? 0.08 : 0}
               className={ln === current ? "spec-cur" : undefined}
             />
           ))}
@@ -283,9 +343,7 @@ export default function Spectrum() {
               className={`spec-band${band === b.id ? " on" : ""}`}
               onClick={(e) => {
                 e.stopPropagation();
-                setBand(band === b.id ? null : b.id);
-                setLocked(null);
-                setHover(null);
+                chooseBand(band === b.id ? null : b.id);
               }}
             >
               <path d={`M${xOf(b.from) + 2},${BANDS_Y - 8}V${BANDS_Y}H${xOf(b.to) - 2}V${BANDS_Y - 8}`} />
@@ -361,6 +419,7 @@ export default function Spectrum() {
           </p>
         )}
       </div>
+    </div>
     </div>
   );
 }
