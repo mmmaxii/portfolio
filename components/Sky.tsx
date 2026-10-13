@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { BANDS, BAND_ORDER, TARGETS, type BandId, type DeepImage, type Target } from "@/data/content";
+import { BANDS, BAND_ORDER, CONTENT, TARGETS, type BandId, type DeepImage, type Target } from "@/data/content";
+import { UI, type Locale } from "@/data/ui";
 import { fmtDec, fmtFov, fmtRA, sepDeg } from "@/lib/sky";
 
 /*
@@ -73,8 +74,12 @@ function homeFov(fov: number, el: HTMLElement | null) {
   return el.clientWidth / Math.max(1, el.clientHeight) < 1.1 ? fov * 0.62 : fov;
 }
 const MAX_DEEP_PX = 60000; // sobre esto el navegador ya no puede dibujar la imagen
+const TOUR_DWELL = 11000; // ms en cada objeto durante el recorrido
+const BAND_KEYS: Record<string, BandId> = { u: "uv", v: "vis", i: "ir" };
 
-export default function Sky() {
+export default function Sky({ locale }: { locale: Locale }) {
+  const C = CONTENT[locale];
+  const T = UI[locale].sky;
   const [band, setBand] = useState<BandId>("vis");
   const [active, setActive] = useState<Target | null>(null);
   const [exploring, setExploringState] = useState(false);
@@ -98,6 +103,9 @@ export default function Sky() {
   const flightRef = useRef(0);
   const surveyRef = useRef("");
   const projRef = useRef<"SIN" | "AIT">("SIN");
+  const skyVisibleRef = useRef(true);
+  const tourRef = useRef<{ ids: string[]; i: number; timer: number } | null>(null);
+  const [tour, setTour] = useState<{ i: number; n: number } | null>(null);
 
   const setExploring = useCallback((v: boolean) => {
     exploringRef.current = v;
@@ -169,6 +177,12 @@ export default function Sky() {
     }
   }, []);
 
+  const stopTour = useCallback(() => {
+    if (tourRef.current) window.clearTimeout(tourRef.current.timer);
+    tourRef.current = null;
+    setTour(null);
+  }, []);
+
   const switchBand = useCallback(
     (b: BandId, keepView = false) => {
       if (b === bandRef.current && !keepView) return;
@@ -191,22 +205,73 @@ export default function Sky() {
   );
 
   const openTarget = useCallback(
-    (t: Target) => {
+    (t: Target, fromTour = false) => {
+      if (!fromTour) stopTour();
       if (t.band !== bandRef.current) switchBand(t.band, true);
+      // Enlace directo: la dirección queda como …/#pds70 y se puede compartir.
+      window.history.replaceState(null, "", `#${t.id}`);
       activeRef.current = t;
       setActive(t);
       setExploring(true);
       requestDeep(t);
       fly(t.ra, t.dec, t.fov);
     },
-    [fly, requestDeep, setExploring, switchBand],
+    [fly, requestDeep, setExploring, stopTour, switchBand],
   );
 
   const closeCard = useCallback(() => {
+    stopTour();
     activeRef.current = null;
     setActive(null);
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
     goHome(bandRef.current);
-  }, [goHome]);
+  }, [goHome, stopTour]);
+
+  // Recorrido guiado: vuela por los objetos de la banda actual, uno tras otro.
+  const startTour = useCallback(() => {
+    const ids = C.TARGETS.filter((t) => t.band === bandRef.current).map((t) => t.id);
+    if (!ids.length) return;
+    setExploring(true);
+    const step = (i: number) => {
+      const t = C.TARGETS.find((x) => x.id === ids[i]);
+      if (!t) return;
+      openTarget(t, true);
+      setTour({ i: i + 1, n: ids.length });
+      const timer = window.setTimeout(() => {
+        if (!tourRef.current) return;
+        if (i + 1 < ids.length) step(i + 1);
+        else closeCard();
+      }, TOUR_DWELL);
+      tourRef.current = { ids, i, timer };
+    };
+    step(0);
+  }, [C, closeCard, openTarget, setExploring]);
+
+  const userSwitchBand = useCallback(
+    (b: BandId) => {
+      stopTour();
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      switchBand(b);
+    },
+    [stopTour, switchBand],
+  );
+
+  // Enlaces directos: al cargar con …/#id (o al cambiar el hash) se abre ese objeto.
+  useEffect(() => {
+    if (status !== "ready") return;
+    const fromHash = () => {
+      const t = C.TARGETS.find((x) => x.id === window.location.hash.slice(1));
+      if (t && t.id !== activeRef.current?.id) {
+        rootRef.current?.scrollIntoView();
+        openTarget(t);
+      }
+    };
+    fromHash();
+    window.addEventListener("hashchange", fromHash);
+    return () => window.removeEventListener("hashchange", fromHash);
+  }, [C, openTarget, status]);
+
+  useEffect(() => () => stopTour(), [stopTour]);
 
   // Modo objeto: se oculta todo lo de la izquierda y la barra superior.
   useEffect(() => {
@@ -278,12 +343,14 @@ export default function Sky() {
     const io = new IntersectionObserver(
       ([e]) => {
         visible = e.isIntersecting;
+        skyVisibleRef.current = e.intersectionRatio >= 0.5;
         if (e.intersectionRatio < 0.55 && exploringRef.current && !activeRef.current) setExploring(false);
       },
       { threshold: [0, 0.55, 1] },
     );
     if (root) io.observe(root);
 
+    const fieldLabel = T.field;
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const a = al.current;
@@ -340,8 +407,13 @@ export default function Sky() {
             : "translate(-9999px, -9999px)";
       }
 
+      // El texto de la izquierda se esconde al acercarse: bajo 70° en el visible, o bajo el 70 % del
+      // campo inicial en los filtros que ya parten más cerca (infrarrojo y ultravioleta).
+      const hideBelow = Math.min(70, BANDS[b].home.fov * 0.7);
+      root?.classList.toggle("zoomed", fov < hideBelow);
+
       if (readoutRef.current) {
-        readoutRef.current.innerHTML = `α <b>${fmtRA(cRa)}</b> &nbsp;δ <b>${fmtDec(cDec)}</b> · campo <b>${fmtFov(fov)}</b> · ${surveyFor(b, fov).name}`;
+        readoutRef.current.innerHTML = `α <b>${fmtRA(cRa)}</b> &nbsp;δ <b>${fmtDec(cDec)}</b> · ${fieldLabel} <b>${fmtFov(fov)}</b> · ${surveyFor(b, fov).name}`;
       }
     };
     raf = requestAnimationFrame(tick);
@@ -349,7 +421,7 @@ export default function Sky() {
       cancelAnimationFrame(raf);
       io.disconnect();
     };
-  }, [setExploring]);
+  }, [setExploring, T.field]);
 
   // Interacción: la rueda y el arrastre solo llegan al cielo en modo exploración, así la página
   // se puede recorrer con scroll sin quedar atrapada en el mapa.
@@ -365,6 +437,7 @@ export default function Sky() {
     };
     const onDown = (e: PointerEvent) => {
       if (!inSky(e)) return;
+      if (tourRef.current) stopTour();
       if (!exploringRef.current) {
         down = { x: e.clientX, y: e.clientY };
         e.stopPropagation();
@@ -378,12 +451,33 @@ export default function Sky() {
       if (e.pointerType === "mouse" && !activeRef.current) setExploring(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && activeRef.current) closeCard();
+      if (e.key === "Escape" && activeRef.current) {
+        closeCard();
+        return;
+      }
+      // Atajos: U V I cambian el filtro, ← → recorren los objetos. Solo con el cielo a la vista.
+      const el = e.target instanceof Element ? e.target : null;
+      if (e.metaKey || e.ctrlKey || e.altKey || el?.closest("input, textarea, [contenteditable]")) return;
+      if (!skyVisibleRef.current) return;
+      const b = BAND_KEYS[e.key.toLowerCase()];
+      if (b) {
+        userSwitchBand(b);
+        return;
+      }
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        const list = C.TARGETS.filter((t) => t.band === bandRef.current);
+        if (!list.length) return;
+        e.preventDefault();
+        const i = list.findIndex((t) => t.id === activeRef.current?.id);
+        const next =
+          e.key === "ArrowRight" ? list[(i + 1) % list.length] : list[i < 0 ? list.length - 1 : (i - 1 + list.length) % list.length];
+        openTarget(next);
+      }
     };
     const onDocClick = (e: MouseEvent) => {
-      const el = (e.target as HTMLElement).closest<HTMLElement>("[data-target]");
+      const el = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-target]") : null;
       if (!el) return;
-      const t = TARGETS.find((x) => x.id === el.dataset.target);
+      const t = C.TARGETS.find((x) => x.id === el.dataset.target);
       if (!t) return;
       e.preventDefault();
       root.scrollIntoView({ behavior: "smooth" });
@@ -411,33 +505,33 @@ export default function Sky() {
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("click", onDocClick);
     };
-  }, [closeCard, openTarget, setExploring]);
+  }, [C, closeCard, openTarget, setExploring, stopTour, userSwitchBand]);
 
-  const B = BANDS[band];
+  const B = C.BANDS[band];
   const hint =
     status === "error"
-      ? "El cielo no pudo cargar en este navegador (requiere WebGL2)."
+      ? T.hintError
       : exploring
         ? touch
-          ? "Pellizca para acercar · arrastra para moverte"
-          : "Rueda para acercar o alejar · arrastra para moverte"
+          ? T.hintExploreTouch
+          : T.hintExplore
         : touch
-          ? "Toca el cielo para explorarlo"
-          : "Clic en el cielo para explorarlo";
+          ? T.hintIdleTouch
+          : T.hintIdle;
 
   return (
     <section
       ref={rootRef}
       className={`sky${exploring ? " exploring" : ""}`}
       id="cielo"
-      aria-label="Cielo interactivo"
+      aria-label={T.aria}
       data-band={band}
     >
       <div id="aladin-lite" ref={aladinRef} />
       <div className="veil" ref={veilRef} />
       <div className="markers">
         <div className="deep-bg" ref={deepBgRef} />
-        {TARGETS.filter((t) => t.deep).map((t) => (
+        {C.TARGETS.filter((t) => t.deep).map((t) => (
           // Imagen astronómica externa posicionada por coordenadas; next/image no aplica aquí.
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -454,7 +548,7 @@ export default function Sky() {
             }}
           />
         ))}
-        {TARGETS.map((t) => (
+        {C.TARGETS.map((t) => (
           <button
             key={t.id}
             type="button"
@@ -487,7 +581,7 @@ export default function Sky() {
           <br />
           Valderrama
         </h1>
-        <p className="role">Astronomía y desarrollo backend en Python.</p>
+        <p className="role">{T.role}</p>
         <div className="theme">
           <h2>{B.title}</h2>
           <p>{B.text}</p>
@@ -495,8 +589,8 @@ export default function Sky() {
         </div>
       </div>
 
-      <div className="filters" role="group" aria-label="Filtro de longitud de onda">
-        <div className="lbl">Filtro</div>
+      <div className="filters" role="group" aria-label={T.filterAria}>
+        <div className="lbl">{T.filter}</div>
         {BAND_ORDER.map((id) => (
           <button
             key={id}
@@ -504,32 +598,40 @@ export default function Sky() {
             className="fb"
             data-band={id}
             aria-pressed={band === id}
-            onClick={() => switchBand(id)}
+            onClick={() => userSwitchBand(id)}
           >
             <span className="dot" />
             <span>
-              <b>{BANDS[id].label}</b>
-              <small>{BANDS[id].range}</small>
+              <b>{C.BANDS[id].label}</b>
+              <small>{C.BANDS[id].range}</small>
             </span>
           </button>
         ))}
+        <button
+          type="button"
+          className={`tour${tour ? " on" : ""}`}
+          aria-label={tour ? undefined : T.tourAria}
+          onClick={() => (tour ? closeCard() : startTour())}
+        >
+          {tour ? `${T.tourStop} · ${tour.i} ${T.tourOf} ${tour.n}` : T.tour}
+        </button>
       </div>
 
       <p className="readout" ref={readoutRef}>
-        α <b>--</b> δ <b>--</b> · campo <b>--</b>
+        α <b>--</b> δ <b>--</b> · {T.field} <b>--</b>
       </p>
       <p className={`hint${status === "error" ? " err" : ""}`}>{hint}</p>
       <a className="down" href="#sobre">
-        Bitácora ↓
+        {T.logbook}
       </a>
 
       {active && (
         <aside className="card" aria-live="polite">
-          <button className="x" type="button" aria-label="Cerrar ficha" onClick={closeCard}>
+          <button className="x" type="button" aria-label={T.close} onClick={closeCard}>
             ✕
           </button>
           <p className="cat">
-            {active.cat} · {BANDS[active.band].label.toUpperCase()}
+            {active.cat} · {C.BANDS[active.band].label.toUpperCase()}
           </p>
           <h3>{active.name}</h3>
           <p className="coords">
@@ -538,11 +640,11 @@ export default function Sky() {
           <p className="fact">{active.fact}</p>
           {active.deep && (
             <p className="coords">
-              Imagen: {active.deep.label} · {active.deep.credit}
+              {T.image}: {active.deep.label} · {active.deep.credit}
             </p>
           )}
           <hr />
-          <p className="pk">Proyecto</p>
+          <p className="pk">{T.project}</p>
           <h4>{active.project.title}</h4>
           <p className="desc">{active.project.desc}</p>
           {active.project.img && (

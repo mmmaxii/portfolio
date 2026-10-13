@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { UI, type Locale } from "@/data/ui";
 
-export default function CopyEmail({ email }: { email: string }) {
+export default function CopyEmail({ email, locale }: { email: string; locale: Locale }) {
+  const U = UI[locale].contact;
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -30,10 +32,10 @@ export default function CopyEmail({ email }: { email: string }) {
       </div>
       <div className="btns">
         <button className="btn fill" type="button" onClick={copy}>
-          {copied ? "Copiado" : "Copiar correo"}
+          {copied ? U.copied : U.copy}
         </button>
         <a className="btn" href={`mailto:${email}`}>
-          Escribir ↗
+          {U.write}
         </a>
       </div>
     </>

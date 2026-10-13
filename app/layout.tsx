@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     locale: "es_CL",
     type: "website",
   },
+  alternates: { canonical: "/", languages: { es: "/", en: "/en" } },
 };
 
 export const viewport: Viewport = {
@@ -43,8 +44,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
-      <body data-band="vis">{children}</body>
+    <html lang="es" className={`${display.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Aplica el tema guardado antes de pintar, para que no parpadee. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

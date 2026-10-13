@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SOURCES, SPECTRUM } from "@/data/content";
+import { CONTENT, SPECTRUM, targetsOf, type SpectrumBand } from "@/data/content";
+import { UI, type Locale } from "@/data/ui";
 import { wavelengthRGB } from "@/lib/sky";
 
 /*
@@ -47,13 +48,13 @@ function noise(i: number) {
 
 const TOTAL = SPECTRUM.reduce((n, b) => n + b.tools.length, 0);
 
-function buildLines(): Line[] {
-  const max = Math.max(...SPECTRUM.flatMap((b) => b.tools.map((t) => t.sources.length)));
-  return SPECTRUM.flatMap((b) =>
-    b.tools.map((t) => {
+function buildLines(spec: SpectrumBand[]): Line[] {
+  const max = Math.max(...spec.flatMap((b) => b.tools.map((t) => t.sources.length)));
+  return spec.flatMap((b) =>
+    b.tools.map((t, i) => {
       const [r, g, bl] = wavelengthRGB(t.lambda);
       return {
-        key: `${b.id}-${t.name}`,
+        key: `${b.id}-${i}`,
         name: t.name,
         band: b.id,
         bandName: b.name,
@@ -92,7 +93,9 @@ function profilePath(all: Line[], revealed: number) {
 
 const BAND_INDEX: Record<string, number> = Object.fromEntries(SPECTRUM.map((b, i) => [b.id, i]));
 const NB = SPECTRUM.length;
-const LINES = buildLines();
+// Mismas líneas en ambos idiomas (solo cambian los nombres); la geometría sale del español.
+const LINES_BY: Record<Locale, Line[]> = { es: buildLines(CONTENT.es.SPECTRUM), en: buildLines(CONTENT.en.SPECTRUM) };
+const LINES = LINES_BY.es;
 // Un perfil por etapa: 0 bandas, 1 banda, ..., todas. El navegador interpola entre ellos.
 const PATHS = Array.from({ length: NB + 1 }, (_, k) => profilePath(LINES, k));
 // Las etiquetas se anclan sobre el punto más alto de la curva completa cerca de cada línea,
@@ -107,8 +110,13 @@ const LABEL_Y: Record<string, number> = Object.fromEntries(
 );
 const VIEW_TOP = 60;
 
-export default function Spectrum() {
-  const lines = LINES;
+export default function Spectrum({ locale }: { locale: Locale }) {
+  const lines = LINES_BY[locale];
+  const SPEC = CONTENT[locale].SPECTRUM;
+  const SRC = CONTENT[locale].SOURCES;
+  const U = UI[locale].spectrum;
+  // Proyecto destacado desde el catálogo (al pasar el cursor por una fila).
+  const [proj, setProj] = useState<string | null>(null);
   const [hover, setHover] = useState<Line | null>(null);
   const [locked, setLocked] = useState<Line | null>(null);
   // Etapa según el scroll: 0 = solo continuo, 1..NB = banda activa, NB+1 = todo.
@@ -169,8 +177,25 @@ export default function Spectrum() {
   }, [band]);
 
   const current = hover ?? locked;
+
+  // Conexión con el catálogo: la línea activa marca los proyectos que la usan, y una fila del
+  // catálogo resalta aquí las líneas de su proyecto.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("portfolio:tool", {
+        detail: current ? { tool: current.name, color: current.rgb, targets: targetsOf(current.sources) } : null,
+      }),
+    );
+  }, [current]);
+  useEffect(() => {
+    const on = (e: Event) => setProj((e as CustomEvent<string | null>).detail);
+    window.addEventListener("portfolio:project", on);
+    return () => window.removeEventListener("portfolio:project", on);
+  }, []);
+  const isProj = (ln: Line) => !!proj && targetsOf(ln.sources).includes(proj);
   const inFocus = (ln: Line) => isOn(ln) && (!band || ln.band === band);
-  const labelled = (ln: Line) => (band ? ln.band === band : ln.sources.length >= 3) || ln === current;
+  const labelled = (ln: Line) =>
+    (proj ? isProj(ln) : band ? ln.band === band : ln.sources.length >= 3) || ln === current;
 
   function svgX(e: React.PointerEvent<SVGSVGElement> | React.MouseEvent<SVGSVGElement>) {
     const svg = svgRef.current;
@@ -226,10 +251,10 @@ export default function Spectrum() {
 
   const step =
     stage === 0
-      ? "Desliza para encender el espectro"
+      ? U.start
       : stage > 0
-        ? `${stage} de ${NB} · ${SPECTRUM[stage - 1].name}: ${SPECTRUM[stage - 1].species}`
-        : "Espectro completo";
+        ? `${stage} ${U.of} ${NB} · ${SPEC[stage - 1].name}: ${SPEC[stage - 1].species}`
+        : U.complete;
 
   return (
     <div className="spec-pin" ref={pinRef} style={{ "--steps": NB + 1 } as React.CSSProperties}>
@@ -237,16 +262,16 @@ export default function Spectrum() {
       <p className="spec-step" aria-hidden>
         {step}
       </p>
-      <div className="spec-bands" role="group" aria-label="Bandas del espectro">
+      <div className="spec-bands" role="group" aria-label={U.bandsAria}>
         <button
           type="button"
           className="sb"
           aria-pressed={band === null && revealed === NB}
           onClick={() => chooseBand(null)}
         >
-          Todo <span>{total}</span>
+          {U.all} <span>{total}</span>
         </button>
-        {SPECTRUM.map((b) => {
+        {SPEC.map((b) => {
           const [r, g, bl] = wavelengthRGB(b.tools[0].lambda);
           return (
             <button
@@ -269,7 +294,7 @@ export default function Spectrum() {
           className="spec-svg"
           viewBox={`0 ${VIEW_TOP} ${W} ${H - VIEW_TOP}`}
           role="img"
-          aria-label="Espectro de emisión: cada área es un elemento químico y cada herramienta una de sus líneas; la altura es el número de proyectos o cursos donde aparece"
+          aria-label={U.aria}
           onPointerMove={onMove}
           onPointerLeave={() => {
             setHover(null);
@@ -289,7 +314,7 @@ export default function Spectrum() {
             return (
               <g
                 key={ln.key}
-                className={`spec-id${isOn(ln) ? "" : " hidden"}${dim ? " dim" : ""}${ln === current ? " cur" : ""}`}
+                className={`spec-id${isOn(ln) ? "" : " hidden"}${dim && !isProj(ln) ? " dim" : ""}${ln === current || isProj(ln) ? " cur" : ""}`}
               >
                 <line x1={ln.x} x2={ln.x} y1={peak - 4} y2={peak - (show ? 12 : 7)} />
                 {show && (
@@ -325,7 +350,7 @@ export default function Spectrum() {
               width={3.2}
               height={STRIP_B - STRIP_T}
               fill={ln.rgb}
-              opacity={inFocus(ln) ? 0.35 + 0.65 * ln.amp : isOn(ln) ? 0.08 : 0}
+              opacity={isProj(ln) ? 1 : inFocus(ln) ? 0.35 + 0.65 * ln.amp : isOn(ln) ? 0.08 : 0}
               className={ln === current ? "spec-cur" : undefined}
             />
           ))}
@@ -350,16 +375,16 @@ export default function Spectrum() {
               <div>
                 <h3>{current.name}</h3>
                 <p>
-                  {current.ion} · λ {current.lambda.toFixed(2)} nm · {current.bandName} ({current.species}) · intensidad{" "}
+                  {current.ion} · λ {current.lambda.toFixed(2)} nm · {current.bandName} ({current.species}) · {U.intensity}{" "}
                   {current.sources.length}
                 </p>
               </div>
             </div>
             <div className="sd-src">
-              <p className="sd-k">Aparece en</p>
+              <p className="sd-k">{U.appearsIn}</p>
               <ul>
                 {current.sources.map((s) => {
-                  const src = SOURCES[s];
+                  const src = SRC[s];
                   return (
                     <li key={s}>
                       {src.target ? (
@@ -378,7 +403,7 @@ export default function Spectrum() {
         ) : band ? (
           <div className="sd-list">
             <p className="sd-k">
-              {SPECTRUM.find((b) => b.id === band)?.name} · {SPECTRUM.find((b) => b.id === band)?.species} · elige una línea
+              {SPEC.find((b) => b.id === band)?.name} · {SPEC.find((b) => b.id === band)?.species} · {U.pick}
             </p>
             <ul>
               {bandLines.map((ln) => (
@@ -395,10 +420,7 @@ export default function Spectrum() {
             </ul>
           </div>
         ) : (
-          <p className="sd-empty">
-            {total} líneas de {SPECTRUM.length} elementos. Pasa el cursor por el espectro o elige un elemento; las líneas con{" "}
-            <span aria-hidden>◎</span> te llevan al objeto del cielo donde está el proyecto.
-          </p>
+          <p className="sd-empty">{U.empty(total, SPEC.length)}</p>
         )}
       </div>
     </div>

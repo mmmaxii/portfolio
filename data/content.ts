@@ -1,3 +1,6 @@
+import { EN } from "./content-en";
+import type { Locale } from "./ui";
+
 // Fuente única de contenido del portafolio (español).
 // Cielo: bandas (filtros) y objetos reales; cada objeto lleva un proyecto y, si existe,
 // una imagen profunda con su astrometría (metadatos AVM de ESO / ESA/Hubble).
@@ -372,3 +375,55 @@ export const SPECTRUM: SpectrumBand[] = [
     ],
   },
 ];
+
+/* ------------------------------ Idiomas ------------------------------ */
+// Arma el contenido completo de cada idioma: el español es la base y el inglés reemplaza solo textos.
+
+
+export interface Content {
+  BANDS: Record<BandId, Band>;
+  TARGETS: Target[];
+  SPECTRUM: SpectrumBand[];
+  SOURCES: Record<string, Source>;
+}
+
+function english(): Content {
+  const bands = Object.fromEntries(
+    Object.entries(BANDS).map(([id, b]) => [id, { ...b, ...EN.bands[id] }]),
+  ) as Record<BandId, Band>;
+  const targets = TARGETS.map((t) => {
+    const e = EN.targets[t.id];
+    if (!e) return t;
+    return {
+      ...t,
+      name: e.name,
+      fact: e.fact,
+      project: {
+        ...t.project,
+        title: e.title ?? t.project.title,
+        desc: e.desc,
+        links: t.project.links.map((l, i) => ({ ...l, label: e.links[i] ?? l.label })),
+      },
+      deep: t.deep && { ...t.deep, label: e.deepLabel ?? t.deep.label },
+    };
+  });
+  const spectrum = SPECTRUM.map((b) => ({
+    ...b,
+    ...EN.spectrum[b.id],
+    tools: b.tools.map((t) => ({ ...t, name: EN.tools[t.name] ?? t.name })),
+  }));
+  const sources = Object.fromEntries(
+    Object.entries(SOURCES).map(([k, s]) => [k, { ...s, label: EN.sources[k] ?? s.label }]),
+  );
+  return { BANDS: bands, TARGETS: targets, SPECTRUM: spectrum, SOURCES: sources };
+}
+
+export const CONTENT: Record<Locale, Content> = {
+  es: { BANDS, TARGETS, SPECTRUM, SOURCES },
+  en: english(),
+};
+
+/** Ids de los objetos del cielo donde se usó cada herramienta (vía sus fuentes). */
+export function targetsOf(sources: string[]): string[] {
+  return sources.map((s) => SOURCES[s]?.target).filter((t): t is string => !!t);
+}
