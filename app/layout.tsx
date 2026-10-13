@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://valderramam.vercel.app"),
   title: "Maximiliano Valderrama | Astronomía y desarrollo Python",
   description:
-    "Portafolio de Maximiliano Valderrama: astronomía (PUC) y desarrollo backend en Python. Un cielo real con datos de Mellinger, DSS2, 2MASS y GALEX donde cada objeto es un proyecto.",
+    "Portafolio de Maximiliano Valderrama: astronomía, desarrollo backend en Python y data science. Un cielo real con datos de Mellinger, DSS2, 2MASS y GALEX donde cada objeto es un proyecto.",
   openGraph: {
     title: "Maximiliano Valderrama | Astronomía y desarrollo Python",
     description: "Un cielo real con zoom y filtros ultravioleta, visible e infrarrojo; cada objeto es un proyecto.",

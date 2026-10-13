@@ -2,7 +2,13 @@ import Sky from "@/components/Sky";
 import Spectrum from "@/components/Spectrum";
 import CopyEmail from "@/components/CopyEmail";
 import Catalog from "@/components/Catalog";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { profile } from "@/data/content";
+
+// El botón del CV aparece solo si el PDF está en public/cv/ al momento de compilar.
+const CV_PATH = "/cv/CV-Maximiliano-Valderrama.pdf";
+const hasCv = existsSync(join(process.cwd(), "public", CV_PATH));
 
 export default function Home() {
   return (
@@ -18,6 +24,11 @@ export default function Home() {
           <a href="#stack">Stack</a>
           <a href="#proyectos">Proyectos</a>
           <a href="#contacto">Contacto</a>
+          {hasCv && (
+            <a href={CV_PATH} download>
+              CV ↓
+            </a>
+          )}
         </nav>
       </header>
 
@@ -42,11 +53,11 @@ export default function Home() {
                 </div>
                 <div>
                   <dt>Formación</dt>
-                  <dd>Licenciatura en Astronomía, PUC</dd>
+                  <dd>Licenciatura en Astronomía</dd>
                 </div>
                 <div>
                   <dt>Foco</dt>
-                  <dd>Backend Python, datos, IA</dd>
+                  <dd>Backend Python y data science</dd>
                 </div>
                 <div>
                   <dt>Proyección</dt>
@@ -55,17 +66,19 @@ export default function Home() {
               </dl>
               <div className="txt">
                 <p>
-                  Estudié astronomía en la PUC. Trabajando con datos de Gaia DR3, TESS, MUSE y simulaciones como
-                  IllustrisTNG descubrí que lo que más disfruto es escribir el software que procesa esos datos.
+                  Estudié la Licenciatura en Astronomía. Trabajé con datos de distintos catálogos e instrumentos
+                  astronómicos (Gaia DR3, TESS, MUSE, entre otros) y, en astrofísica experimental, con la simulación
+                  cosmológica IllustrisTNG. Ahí descubrí que lo que más disfruto es escribir el software que procesa
+                  esos datos.
                 </p>
                 <p>
-                  Hoy desarrollo backend en Python: APIs con Django y FastAPI, pipelines de datos y aplicaciones con
-                  modelos de lenguaje. Mantengo <strong>DecoIA</strong>, una plataforma de diseño de interiores con
-                  IA, y <strong>PA3Py</strong>, un paquete de simulación de crecimiento planetario.
+                  También me gustan mucho la física y las matemáticas, y de ahí salen proyectos como{" "}
+                  <strong>Neural Geodesics</strong>, sobre la trayectoria de la luz alrededor de agujeros negros, o la
+                  simulación de <strong>lentes gravitacionales</strong>.
                 </p>
                 <p>
-                  Además soy papá a tiempo completo, lo que me obliga a ser ordenado con el tiempo. A futuro me
-                  interesa investigar cómo se forman los mundos oceánicos en discos protoplanetarios.
+                  Hoy me enfoco en desarrollo backend y data science, con miras a la investigación astronómica más
+                  adelante.
                 </p>
               </div>
             </div>
@@ -114,6 +127,11 @@ export default function Home() {
               <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
                 LinkedIn ↗
               </a>
+              {hasCv && (
+                <a href={CV_PATH} download>
+                  Descargar CV ↓
+                </a>
+              )}
             </div>
           </div>
         </section>

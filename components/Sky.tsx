@@ -487,7 +487,7 @@ export default function Sky() {
           <br />
           Valderrama
         </h1>
-        <p className="role">Astronomía (PUC) y desarrollo backend en Python.</p>
+        <p className="role">Astronomía y desarrollo backend en Python.</p>
         <div className="theme">
           <h2>{B.title}</h2>
           <p>{B.text}</p>

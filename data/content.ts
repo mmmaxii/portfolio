@@ -5,7 +5,7 @@
 export const profile = {
   name: "Maximiliano Valderrama",
   fullName: "Maximiliano F. Valderrama",
-  role: "Astronomía (PUC) y desarrollo backend en Python.",
+  role: "Astronomía y desarrollo backend en Python.",
   email: "mvalderrav@uc.cl",
   github: "https://github.com/mmmaxii",
   linkedin: "https://www.linkedin.com/in/maximiliano-valderrama-vargas/",
