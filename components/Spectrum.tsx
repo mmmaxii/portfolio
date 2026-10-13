@@ -69,21 +69,25 @@ function buildLines(): Line[] {
   );
 }
 
-function profilePath(all: Line[], revealed: number) {
-  const lines = all.filter((l) => BAND_INDEX[l.band] < revealed);
+// Flujo del perfil en cada columna x (continuo suave + líneas gaussianas).
+function profileValues(lines: Line[]) {
   const sigma = 2.3;
-  let d = "";
+  const v: number[] = [];
   for (let x = X0; x <= X1; x += 1) {
     const l = lOf(x);
-    let v = 0.03 + 0.05 * Math.exp(-(((l - 470) / 160) ** 2)) + 0.008 * Math.sin(l / 9) + (noise(x) - 0.5) * 0.022;
+    let f = 0.03 + 0.05 * Math.exp(-(((l - 470) / 160) ** 2)) + 0.008 * Math.sin(l / 9) + (noise(x) - 0.5) * 0.022;
     for (const ln of lines) {
       const dx = x - ln.x;
-      if (Math.abs(dx) < 12) v += ln.amp * Math.exp(-0.5 * (dx / sigma) ** 2);
+      if (Math.abs(dx) < 12) f += ln.amp * Math.exp(-0.5 * (dx / sigma) ** 2);
     }
-    const y = BASE - v * PEAK;
-    d += `${x === X0 ? "M" : "L"}${x},${y.toFixed(1)}`;
+    v.push(f);
   }
-  return d;
+  return v;
+}
+
+function profilePath(all: Line[], revealed: number) {
+  const v = profileValues(all.filter((l) => BAND_INDEX[l.band] < revealed));
+  return v.map((f, i) => `${i ? "L" : "M"}${X0 + i},${(BASE - f * PEAK).toFixed(1)}`).join("");
 }
 
 const BAND_INDEX: Record<string, number> = Object.fromEntries(SPECTRUM.map((b, i) => [b.id, i]));
@@ -91,13 +95,25 @@ const NB = SPECTRUM.length;
 const LINES = buildLines();
 // Un perfil por etapa: 0 bandas, 1 banda, ..., todas. El navegador interpola entre ellos.
 const PATHS = Array.from({ length: NB + 1 }, (_, k) => profilePath(LINES, k));
+// Las etiquetas se anclan sobre el punto más alto de la curva completa cerca de cada línea,
+// así nunca quedan bajo una línea vecina más intensa.
+const FULL = profileValues(LINES);
+const LABEL_Y: Record<string, number> = Object.fromEntries(
+  LINES.map((ln) => {
+    const i = Math.round(ln.x - X0);
+    const top = Math.max(...FULL.slice(Math.max(0, i - 7), i + 8));
+    return [ln.key, BASE - top * PEAK];
+  }),
+);
+const VIEW_TOP = 60;
 
 export default function Spectrum() {
   const lines = LINES;
   const [hover, setHover] = useState<Line | null>(null);
   const [locked, setLocked] = useState<Line | null>(null);
   // Etapa según el scroll: 0 = solo continuo, 1..NB = banda activa, NB+1 = todo.
-  const [stage, setStage] = useState(NB + 1);
+  // -1 = espectro completo sin banda (antes de medir el scroll), 0 = solo continuo, 1..NB = banda activa.
+  const [stage, setStage] = useState(-1);
   // Elección manual (botón o banda del gráfico); se descarta al avanzar el scroll.
   const [manual, setManual] = useState<{ band: string | null } | null>(null);
   const [cursor, setCursor] = useState<number | null>(null);
@@ -107,7 +123,7 @@ export default function Spectrum() {
 
   const scrollBand = stage >= 1 && stage <= NB ? SPECTRUM[stage - 1].id : null;
   const band = manual ? manual.band : scrollBand;
-  const revealed = manual ? NB : Math.min(stage, NB);
+  const revealed = manual || stage < 0 ? NB : stage;
   const isOn = (ln: Line) => BAND_INDEX[ln.band] < revealed;
   const path = PATHS[revealed];
 
@@ -125,9 +141,8 @@ export default function Spectrum() {
       if (!el) return;
       const r = el.getBoundingClientRect();
       const total = r.height - window.innerHeight;
-      // Pantallas bajas: el gráfico no cabe fijo, así que se muestra completo desde el inicio.
-      const short = window.matchMedia("(max-height: 640px)").matches;
-      const st = short || total <= 8 ? NB + 1 : Math.min(NB + 1, Math.max(0, Math.floor((-r.top / total) * (NB + 2))));
+      // NB + 1 tramos iguales: el primero solo muestra el continuo y el último termina en la última banda.
+      const st = total <= 8 ? -1 : Math.min(NB, Math.max(0, Math.floor((-r.top / total) * (NB + 1))));
       if (st !== last) {
         last = st;
         setStage(st);
@@ -212,12 +227,12 @@ export default function Spectrum() {
   const step =
     stage === 0
       ? "Desliza para encender el espectro"
-      : stage <= NB
+      : stage > 0
         ? `${stage} de ${NB} · ${SPECTRUM[stage - 1].name}: ${SPECTRUM[stage - 1].species}`
         : "Espectro completo";
 
   return (
-    <div className="spec-pin" ref={pinRef} style={{ "--steps": NB + 2 } as React.CSSProperties}>
+    <div className="spec-pin" ref={pinRef} style={{ "--steps": NB + 1 } as React.CSSProperties}>
     <div className="spec">
       <p className="spec-step" aria-hidden>
         {step}
@@ -226,7 +241,7 @@ export default function Spectrum() {
         <button
           type="button"
           className="sb"
-          aria-pressed={band === null}
+          aria-pressed={band === null && revealed === NB}
           onClick={() => chooseBand(null)}
         >
           Todo <span>{total}</span>
@@ -252,7 +267,7 @@ export default function Spectrum() {
         <svg
           ref={svgRef}
           className="spec-svg"
-          viewBox={`0 0 ${W} ${H}`}
+          viewBox={`0 ${VIEW_TOP} ${W} ${H - VIEW_TOP}`}
           role="img"
           aria-label="Espectro de emisión: cada área es un elemento químico y cada herramienta una de sus líneas; la altura es el número de proyectos o cursos donde aparece"
           onPointerMove={onMove}
@@ -269,7 +284,7 @@ export default function Spectrum() {
           {/* identificación de líneas */}
           {lines.map((ln) => {
             const show = labelled(ln);
-            const peak = BASE - (ln.amp + 0.04) * PEAK;
+            const peak = LABEL_Y[ln.key];
             const dim = !inFocus(ln);
             return (
               <g
@@ -318,8 +333,8 @@ export default function Spectrum() {
           {/* cursor */}
           {cursor !== null && (
             <g className="spec-cursor">
-              <line x1={cursor} x2={cursor} y1={20} y2={STRIP_B} />
-              <text x={Math.min(cursor + 8, X1 - 90)} y={34}>
+              <line x1={cursor} x2={cursor} y1={VIEW_TOP + 4} y2={STRIP_B} />
+              <text x={Math.min(cursor + 8, X1 - 90)} y={VIEW_TOP + 16}>
                 λ {lOf(cursor).toFixed(1)} nm
               </text>
             </g>
