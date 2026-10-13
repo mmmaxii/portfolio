@@ -55,9 +55,9 @@ export const UI = {
       project: "Proyecto",
       image: "Imagen",
       close: "Cerrar ficha",
-      tour: "▶ Recorrido",
+      tour: "Recorrido",
       tourAria: "Recorrer los objetos de este filtro",
-      tourStop: "■ Detener",
+      tourStop: "Detener",
       tourOf: "de",
     },
     spectrum: {
@@ -124,9 +124,9 @@ export const UI = {
       project: "Project",
       image: "Image",
       close: "Close card",
-      tour: "▶ Tour",
+      tour: "Tour",
       tourAria: "Tour the objects in this filter",
-      tourStop: "■ Stop",
+      tourStop: "Stop",
       tourOf: "of",
     },
     spectrum: {

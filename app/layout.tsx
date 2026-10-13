@@ -46,10 +46,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es" className={`${display.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
-        {/* Aplica el tema guardado antes de pintar, para que no parpadee. */}
+        {/* Aplica el tema guardado y la escala de pantallas anchas (--k) antes de pintar. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`,
+            __html: `try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}(function(){var d=document.documentElement;function k(){var v=Math.max(1,Math.min(innerWidth/1920,innerHeight/1000));d.style.setProperty("--k",v.toFixed(3))}k();addEventListener("resize",k)})()`,
           }}
         />
       </head>

@@ -75,6 +75,7 @@ function homeFov(fov: number, el: HTMLElement | null) {
 }
 const MAX_DEEP_PX = 60000; // sobre esto el navegador ya no puede dibujar la imagen
 const TOUR_DWELL = 11000; // ms en cada objeto durante el recorrido
+const BAND_SHORT = { uv: "UV", vis: "VIS", ir: "IR" } as const;
 const BAND_KEYS: Record<string, BandId> = { u: "uv", v: "vis", i: "ir" };
 
 export default function Sky({ locale }: { locale: Locale }) {
@@ -603,6 +604,9 @@ export default function Sky({ locale }: { locale: Locale }) {
             <span className="dot" />
             <span>
               <b>{C.BANDS[id].label}</b>
+              <b className="short" aria-hidden>
+                {BAND_SHORT[id]}
+              </b>
               <small>{C.BANDS[id].range}</small>
             </span>
           </button>
@@ -613,7 +617,18 @@ export default function Sky({ locale }: { locale: Locale }) {
           aria-label={tour ? undefined : T.tourAria}
           onClick={() => (tour ? closeCard() : startTour())}
         >
-          {tour ? `${T.tourStop} · ${tour.i} ${T.tourOf} ${tour.n}` : T.tour}
+          {tour ? (
+            <>
+              ■<span className="tl"> {T.tourStop} ·</span> {tour.i}
+              <span className="tl"> {T.tourOf} </span>
+              <span className="ts" aria-hidden>/</span>
+              {tour.n}
+            </>
+          ) : (
+            <>
+              ▶<span className="tl"> {T.tour}</span>
+            </>
+          )}
         </button>
       </div>
 
