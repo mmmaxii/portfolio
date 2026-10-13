@@ -99,6 +99,9 @@ body.focused .bar{opacity:0;pointer-events:none}
 
 .readout{position:absolute;z-index:10;left:clamp(16px,3vw,32px);bottom:22px;font:400 11.5px/1.7 var(--f-mono);color:var(--night-dim);font-variant-numeric:tabular-nums;pointer-events:none}
 .readout b{color:var(--night-ink);font-weight:500}
+.powered{position:absolute;z-index:10;left:clamp(16px,3vw,32px);bottom:6px;font:400 10px var(--f-mono);letter-spacing:.06em;color:var(--night-dim);text-decoration:none;opacity:.7}
+.powered:hover{opacity:1;color:var(--night-ink)}
+body.focused .powered{opacity:0;pointer-events:none}
 .hint{position:absolute;z-index:10;left:50%;bottom:22px;transform:translateX(-50%);font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--night-dim);text-align:center;pointer-events:none;transition:opacity .3s;white-space:nowrap}
 .hint.err{color:var(--ir)}
 .down{position:absolute;z-index:10;right:clamp(16px,3vw,32px);bottom:18px;font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(233,237,243,.3);padding:8px 14px;border-radius:999px;background:rgba(4,6,10,.5)}
@@ -133,6 +136,7 @@ body.focused .bar{opacity:0;pointer-events:none}
   .fb{min-width:0;flex:1;padding:8px 10px;grid-template-columns:10px auto;column-gap:8px}
   .fb small{display:none}
   .readout{display:none}
+  .powered{bottom:auto;top:calc(22px + env(safe-area-inset-top,0px))}
   .hint{bottom:20px;font-size:10px}
   .down{display:none}
   .card{top:auto;bottom:12px;max-height:46%}
@@ -332,7 +336,7 @@ body.focused .tour{margin-top:0;padding:8px 12px}
  * <head>; vale 1 hasta 1920 px de ancho), así la composición se ve igual. El cielo no se escala para
  * no perder resolución; las alturas en svh se dividen por --k porque el zoom las multiplicaría.
  */
-.paper .wrap,.bar,.intro,.filters,.readout,.hint,.down,.card,.deep-tag{zoom:var(--k,1)}
+.paper .wrap,.bar,.intro,.filters,.readout,.powered,.hint,.down,.card,.deep-tag{zoom:var(--k,1)}
 
 /* pantallas muy bajas (celular horizontal, zoom muy alto): el espectro deja espacio a la curva */
 @media (max-height:480px){
@@ -352,3 +356,64 @@ body.focused .tour{margin-top:0;padding:8px 12px}
   .fb b{font-size:15px}
   .tour{margin-top:0;padding:6px 12px}
 }
+
+/* ---------- celulares (solo bajo 600 px; laptop y tablet no cambian) ---------- */
+@media (max-width:600px){
+  /* textos del cielo (la interacción con Aladin queda igual) */
+  .intro h1{font-size:clamp(40px,12vw,56px)}
+  .role{font-size:17px}
+  .theme h2{font-size:30px}
+  .theme .note{font-size:13px}
+  .hint{font-size:11px}
+  .powered{font-size:11px}
+  .card h3{font-size:30px}
+  .card .cat,.card .pk{font-size:12px}
+  .card .coords{font-size:13px}
+  .card .fact{font-size:15px}
+  .card .desc{font-size:15.5px;line-height:1.55}
+  .tags li{font-size:12.5px;padding:4px 9px}
+  .links a{font-size:13px;padding:10px 14px}
+
+  /* bitácora */
+  section.blk{padding-block:64px}
+  .sec-head .k{font-size:13px}
+  .sec-head h2{font-size:clamp(44px,13vw,60px)}
+  .lede{font-size:17px;line-height:1.55;margin-top:16px}
+  .about{margin-top:28px;gap:28px}
+  .about .facts{font-size:14px;display:grid;grid-template-columns:1fr 1fr;column-gap:16px}
+  .about .txt{font-size:18px}
+
+  /* espectro: los elementos en una fila deslizable, el gráfico más grande */
+  .spec-bands{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px;position:relative;margin-bottom:10px}
+  .spec-bands::-webkit-scrollbar{display:none}
+  .sb{flex:none;font-size:13px;padding:10px 13px}
+  .spec-step{font-size:12px}
+  .spec-scroll{margin-inline:-16px;padding-inline:16px;scrollbar-width:none}
+  .spec-scroll::-webkit-scrollbar{display:none}
+  .spec-svg{min-width:1000px}
+  .spec-id text{font-size:14px}
+  .spec-tick text{font-size:12.5px}
+  .sd-head h3{font-size:30px}
+  .sd-head p{font-size:13.5px}
+  .sd-k{font-size:12px}
+  .sd-src a,.sd-src span{font-size:15px;padding:8px 12px}
+  .sd-list button{font-size:15px;padding:9px 12px}
+
+  /* catálogo */
+  .idx{margin-top:32px}
+  .idx a,.idx .row{gap:6px;padding-block:22px}
+  .idx .bd{font-size:12px}
+  .idx h3{font-size:30px}
+  .idx .tech{font-size:14px;line-height:1.5}
+  .idx .obj{font-size:13px;display:flex;flex-direction:column;gap:6px}
+  .idx .mini{width:100%;max-width:280px;height:14px}
+
+  /* contacto y pie */
+  .contact .mail{font-size:clamp(30px,10vw,44px)}
+  .contact .btns{width:100%}
+  .contact .btns .btn{flex:1 1 140px;text-align:center;white-space:nowrap}
+  .btn{font-size:13px;padding:15px 18px}
+  .social{flex-wrap:wrap;gap:14px 22px;font-size:14px}
+  footer{font-size:12.5px}
+}
+@media (max-width:380px){.card h3{font-size:26px}.intro h1{font-size:40px}}

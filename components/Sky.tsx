@@ -493,6 +493,14 @@ export default function Sky({ locale }: { locale: Locale }) {
     root.addEventListener("pointerdown", onDown, opts);
     root.addEventListener("pointerup", onUp, opts);
     root.addEventListener("pointerleave", onLeave);
+    // Sin el menú de herramientas de Aladin al hacer clic derecho sobre el cielo.
+    const onMenu = (e: MouseEvent) => {
+      if (e.target instanceof Element && e.target.closest("#aladin-lite")) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    root.addEventListener("contextmenu", onMenu, { capture: true });
     window.addEventListener("keydown", onKey);
     document.addEventListener("click", onDocClick);
     return () => {
@@ -503,6 +511,7 @@ export default function Sky({ locale }: { locale: Locale }) {
       root.removeEventListener("pointerdown", onDown, opts);
       root.removeEventListener("pointerup", onUp, opts);
       root.removeEventListener("pointerleave", onLeave);
+      root.removeEventListener("contextmenu", onMenu, { capture: true });
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("click", onDocClick);
     };
@@ -635,6 +644,9 @@ export default function Sky({ locale }: { locale: Locale }) {
       <p className="readout" ref={readoutRef}>
         α <b>--</b> δ <b>--</b> · {T.field} <b>--</b>
       </p>
+      <a className="powered" href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener noreferrer">
+        {T.powered}
+      </a>
       <p className={`hint${status === "error" ? " err" : ""}`}>{hint}</p>
       <a className="down" href="#sobre">
         {T.logbook}

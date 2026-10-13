@@ -128,6 +128,7 @@ export default function Spectrum({ locale }: { locale: Locale }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bandsRef = useRef<HTMLDivElement>(null);
 
   const scrollBand = stage >= 1 && stage <= NB ? SPECTRUM[stage - 1].id : null;
   const band = manual ? manual.band : scrollBand;
@@ -175,6 +176,15 @@ export default function Spectrum({ locale }: { locale: Locale }) {
     const mid = (Math.min(...xs) + Math.max(...xs)) / 2;
     box.scrollTo({ left: (mid / W) * svg.clientWidth - box.clientWidth / 2, behavior: "smooth" });
   }, [band]);
+
+  // En celular los elementos van en una sola fila deslizable: el activo se centra solo.
+  useEffect(() => {
+    const row = bandsRef.current;
+    if (!row || row.scrollWidth <= row.clientWidth + 1) return;
+    const on = row.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (!on) return;
+    row.scrollTo({ left: on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2, behavior: "smooth" });
+  }, [band, stage]);
 
   const current = hover ?? locked;
 
@@ -262,7 +272,7 @@ export default function Spectrum({ locale }: { locale: Locale }) {
       <p className="spec-step" aria-hidden>
         {step}
       </p>
-      <div className="spec-bands" role="group" aria-label={U.bandsAria}>
+      <div className="spec-bands" role="group" aria-label={U.bandsAria} ref={bandsRef}>
         <button
           type="button"
           className="sb"
