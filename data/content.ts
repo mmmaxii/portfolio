@@ -159,6 +159,21 @@ export const TARGETS: Target[] = [
 
   // ---- Infrarrojo: lo que investigo
   {
+    id: "m42", band: "ir", cat: "M42", name: "Nebulosa de Orión", ra: 83.822, dec: -5.391, fov: 0.9,
+    fact: "La región de formación de estrellas masivas más cercana, a unos 1.350 años luz. Uno de los campos con que probamos SPHEREx Blink.",
+    project: {
+      title: "SPHEREx Blink", tech: ["Python", "FastAPI", "Astropy", "React", "TypeScript", "Aladin Lite"],
+      desc: "Herramienta web pública para ver cómo cambia el cielo infrarrojo de SPHEREx entre las fechas en que observó cada lugar. Hecha en equipo de tres para el NASA Space Apps Challenge 2026 (desafío Planet X and SPHEREx). Muestra cada exposición en orden, diferencias entre pasadas, el espectro de 0.75 a 5 µm y la variación de brillo contra estrellas de referencia. El backend lee solo los bytes necesarios de cada imagen en la nube de NASA, con lo que una curva de brillo bajó de 52 a unos 4 minutos. Probada con RW Aur, R Dra y la estrella de Barnard.",
+      img: "/img/spherex/spherex_blink_rwaur.png",
+      links: [
+        { label: "Ver sitio", href: "https://spherex-blink-umber.vercel.app" },
+        { label: "Repositorio", href: "https://github.com/mmmaxii/spherex-blink" },
+        { label: "Video demo", href: "https://youtu.be/ALjnbyQYaUY" },
+      ],
+    },
+    deep: { src: ESO + "publicationjpg/eso1006a.jpg", ra: 83.822167, dec: -5.390986, widthDeg: 1.197333, fx: 0.5, fy: 0.5, rot: 0.1, label: "VISTA · Z J Ks (infrarrojo cercano)", credit: "ESO/J. Emerson/VISTA. Acknowledgment: Cambridge Astronomical Survey Unit" },
+  },
+  {
     id: "pds70", band: "ir", cat: "PDS 70", name: "Disco con planetas en formación", ra: 212.0423325, dec: -41.3979441, fov: 0.0009,
     fact: "Estrella T Tauri con dos planetas que todavía se forman dentro de su disco, observada por VLT, ALMA y JWST.",
     project: {
@@ -256,6 +271,7 @@ export const SOURCES: Record<string, Source> = {
   tng: { label: "ML con TNG50", target: "hudf" },
   lens: { label: "Lente gravitacional", target: "a370" },
   asterion: { label: "Asterion", target: "m83" },
+  spherex: { label: "SPHEREx Blink", target: "m42" },
   gada: { label: "Certificado Google Advanced Data Analytics" },
   bootcamp: { label: "Bootcamp Fullstack Python" },
   web: { label: "Este portafolio" },
@@ -282,12 +298,12 @@ export const SPECTRUM: SpectrumBand[] = [
   {
     id: "backend", name: "Backend", species: "Hidrógeno · serie de Balmer",
     tools: [
-      { name: "Python", lambda: 656.28, ion: "Hα", sources: ["bancopy", "pa3py", "ngeo", "ifu", "tng", "lens", "asterion", "gada"] },
+      { name: "Python", lambda: 656.28, ion: "Hα", sources: ["bancopy", "pa3py", "ngeo", "ifu", "tng", "lens", "asterion", "gada", "spherex"] },
       { name: "Django", lambda: 486.13, ion: "Hβ", sources: ["decoia", "alke", "bootcamp"] },
-      { name: "APIs REST", lambda: 434.05, ion: "Hγ", sources: ["decoia", "asterion"] },
+      { name: "APIs REST", lambda: 434.05, ion: "Hγ", sources: ["decoia", "asterion", "spherex"] },
       { name: "POO", lambda: 410.17, ion: "Hδ", sources: ["bancopy", "bootcamp"] },
-      { name: "pytest", lambda: 397.01, ion: "Hε", sources: ["pa3py", "asterion"] },
-      { name: "FastAPI", lambda: 388.91, ion: "H8", sources: ["asterion"] },
+      { name: "pytest", lambda: 397.01, ion: "Hε", sources: ["pa3py", "asterion", "spherex"] },
+      { name: "FastAPI", lambda: 388.91, ion: "H8", sources: ["asterion", "spherex"] },
       { name: "JWT", lambda: 383.54, ion: "H9", sources: ["bootcamp"] },
     ],
   },
@@ -314,7 +330,7 @@ export const SPECTRUM: SpectrumBand[] = [
       { name: "EDA", lambda: 630.03, ion: "[O I] 6300", sources: ["gada"] },
       { name: "Pruebas de hipótesis", lambda: 636.38, ion: "[O I] 6364", sources: ["gada"] },
       { name: "Tableau", lambda: 615.82, ion: "O I 6158", sources: ["gada"] },
-      { name: "Astropy", lambda: 731.89, ion: "[O II] 7319", sources: ["ifu"] },
+      { name: "Astropy", lambda: 731.89, ion: "[O II] 7319", sources: ["ifu", "spherex"] },
       { name: "h5py", lambda: 441.49, ion: "O II 4415", sources: ["pa3py"] },
     ],
   },
@@ -356,21 +372,22 @@ export const SPECTRUM: SpectrumBand[] = [
     id: "frontend", name: "Frontend", species: "Calcio",
     tools: [
       { name: "JavaScript", lambda: 393.37, ion: "Ca II K", sources: ["alke", "bootcamp"] },
-      { name: "React", lambda: 729.15, ion: "[Ca II] 7291", sources: ["decoia"] },
+      { name: "React", lambda: 729.15, ion: "[Ca II] 7291", sources: ["decoia", "spherex"] },
       { name: "Next.js", lambda: 422.67, ion: "Ca I 4227", sources: ["web"] },
-      { name: "TypeScript", lambda: 445.48, ion: "Ca I 4455", sources: ["web"] },
-      { name: "Vite", lambda: 558.88, ion: "Ca I 5589", sources: ["decoia"] },
+      { name: "TypeScript", lambda: 445.48, ion: "Ca I 4455", sources: ["web", "spherex"] },
+      { name: "Vite", lambda: 558.88, ion: "Ca I 5589", sources: ["decoia", "spherex"] },
     ],
   },
   {
     id: "infra", name: "Infraestructura", species: "Hierro",
     tools: [
-      { name: "Git", lambda: 530.29, ion: "[Fe XIV] 5303", sources: ["decoia", "pa3py", "asterion", "web"] },
-      { name: "Vercel", lambda: 637.45, ion: "[Fe X] 6375", sources: ["asterion", "web"] },
+      { name: "Git", lambda: 530.29, ion: "[Fe XIV] 5303", sources: ["decoia", "pa3py", "asterion", "web", "spherex"] },
+      { name: "Vercel", lambda: 637.45, ion: "[Fe X] 6375", sources: ["asterion", "web", "spherex"] },
       { name: "Docker", lambda: 465.81, ion: "[Fe III] 4658", sources: ["asterion"] },
       { name: "GitHub Actions", lambda: 516.9, ion: "Fe II 5169", sources: ["pa3py"] },
       { name: "AWS", lambda: 608.7, ion: "[Fe VII] 6087", sources: ["asterion"] },
       { name: "Railway", lambda: 572.07, ion: "[Fe VII] 5721", sources: ["alke"] },
+      { name: "Render", lambda: 428.74, ion: "[Fe II] 4287", sources: ["spherex"] },
       { name: "HPC (Geryon 2)", lambda: 715.52, ion: "[Fe II] 7155", sources: ["pa3py"] },
     ],
   },

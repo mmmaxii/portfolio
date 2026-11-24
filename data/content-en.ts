@@ -48,6 +48,13 @@ export const EN: {
     },
   },
   targets: {
+    m42: {
+      name: "Orion Nebula",
+      fact: "The nearest region forming massive stars, about 1,350 light-years away. One of the fields we used to test SPHEREx Blink.",
+      desc: "Public web tool to see how the SPHEREx infrared sky changes between the dates it observed each place. Built by a team of three for the NASA Space Apps Challenge 2026 (Planet X and SPHEREx challenge). It shows every exposure in order, differences between survey passes, the 0.75 to 5 µm spectrum and brightness changes against reference stars. The backend reads only the bytes it needs from each image in NASA's cloud, which brought a light curve down from 52 to about 4 minutes. Tested with RW Aur, R Dra and Barnard's star.",
+      links: ["Visit site", "Repository", "Demo video"],
+      deepLabel: "VISTA · Z J Ks (near infrared)",
+    },
     "30dor": {
       name: "Tarantula Nebula",
       fact: "The most active star-forming region in the Local Group, in the Large Magellanic Cloud.",
