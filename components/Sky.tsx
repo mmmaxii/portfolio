@@ -11,7 +11,7 @@ import { fmtDec, fmtFov, fmtRA, sepDeg } from "@/lib/sky";
  * objeto colocada con su astrometría AVM (posición, escala angular y rotación al norte).
  */
 
-const ALADIN_SRC = "https://aladin.cds.unistra.fr/AladinLite/api/v3/3.8.2/aladin.js";
+const ALADIN_SRC = "https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js";
 
 interface AladinView {
   getFov(): number[];
